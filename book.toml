@@ -1,0 +1,6 @@
+[book]
+authors = ["Jacob Rosenthal", "Craig Bishop"]
+language = "en"
+multilingual = false
+src = "src"
+title = "rust-training-aug19"
