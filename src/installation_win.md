@@ -42,6 +42,10 @@ This guide will cover:
 
     ![Installing Rust language server](./images/install/rustup5.png)
 
+   3. Install the rustfmt component by running the command `rustup component add rustfmt`
+   
+    ![Installing Rust language server](./images/install/rustupfmt.png)
+
 ## Test out the Rust installation
 
 1. Open a command prompt window
@@ -93,7 +97,7 @@ This guide will cover:
        assert!(2 + 2 == 5);
    }
    ```
-   2. Run the tests with `cargo test`
+   1. Run the tests with `cargo test`
 
     ![Using Cargo to run tests](./images/install/cargotest.png)
 
