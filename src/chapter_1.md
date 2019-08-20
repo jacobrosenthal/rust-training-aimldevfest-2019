@@ -32,7 +32,7 @@ edition = "2018"
 [dependencies]
 ```
 In src folder we have main.rs, a Rust file. In this case it generated a simple hello world. 
-```rust
+```rust,editable
 fn main() {
     println!("Hello, world!");
 }
@@ -81,7 +81,7 @@ The top of the [Rust standard library page](https://doc.rust-lang.org/std/) has 
 > While you totally can thrash around on stack overflow, and we all do, there really is an authoratative source that you should check first.
 
 From there we have our String constructor:
-```rust
+```rust,no_run
 let input_path = String::from("cat.jpg");
 ```
 
@@ -89,12 +89,12 @@ First, note we dont need to import anything (we call it `use`) to use this type.
 
 Also notice we didn't have to explicitly type our variable named first. What Rust *can* figure it out, *it will* and so its entirely idiomatic to omit type annotations. However if you or the compiler are having trouble or getting odd type errors, start annotating some of your types like to see if you can give the compiler a hand. Its also a great way to figure out what type you actually have in case you're not sure, let the compiler (or linter) tell you.
 
-```rust
+```rust,no_run
 let output_path:String = String::from("test.png");
 ```
 
 In Rust our printf replacement character is `{}`. Following the println! documentation down the rabbit hole will send us to the [formatters section](https://doc.rust-lang.org/std/fmt/index.html) page and we find all the formatters which you would expect like hex `{:x}`, binary `{:b}`, etc. We're going to focus on the 'empty' Display formatter `{}` for now which is a kind of a pretty printer in Rust. As long as whover wrote our type implemented the Display pretty printer trait this will work great (cue ominous music).
-```rust
+```rust,editable
 fn main() {
     let input_path = String::from("cat.jpg");
     let output_path = String::from("test.png");
@@ -102,12 +102,12 @@ fn main() {
 }
 ```
 String pretty printing results in rather clean output in this case:
-```bash
+```text
 input_path:cat.jpg output_path:test.png
 ```
 
 Objects, we call them structs, should be very familiar. You can define a new struct in any scope you like and we can name and type their members.
-```rust
+```rust,editable
 struct Opt {
     input_path: String,
     output_path: String,
@@ -131,12 +131,12 @@ fn main() {
 Notice we access our struct members with dot notation, and there is no default new constructor or overloading in Rust. Though in practice, for functions where it makes sense many developers will offer and even require usage of a `new` function, and also make their struct private to require the usage of a new or other constructor and so new is still a good place to start looking. String::new() totally exists and would have made you an empty string.
 
 But hey this seems wordy, lets just print our whole struct in one formatter.
-```rust, ignore
+```rust, ignore, no_run
 println!("{}", options);
 ```
 
 Running this results in:
-```
+```text
 error[E0277]: `Opt` doesn't implement `std::fmt::Display`
   --> src/main.rs:14:20
    |
@@ -165,7 +165,13 @@ So we should either use the Debug trait by changing our `{}` to `{:?}` or implem
 In Rust we stress composition over inheritence using [traits](https://doc.rust-lang.org/book/ch10-02-traits.html). Traits, much like header files, seperate the defintion from the implementation. Before we solve our Display problem by consuming someone elses trait definition, lets make a convoluted example to illustrate the syntax
 
 We'll make a trait that has one function that println! SHOUTS our options. Traits can get the object theyre called on by using the self property which will give us access to the fields via self.input_path and self.output_path.
-```rust
+```rust,editable
+
+struct Opt {
+    input_path: String,
+    output_path: String,
+}
+
 pub trait Shout {
     fn shout(self);
 }
@@ -182,17 +188,17 @@ impl Shout for Opt {
 ```
 
 Now anytime this trait is in namespace, which in our case it is because it defined in this same file, it is available on all instances of Opt. Lets call it.
-```rust
+```rust,no_run,ignore
 options.shout();
 ```
 and well should see
-```bash
+```text
 CAT.JPG TEST.PNG
 ```
 > The seperation of definition from implementation is incredbly powerful. This way if we make our trait public anyone downstream can customize our function for their archictecture or edge case. This keeps Rust from amongst other things passing around huge config structs full of lifecycle callbacks and other configuration overrides.
 
 OK. So we can forget about our toy shout example. Lets implement a trait we don't own, the Display trait shipped with std Rust for our custom Opt type. As a reminder above, it said
-```
+```text
    = help: the trait `std::fmt::Display` is not implemented for `Opt`
 ```
 Looking in the std documentation we find [Display](https://doc.rust-lang.org/std/fmt/trait.Display.html) which wants us to make a function which will be passed our instance called self, and another arg called f.
@@ -242,7 +248,7 @@ image = "0.22.1"
 ```
 
 The Cargo toml manifest version field is described here https://doc.rust-lang.org/cargo/reference/manifest.html#the-version-field where we learn Cargo uses [semantic versioning](https://semver.org) which allows us to version and lock dependencies at the level of risk were comfortable with. From the spec:
-```
+```text
 Given a version number MAJOR.MINOR.PATCH, increment the:
 
 MAJOR version when you make incompatible API changes,
@@ -256,7 +262,8 @@ The most restrictive version would be `image = "= 0.22.1` which would not allow 
 
 ## error handling, the result type
 Lets add our input and output to the example from the image crate and learn some more new concepts
-```
+```rust,ignore
+//todo
 use image::GenericImageView;
 
 let img = image::open(options.input_path).unwrap();
@@ -275,7 +282,7 @@ Theres one new big concept here we skipped earlier, [error handing](https://doc.
 There is a minimal runtime in Rust, which means if were not careful we can and will blow up at runtime. This is called a panic and is handled in the panic handler, which on hosted platforms includes undwinding and backtraces.
 
 Lets naively run our example (still missing a cat picture)
-```
+```text
 thread 'main' panicked at 'called `Result::unwrap()` on an `Err` value: IoError(Os { code: 2, kind: NotFound, message: "No such file or directory" })', src/libcore/result.rs:999:5
 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace.
 ```
@@ -292,7 +299,7 @@ Methods that can error utilize the [Result type](https://doc.rust-lang.org/std/r
 Another option is to make it someone elses problem by simply handing the result back up the chain. This is what we did earlier in our Display trait where we simply returned the entire result type without even looking at it. We can do that here even though this is a main function, as Rust will unwrap it behind the scenes, so lets do that.
 
 return a result from our function instead of unwrapping perhaps we would change
-```
+```rust, ingore, no_run
 use image::GenericImageView, ImageError; //<--import the error type
 
 fn main() -> Result{ //<- add the function return
@@ -301,11 +308,9 @@ fn main() -> Result{ //<- add the function return
 Theres also a helper macro for this case in order to exit early, the [? operator](https://doc.rust-lang.org/book/ch09-02-recoverable-errors-with-result.html#a-shortcut-for-propagating-errors-the--operator). This was previously the [try! macro](https://doc.rust-lang.org/std/macro.try.html) but that has been deprecated though you may still see it in code.
 
 We also get exit from main for free on hosted operating systems, so we can simply have main return the result to be printed on the console. So we could change our example like so
-```
-use crate image;
-
+```rust,ignore
 use image::GenericImageView;
-
+//todo
 fn main() -> Result { //<- added the return
     // Use the open function to load an image from a Path.
     // ```open``` returns a `DynamicImage` on success.
@@ -327,7 +332,7 @@ We used to use  Nowadays we cant use the try operator though, it has been replac
 ### option 3, handle it
 Or you can deal with it yourself
 * The old school [match pattern](https://doc.rust-lang.org/rust-by-example/flow_control/match.html) 
-```
+```rust,ignore,no_run
 match result {
     Some(x) => println!("Result: {}", x),
     None    => println!("Cannot divide by 0"),
@@ -335,20 +340,20 @@ match result {
 ```
 
 * [if let destructuring](https://doc.rust-lang.org/rust-by-example/flow_control/if_let.html) can be nicer than match sometimes
-```
+```rust,ignore,no_run
 if let Some(i) = number {
     println!("Matched {:?}!", i);
 }
 ```
 
 * if you dont care about the value or error just the end (little case r) result try [is_ok()](https://doc.rust-lang.org/std/result/enum.Result.html#method.is_ok) or [is_err()](https://doc.rust-lang.org/std/result/enum.Result.html#method.is_err)
-```
+```rust,ignore,no_run
 if(x.is_ok() && y.is_err()){
 }
 ```
 
 * you can also use [Combinators](https://learning-rust.github.io/docs/e6.combinators.html) to string a bunch of results or options together. Theres a TON of these
-```
+```rust,ignore,no_run
 s1.or(s2)
 s1.or_else(|| Some("some2"))
 s1.and_then(|| Some("some2"))

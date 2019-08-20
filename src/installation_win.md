@@ -56,7 +56,7 @@ This guide will cover:
    - We can also create a crate (Rust's name for libraries) by passing the `--lib` argument.
    - The `cargo new` command creates a new directory named "hellorust" and creates the default Rust project directory structure
 
-    ```
+    ```text
     hellorust
     - src
       - main.rs
@@ -108,7 +108,7 @@ The steps below configure GVim 8.x on Windows to support Rust and use the Rust L
 2. Visit [https://rls.booyaa.wtf](https://rls.booyaa.wtf) and follow the steps for your preferred Vim package management strategy.
 3. Modify your vimrc to include the below snippet. The guide linked in the previous step is still configured to use the Rust nightly build, since the RLS used to only be available in the nightly builds. RLS is now available in stable, and we installed stable Rust (the default). The below snippet should replace the one from the linked guide, and changes the 'cmd' to use stable instead of nightly.
    
-   ```
+   ```text
     if executable('rls')
         au User lsp_setup call lsp#register_server({
             \ 'name': 'rls',
