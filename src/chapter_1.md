@@ -131,7 +131,7 @@ fn main() {
 Notice we access our struct members with dot notation, and there is no default new constructor or overloading in Rust. Though in practice, for functions where it makes sense many developers will offer and even require usage of a `new` function, and also make their struct private to require the usage of a new or other constructor and so new is still a good place to start looking. String::new() totally exists and would have made you an empty string.
 
 But hey this seems wordy, lets just print our whole struct in one formatter.
-```rust
+```rust, ignore
 println!("{}", options);
 ```
 
@@ -164,15 +164,12 @@ So we should either use the Debug trait by changing our `{}` to `{:?}` or implem
 ## traits
 In Rust we stress composition over inheritence using [traits](https://doc.rust-lang.org/book/ch10-02-traits.html). Traits, much like header files, seperate the defintion from the implementation. Before we solve our Display problem by consuming someone elses trait definition, lets make a convoluted example to illustrate the syntax
 
-We'll make a trait that has one function that println! SHOUTS our options. Again, we won't implement here, we just define
+We'll make a trait that has one function that println! SHOUTS our options. Traits can get the object theyre called on by using the self property which will give us access to the fields via self.input_path and self.output_path.
 ```rust
 pub trait Shout {
     fn shout(self);
 }
-```
 
-self represents the instance of the type that this will be called on, and in our case will give us access to the first and last fields via self.input_path and self.output_path. So now lets make an 'implementation' of Shout for Opt.
-```rust
 impl Shout for Opt {
     fn shout(self) {
         println!(
@@ -194,7 +191,7 @@ CAT.JPG TEST.PNG
 ```
 > The seperation of definition from implementation is incredbly powerful. This way if we make our trait public anyone downstream can customize our function for their archictecture or edge case. This keeps Rust from amongst other things passing around huge config structs full of lifecycle callbacks and other configuration overrides.
 
-OK. So we can forget about shout. Lets implement a trait we don't own, the Display trait shipped with std Rust for our custom Opt type. As a reminder above, it said
+OK. So we can forget about our toy shout example. Lets implement a trait we don't own, the Display trait shipped with std Rust for our custom Opt type. As a reminder above, it said
 ```
    = help: the trait `std::fmt::Display` is not implemented for `Opt`
 ```
@@ -203,9 +200,11 @@ Looking in the std documentation we find [Display](https://doc.rust-lang.org/std
 Some new syntax again:
 * We finally have a function here in fmt that returns something. Thats indicated by the `->` syntax the fn definition which returns whatever type is on the right hand side. We'll cover the Result type later.
 * Hopefully you're ahead of me and found the write! macro definition linked right on that page. It is just like println!  but with two big changes. Instead of printing the formatted string it sticks it in its first argument and it returns one of those Result things where println! didnt return anything.
-* And wait. The write! macro function doesnt have a semicolon at the end this time! Thats indicates its return argument is implicitly being returned from this function. We could instead explicitly return and write `let blah = write!(f, "({}, {})", self.x, self.y); return blah;`
+* And wait. The write! macro function doesnt have a semicolon at the end this time! Thats indicates its return argument is implicitly being returned from this function. We could instead explicitly return and write `let blah = write!(f, "({}, {})", self.x, self.y); return blah;` but why would we.
 
-With that info you should have what you need to finish implementing Display for Opt.
+With that info you should have what you need to finish implementing Display for Opt. And with that you've created a new type and defined and implemented traits for it, and youve implemented an trait for an external type.
+
+> Theres one limitation with traits you will eventually find, called orphan rules. For various reasons, the compiler can't reason about traits unless you own either the trait you're implementing OR the struct you're implementing it on. Theres several ways around this including forking the underlying crate and [overriding dependencies](https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html#overriding-dependencies) with Cargo patch functionality and the newtype pattern.
 
 ## runtime arguments
 Let's take our options from the command line with runtime args instead of hard coding it at compile time. Search the standard library for [args](https://doc.rust-lang.org/std/env/fn.args.html)
@@ -254,7 +253,6 @@ PATCH version when you make backwards compatible bug fixes.
 The [Cargo chapter on dependencies](https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html) explains more how to do this locking. The three digit version we used above is the same as a [caret requirement](https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html#caret-requirements) as if we had type `image = "^0.22.1"`. With this requirement Cargo is allowed to use any version it can satisfy between the range `>=0.22.1 <0.3.0` Semver works different below and above 1.0 with the idea that theres more breaking churn below 1.0. So for a fictional `image = "^1.2.3"` Cargo would be allowed to find patches `>=1.2.3 <2.0.0`. Refer to the spec and the book for many more clarifying examples.
 
 The most restrictive version would be `image = "= 0.22.1` which would not allow cargo any update capability. This can be handy for to make production code reproducable. Further along that line the resolved version state of all your dependencies (recursively) is captured in the Cargo.lock file and for binaries like ours can and should be checked into the repository. This way even if you're not locking the version explicitely you're still tracking and reviewing the upstreaming of all version changes. Finally, and outside of scope here you may also use [cargo vendor](https://doc.rust-lang.org/stable/cargo/commands/cargo-vendor.html) to download all your deps locally and check them into your repository and or you may host your own [alternate registry](https://doc.rust-lang.org/cargo/reference/registries.html) in which you only publish vetted versions.
-
 
 calibrate audience
 what questions do you have about rust
