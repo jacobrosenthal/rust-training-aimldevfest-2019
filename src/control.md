@@ -35,7 +35,7 @@ This `if` expression behaves much like the ternary operator in C/C++, but also a
 
 Control flow statements in Rust evaluate to a value, even if you are not using that value. If you end a branch with `;`, the return value will be `()`, the same as a function without a specified return value. Therefore, all the possible evaluations of the control structure need to return the same type. For example, the below code will not compile.
 
-```rust,editable
+```rust,editable,ignore
 fn main() {
     if 1 + 1 == 2 {
         println!("The world is sane.");
