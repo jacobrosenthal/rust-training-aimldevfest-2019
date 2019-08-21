@@ -45,6 +45,18 @@ fn main() {
 }
 ```
 
+It's quite common in Rust to see functions that look like below. The return value of the function is the evaluated value of the if expression.
+
+```rust
+fn square_if_over_10(i: i32) -> i32 {
+    if i > 10 {
+        i * i
+    } else {
+        i
+    }
+}
+```
+
 ## Loop
 Rust provides an unconditional loop construct, equivalent to `while (true) { }` in C/C++. The loop can be broken with `break` or execution can skip to the next iteration with `continue`. Unlike C/C++ loops, and just like Rust `if` statements, loops evaluate to a value as well.
 
