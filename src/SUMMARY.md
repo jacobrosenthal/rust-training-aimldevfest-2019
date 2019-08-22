@@ -12,6 +12,7 @@
 - [code organization, modules](./todo.md)
 - [Enums and algebraic data types](./todo.md)
 - [error handling](./error_handling.md)
+- [Control Structures](./control.md)
 
 - [type states](./todo.md)
 - [networking, http? mqtt, changing states](./todo.md)
