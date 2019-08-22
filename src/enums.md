@@ -1,20 +1,15 @@
 # enums, matching, options
+So we’ve seen enums are good at constraining a type between a limited set of values and they can also hold values, like an error or a type, which makes them algebraic datatypes. Rust Enums are liked [tagged unions for the C](http://patshaughnessy.net/2018/3/15/how-rust-implements-tagged-unions) folks but implemented in such a way that you cant hurt yourself.
 
-tagged unions for the cs folks, but implemented so you cant hurt yourself http://patshaughnessy.net/2018/3/15/how-rust-implements-tagged-unions
-todo have craig go on and on about enums
+TODO have craig go on and on about enums
 
-As we just saw, the Result enum is a Std type with variants of only either Ok(Generic Value) or Err(Error)
+Looking through the image documentation, we can [open an image](https://docs.rs/image/0.22.1/image/fn.open.html), get back a ImageResult containing a [DynamicImage type](https://docs.rs/image/0.22.1/image/enum.DynamicImage.html).
+```rust,ignore,no_run
+//just unwrap our Result as written we have to have a value or we would have already blown up
+let img = image::open(options.input_path).unwrap();
+```
 
-As you can see.. enums can not only constrain input to one of a set of limited values, they can also hold values, makes them algebraic datatypes
-
-Rust uses these features in lieu of exceptions Rust uses algebraic enums to allow you to pass back some data as part of your Result Error type
-https://doc.rust-lang.org/stable/core/result/enum.Result.html
-
-
-configuration also uses enums heavily to constrain arguments.
-
-
-Looking at the (DynamicImage](https://docs.rs/image/0.22.1/image/enum.DynamicImage.html) (enum) type we got back from `image::Open()` method we have a [resize function that takes a filter](https://docs.rs/image/0.22.1/image/enum.DynamicImage.html#method.resize) which is an enum of 
+Then we can use any of the many handy methods including a [resize method](https://docs.rs/image/0.22.1/image/enum.DynamicImage.html#method.resize) Authors tend to reach for enums often in constraining input to functions. Here FilterType Enum could be one of the following sampling filter:
 ```rust,no_run
 pub enum FilterType {
     Nearest,
@@ -25,60 +20,23 @@ pub enum FilterType {
 }
 ```
 
-
-We can even write traits for enums! That would let us do something like turn a runtime command line argument string into a typed filter enum. For now lets just use a `String` 
-
-Implement this trait and add an object to our Opt struct. We'd probably want to go back to our match statement we briefly touched on... match with some kind of text like "nearest" to `FilterType::Nearest`
+So something like
 ```rust,ignore,no_run
-trait FilterString {
-    fn from_str(input: &str) -> FilterType;
-}
+//using the same variable name, called shadowing, is often even encouraged, as it means less messy temporary variables.
+let img = img.resize(32, 32, FilterType::Nearest);
 ```
-so that this compiles
+before finally saving out like:
 ```rust,ignore,no_run
-    let options = Opt {
-        input_path: String::from("cat.jpg"),
-        output_path: String::from("test.png"),
-        scale_filter: FilterType::from_str("tri"),
-    };
-```
-Todo need to cover string borrows
-
-But wait.. what if I cant find the string that gets entered?? We need a way to say that. We COULD use an error, like ENOTFOUND, But theres another enum that specifically designed for that. [Option](https://doc.rust-lang.org/std/option/index.html). It's variants are Some(Val) or None and is perfect when looking for something that might return something, or might not.
-
-Fix up our trait with an option by returning something like `Some(FilterType::Nearest)` and add an exaustive catch all case with _ that returns None
-```rust,ignore,no_run
-trait FilterString {
-    fn from_str(input: &str) -> Option<FilterType>;
-}
+img.save(options.output_path).unwrap();
 ```
 
-so that this compiles
+Finding a cat picture and assembling the pieces is left as a exercise for reader.
+
+
+So obviously we'd like to take resize from the command line, which means wed like a match statement to go from a command line argument String to a FilterType Enum, and we need to update our Opt struct to hold it. Wed like to resize based on command line input constrained to one of these types.
+Naively we could implement the following:
 ```rust,ignore,no_run
-    let options = Opt {
-        input_path: String::from("cat.jpg"),
-        output_path: String::from("test.png"),
-        scale_filter: FilterType::from_str("tri").expect("couldn't find filter"),
-    };
-```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Its left as an exercise to the user to find a cat picture. But after that bringing the last few lessons together, we might like to resize our image before we save it out, add this line before the `img.save()`
-```rust,ignore,no_run
-use image::{FilterType, ImageError};
+use std::env;
 
 struct Opt {
     input_path: String,
@@ -86,22 +44,50 @@ struct Opt {
     scale_filter: FilterType,
 }
 
-fn main() -> Result<(), ImageError> {
-    let options = Opt {
-        input_path: String::from("cat.jpg"),
-        output_path: String::from("test.png"),
-        scale_filter: FilterType::Triangle,
+fn options() -> Option<Opt> {
+    let filter_string = env::args().nth(3)?;
+
+    //we actually match on a as_ref borrow of the String
+    let filter = match filter_string.as_ref() {
+        "nearest" => FilterType::Nearest,
+        "triangle" => FilterType::Triangle,
+        "catmullrom" => FilterType::CatmullRom,
+        "gaussian" => FilterType::Gaussian,
+        "lanczos3" => FilterType::Lanczos3,
+        _ => panic!("uhh I don’t know that filter"),
     };
 
-    let img = image::open(options.input_path)?;
+    Some(Opt {
+        input_path: env::args().nth(1)?,
+        output_path: env::args().nth(2)?,
+        scale_filter: filter,
+    })
+}
 
-    let img = img.resize(32, 32, options.scale_filter);
-
-    img.save(options.output_path).unwrap();
-
-    Ok(())
+fn main() {
+    let options = options().unwrap();
+    println!("{}", options);
 }
 ```
-todo mention shadowing
 
-we really need to stop hardcoding all this.
+Which is totally workable but we can do one better, we can even write traits for enums which would be a clever solution to this problem. Lets abstract all that matching code into a trait. 
+
+Heres a trait definition:
+```rust,ignore,no_run
+trait FilterString {
+    fn from_str(input: String) -> Option<FilterType>;
+}
+```
+and the usage
+```rust,ignore,no_run
+fn options() -> Option<Opt> {
+    let filter_string = env::args().nth(3)?;
+
+    Some(Opt {
+        input_path: env::args().nth(1)?,
+        output_path: env::args().nth(2)?,
+        scale_filter: FilterType::from_str(filter_string)?,
+    })
+}
+```
+Now write out the the trait implementation to make all this work

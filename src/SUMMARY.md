@@ -5,9 +5,9 @@
 - [Installation (Windows)](./installation_win.md)
 - [anatomy](./anatomy.md)
 - [data types](./data_types.md)
+- [error handling](./error_handling.md)
 - [traits](./traits.md)
 - [external dependencies](./external_dependencies.md)
-- [error handling](./error_handling.md)
 - [Enums and algebraic data types](./enums.md)
 
 - [borrow checker, scopes, raii, clone](./todo.md)
