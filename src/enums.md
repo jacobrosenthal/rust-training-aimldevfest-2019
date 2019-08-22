@@ -1,20 +1,20 @@
+# enums, matching, options
 
-# enums and matching and options
 tagged unions for the cs folks, but implemented so you cant hurt yourself http://patshaughnessy.net/2018/3/15/how-rust-implements-tagged-unions
 todo have craig go on and on about enums
 
 As we just saw, the Result enum is a Std type with variants of only either Ok(Generic Value) or Err(Error)
 
-As you can see.. enums can not only constrain input to one of a set of limited values, they can also hold values, makes them algabreaic datatypes
+As you can see.. enums can not only constrain input to one of a set of limited values, they can also hold values, makes them algebraic datatypes
 
-Rust uses these features in luie of exceptions Rust uses algabreaic enums to allow you to pass back some data as part of your Result Erorr type
+Rust uses these features in lieu of exceptions Rust uses algebraic enums to allow you to pass back some data as part of your Result Error type
 https://doc.rust-lang.org/stable/core/result/enum.Result.html
 
 
-configuration also uses enums heavily to constrain arugments.
+configuration also uses enums heavily to constrain arguments.
 
 
-Looking at the (DynamicImage](https://docs.rs/image/0.22.1/image/enum.DynamicImage.html) type we got back from Open (also an enum btw) library we have a [resize function that takes a filter](https://docs.rs/image/0.22.1/image/enum.DynamicImage.html#method.resize) which is an enum of 
+Looking at the (DynamicImage](https://docs.rs/image/0.22.1/image/enum.DynamicImage.html) (enum) type we got back from `image::Open()` method we have a [resize function that takes a filter](https://docs.rs/image/0.22.1/image/enum.DynamicImage.html#method.resize) which is an enum of 
 ```rust,no_run
 pub enum FilterType {
     Nearest,
@@ -25,7 +25,58 @@ pub enum FilterType {
 }
 ```
 
-So bring the last few lessons together and locating a cat picture, we might like to resize our image before we save it out, add this line before the img.save
+
+We can even write traits for enums! That would let us do something like turn a runtime command line argument string into a typed filter enum. For now lets just use a `String` 
+
+Implement this trait and add an object to our Opt struct. We'd probably want to go back to our match statement we briefly touched on... match with some kind of text like "nearest" to `FilterType::Nearest`
+```rust,ignore,no_run
+trait FilterString {
+    fn from_str(input: &str) -> FilterType;
+}
+```
+so that this compiles
+```rust,ignore,no_run
+    let options = Opt {
+        input_path: String::from("cat.jpg"),
+        output_path: String::from("test.png"),
+        scale_filter: FilterType::from_str("tri"),
+    };
+```
+Todo need to cover string borrows
+
+But wait.. what if I cant find the string that gets entered?? We need a way to say that. We COULD use an error, like ENOTFOUND, But theres another enum that specifically designed for that. [Option](https://doc.rust-lang.org/std/option/index.html). It's variants are Some(Val) or None and is perfect when looking for something that might return something, or might not.
+
+Fix up our trait with an option by returning something like `Some(FilterType::Nearest)` and add an exaustive catch all case with _ that returns None
+```rust,ignore,no_run
+trait FilterString {
+    fn from_str(input: &str) -> Option<FilterType>;
+}
+```
+
+so that this compiles
+```rust,ignore,no_run
+    let options = Opt {
+        input_path: String::from("cat.jpg"),
+        output_path: String::from("test.png"),
+        scale_filter: FilterType::from_str("tri").expect("couldn't find filter"),
+    };
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Its left as an exercise to the user to find a cat picture. But after that bringing the last few lessons together, we might like to resize our image before we save it out, add this line before the `img.save()`
 ```rust,ignore,no_run
 use image::{FilterType, ImageError};
 
@@ -54,44 +105,3 @@ fn main() -> Result<(), ImageError> {
 todo mention shadowing
 
 we really need to stop hardcoding all this.
-
-We can even write traits for enums! That would let us do something like turn a runtime argument string into a typed filter enum
-
-```rust,ignore,no_run
-FilterType::from_str().unwrap()
-```
-
-This will come in handy here.. 
-
-
-# runtime arguments
-Let's take our options from the command line with runtime args instead of hard coding it at compile time. Search the standard library for [args](https://doc.rust-lang.org/std/env/fn.args.html)
-
-Heres an explicit use (import) finally and a for loop we can add to our main:
-```rust,no_run
-use std::env;
-
-for argument in env::args() {
-    println!("{}", argument);
-}
-```
-
-And then note you can pass args around cargo to the binary were trying to run like:
-```bash
-$ cargo run -- one-arg 2 three anotherarg
-    Finished dev [unoptimized + debuginfo] target(s) in 0.01s
-     Running `target/debug/training one-arg 2 three anotherarg`
-target/debug/training
-one-arg
-2
-three
-anotherarg
-Hello, world!
-```
-
-Just like C the first argument is the name of the binary and the rest are your arguments. You know where we're headed. Dig out first arguments from your command line and stick them in your options struct.
-
-
-
-So lets fix our examples to not hardcode input_path, output_path, scale_filter
-

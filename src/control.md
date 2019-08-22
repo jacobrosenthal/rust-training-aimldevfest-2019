@@ -100,3 +100,35 @@ fn main() {
 ```
 
 There's a good reason they look similar too! Much like Python, iterators are use all over the place. You won't find the familiar `for ( ; ; ) {}` construct, but don't worry; Rust's iterators are vastly more powerful, and safe. The next section takes us on a deep dive into iterators.
+
+
+
+
+# runtime arguments
+Let's take our options from the command line with runtime args instead of hard coding it at compile time. Search the standard library for [args](https://doc.rust-lang.org/std/env/fn.args.html)
+
+Heres an explicit use (import) finally and a for loop we can add to our main:
+```rust,no_run
+use std::env;
+
+for argument in env::args() {
+    println!("{}", argument);
+}
+```
+
+And then note you can pass args around cargo to the binary were trying to run like:
+```bash
+$ cargo run -- one-arg 2 three anotherarg
+    Finished dev [unoptimized + debuginfo] target(s) in 0.01s
+     Running `target/debug/training one-arg 2 three anotherarg`
+target/debug/training
+one-arg
+2
+three
+anotherarg
+Hello, world!
+```
+
+Just like C the first argument is the name of the binary and the rest are your arguments. You know where we're headed. Dig out first arguments from your command line and stick them in your options struct.
+
+So lets fix our examples to not hardcode input_path, output_path, scale_filter

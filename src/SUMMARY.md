@@ -1,6 +1,5 @@
 # Summary
 
-
 [Preface](./preface.md)
 
 - [Installation (Windows)](./installation_win.md)
@@ -24,5 +23,4 @@
 - [type states](./todo.md)
 - [Generics, using strong types to avoid C and C++ weaknesses](./todo.md)
 - [networking, http? mqtt, changing states](./todo.md)
-
-- [macros sruct op on top of our options struct](./todo.md)
+- [macros struct op on top of our options struct](./todo.md)
