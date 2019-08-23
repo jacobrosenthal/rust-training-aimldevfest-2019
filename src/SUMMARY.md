@@ -16,11 +16,4 @@
 - [Iterators](./iterators.md)
 - [rayon](./todo.md)
 
-- [Cross compiling for the linux arm target](./todo.md)
-- [FFI, calling C libraries, using unsafe Rust, and wrapper generation from C headers](./todo.md)
-
-# extra credit/ time permitting
-- [type states](./todo.md)
-- [Generics, using strong types to avoid C and C++ weaknesses](./todo.md)
-- [networking, http? mqtt, changing states](./todo.md)
-- [macros struct op on top of our options struct](./todo.md)
+- [extra credit](./extra.md)
