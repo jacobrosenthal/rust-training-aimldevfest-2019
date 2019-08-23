@@ -90,4 +90,63 @@ fn options() -> Option<Opt> {
     })
 }
 ```
-Now write out the the trait implementation to make all this work
+Now finish out the the FilterString impl to make all this work
+
+# enum playground
+
+You've started to aqaint yourself with enums in the error handling playground, but theres so much more it is worth spending some more time in the enum playground here to get your mind around how powerful the [pattern syntax](https://doc.rust-lang.org/book/ch18-03-pattern-syntax.html) is.
+TODO change this stolen example from https://doc.rust-lang.org/book/ch06-02-match.html
+```rust
+enum UsState {
+    Alabama,
+    Alaska,
+}
+
+//enums can contain any other type
+enum Coin {
+    Penny,
+    Nickel(u32),
+    Dime(String),
+    Quarter(UsState),
+}
+
+fn value_in_cents(coin: Coin) -> u8 {
+    //you can match on any combination of your enum
+    match coin {
+        Coin::Penny => 1,
+        Coin::Nickel(date) if date < 1920 => 50,
+        Coin::Nickel(date) if date >= 1920 => 5,
+        Coin::Dime(ref text) if text == "scratched" => 5,
+        Coin::Dime(text) => {
+            println!("{}", text);
+            10
+        }
+        Coin::Quarter(UsState::Alaska) => {
+            println!("State quarter from Alaska");
+            25
+        }
+        Coin::Quarter(_state) => {
+            println!("State quarter from elsewhere");
+            25
+        }
+        //matches are exaustive, so if you don't cover all your use cases you need a catch all
+        _ => 5,
+    }
+}
+
+fn main() {
+    println!("{}", value_in_cents(Coin::Quarter(UsState::Alabama)));
+    println!("{}", value_in_cents(Coin::Dime(String::from("scratched"))));
+    println!("{}", value_in_cents(Coin::Dime(String::from("A+"))));
+    println!("{}", value_in_cents(Coin::Nickel(1921)));
+    println!("{}", value_in_cents(Coin::Nickel(2000)));
+
+    match 94 as u32 {
+        1 | 2 => println!("one or two"),
+        3...4 => println!("three or four"),
+        11 => println!("11"),
+        12..=44 => println!("12 to 44 inclusive"),
+        _ => println!("The rest"),
+    }
+}
+```

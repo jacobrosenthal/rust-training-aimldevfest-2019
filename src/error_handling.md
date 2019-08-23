@@ -99,10 +99,51 @@ You could write it this way, revealing the options if they exist, and doing some
     };
 
     println!("{} {}", options.input_path, options.output_path);
-}
 ```
 The Option type is actually an enum type so we lets take a full digression through enums and matching in the next section.
 
 
 # error handling playground
 
+Its worth spending some time in the option result playground here to get your mind around all this
+
+```rust
+use std::io::ErrorKind;
+
+fn main() {
+    let first_arg = Some("cat.jpg");
+    let second_arg: Option<String> = None;
+    let good_val: Result<u32, std::io::ErrorKind> = Ok(22);
+    let definately_error: Result<u32, std::io::ErrorKind> = Err(ErrorKind::Other);
+
+    first_arg.unwrap();
+    good_val.unwrap();
+    //second_arg.unwrap(); // no good
+
+    //matching is exaustive in order
+    match first_arg {
+        Some(val) => println!("first_arg: {}", val),
+        None => {
+            // you can block scope in here and do as much as needed
+            println!("third_arg");
+            println!("oops")
+        }
+    }
+
+    // as we've said, results are similar, just two different variants
+    match definately_error {
+        Ok(val) => println!("cant image how we got here: {}", val),
+        Err(e) => println!("{:?}", e),
+    };
+
+    // the revealing/destructuring pattern is really handy occasionally
+    if let Some(val) = first_arg {
+        println!("Gotem {:?}!", val);
+    }
+
+    // theres also a ton of combinators
+    if good_val.is_ok() && definately_error.is_err() {
+        println!("some convoluted example here");
+    }
+}
+```
