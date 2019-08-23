@@ -1,7 +1,7 @@
 
 # anatomy of Rust program and some workflow
 
-Weve got a few tools to get to know
+We’ve got a few tools to get to know
 * rustup - manage tools and versions of toolchains
 * rustc - rust compiler
 * cargo - manage modules locally and remotely and drives rustc
@@ -19,13 +19,13 @@ edition = "2018"
 [dependencies]
 ```
 In src folder we have main.rs, a Rust file. In this case it generated a simple hello world. 
-```rust,editable
+```rust
 fn main() {
     println!("Hello, world!");
 }
 ```
 
-We're starting to get some syntax for you. Notice functions are denoted fn, we use semicolons to end expressions, and the exclamation after println! means that is a function-like macro. We'll talk more about [macros](https://doc.rust-lang.org/book/ch19-06-macros.html) later.
+We're starting to get some syntax for you. Notice functions are denoted `fn`, we use semicolons to end expressions, and the exclamation after `println!()` means that is a function-like macro. We'll talk more about [macros](https://doc.rust-lang.org/book/ch19-06-macros.html) later.
 
 Generally we'll interact with the compiler via Cargo. Cargo drives the rustc compiler and linker all under the hood. We can `cargo build` or better yet `cargo run` and save ourselves a step:
 ```bash
@@ -56,3 +56,4 @@ $ ./main
 Hello, world!
 ```
 However in practice almost no projects are single files require merging multiple modules from within our project and without and thus Cargo is THE way we interact with Rust.
+

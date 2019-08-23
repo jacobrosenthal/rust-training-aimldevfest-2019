@@ -100,3 +100,6 @@ fn main() {
 ```
 
 There's a good reason they look similar too! Much like Python, iterators are use all over the place. You won't find the familiar `for ( ; ; ) {}` construct, but don't worry; Rust's iterators are vastly more powerful, and safe. The next section takes us on a deep dive into iterators.
+
+
+

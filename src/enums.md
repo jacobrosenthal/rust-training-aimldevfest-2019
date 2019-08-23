@@ -1,20 +1,15 @@
+# enums, matching, options
+So we’ve seen enums are good at constraining a type between a limited set of values and they can also hold values, like an error or a type, which makes them algebraic datatypes. Rust Enums are liked [tagged unions for the C](http://patshaughnessy.net/2018/3/15/how-rust-implements-tagged-unions) folks but implemented in such a way that you cant hurt yourself.
 
-# enums and matching and options
-tagged unions for the cs folks, but implemented so you cant hurt yourself http://patshaughnessy.net/2018/3/15/how-rust-implements-tagged-unions
-todo have craig go on and on about enums
+TODO have craig go on and on about enums
 
-As we just saw, the Result enum is a Std type with variants of only either Ok(Generic Value) or Err(Error)
+Looking through the image documentation, we can [open an image](https://docs.rs/image/0.22.1/image/fn.open.html), get back a ImageResult containing a [DynamicImage type](https://docs.rs/image/0.22.1/image/enum.DynamicImage.html).
+```rust,ignore,no_run
+//just unwrap our Result as written we have to have a value or we would have already blown up
+let img = image::open(options.input_path).unwrap();
+```
 
-As you can see.. enums can not only constrain input to one of a set of limited values, they can also hold values, makes them algabreaic datatypes
-
-Rust uses these features in luie of exceptions Rust uses algabreaic enums to allow you to pass back some data as part of your Result Erorr type
-https://doc.rust-lang.org/stable/core/result/enum.Result.html
-
-
-configuration also uses enums heavily to constrain arugments.
-
-
-Looking at the (DynamicImage](https://docs.rs/image/0.22.1/image/enum.DynamicImage.html) type we got back from Open (also an enum btw) library we have a [resize function that takes a filter](https://docs.rs/image/0.22.1/image/enum.DynamicImage.html#method.resize) which is an enum of 
+Then we can use any of the many handy methods including a [resize method](https://docs.rs/image/0.22.1/image/enum.DynamicImage.html#method.resize) Authors tend to reach for enums often in constraining input to functions. Here FilterType Enum could be one of the following sampling filter:
 ```rust,no_run
 pub enum FilterType {
     Nearest,
@@ -25,9 +20,23 @@ pub enum FilterType {
 }
 ```
 
-So bring the last few lessons together and locating a cat picture, we might like to resize our image before we save it out, add this line before the img.save
+So something like
 ```rust,ignore,no_run
-use image::{FilterType, ImageError};
+//using the same variable name, called shadowing, is often even encouraged, as it means less messy temporary variables.
+let img = img.resize(32, 32, FilterType::Nearest);
+```
+before finally saving out like:
+```rust,ignore,no_run
+img.save(options.output_path).unwrap();
+```
+
+Finding a cat picture and assembling the pieces is left as a exercise for reader.
+
+
+So obviously we'd like to take resize from the command line, which means wed like a match statement to go from a command line argument String to a FilterType Enum, and we need to update our Opt struct to hold it. Wed like to resize based on command line input constrained to one of these types.
+Naively we could implement the following:
+```rust,ignore,no_run
+use std::env;
 
 struct Opt {
     input_path: String,
@@ -35,63 +44,109 @@ struct Opt {
     scale_filter: FilterType,
 }
 
-fn main() -> Result<(), ImageError> {
-    let options = Opt {
-        input_path: String::from("cat.jpg"),
-        output_path: String::from("test.png"),
-        scale_filter: FilterType::Triangle,
+fn options() -> Option<Opt> {
+    let filter_string = env::args().nth(3)?;
+
+    //we actually match on a as_ref borrow of the String
+    let filter = match filter_string.as_ref() {
+        "nearest" => FilterType::Nearest,
+        "triangle" => FilterType::Triangle,
+        "catmullrom" => FilterType::CatmullRom,
+        "gaussian" => FilterType::Gaussian,
+        "lanczos3" => FilterType::Lanczos3,
+        _ => panic!("uhh I don’t know that filter"),
     };
 
-    let img = image::open(options.input_path)?;
+    Some(Opt {
+        input_path: env::args().nth(1)?,
+        output_path: env::args().nth(2)?,
+        scale_filter: filter,
+    })
+}
 
-    let img = img.resize(32, 32, options.scale_filter);
-
-    img.save(options.output_path).unwrap();
-
-    Ok(())
+fn main() {
+    let options = options().unwrap();
+    println!("{}", options);
 }
 ```
-todo mention shadowing
 
-we really need to stop hardcoding all this.
+Which is totally workable but we can do one better, we can even write traits for enums which would be a clever solution to this problem. Lets abstract all that matching code into a trait. 
 
-We can even write traits for enums! That would let us do something like turn a runtime argument string into a typed filter enum
-
+Heres a trait definition:
 ```rust,ignore,no_run
-FilterType::from_str().unwrap()
-```
-
-This will come in handy here.. 
-
-
-# runtime arguments
-Let's take our options from the command line with runtime args instead of hard coding it at compile time. Search the standard library for [args](https://doc.rust-lang.org/std/env/fn.args.html)
-
-Heres an explicit use (import) finally and a for loop we can add to our main:
-```rust,no_run
-use std::env;
-
-for argument in env::args() {
-    println!("{}", argument);
+trait FilterString {
+    fn from_str(input: String) -> Option<FilterType>;
 }
 ```
+and the usage
+```rust,ignore,no_run
+fn options() -> Option<Opt> {
+    let filter_string = env::args().nth(3)?;
 
-And then note you can pass args around cargo to the binary were trying to run like:
-```bash
-$ cargo run -- one-arg 2 three anotherarg
-    Finished dev [unoptimized + debuginfo] target(s) in 0.01s
-     Running `target/debug/training one-arg 2 three anotherarg`
-target/debug/training
-one-arg
-2
-three
-anotherarg
-Hello, world!
+    Some(Opt {
+        input_path: env::args().nth(1)?,
+        output_path: env::args().nth(2)?,
+        scale_filter: FilterType::from_str(filter_string)?,
+    })
+}
 ```
+Now finish out the the FilterString impl to make all this work
 
-Just like C the first argument is the name of the binary and the rest are your arguments. You know where we're headed. Dig out first arguments from your command line and stick them in your options struct.
+# enum playground
 
+You've started to aquatint yourself with enums in the error handling playground, but theres so much more it is worth spending some more time in the enum playground here to get your mind around how powerful the [pattern syntax](https://doc.rust-lang.org/book/ch18-03-pattern-syntax.html) is.
+TODO change this stolen example from https://doc.rust-lang.org/book/ch06-02-match.html
+```rust,editable
+enum UsState {
+    Alabama,
+    Alaska,
+}
 
+//enums can contain any other type
+enum Coin {
+    Penny,
+    Nickel(u32),
+    Dime(String),
+    Quarter(UsState),
+}
 
-So lets fix our examples to not hardcode input_path, output_path, scale_filter
+fn value_in_cents(coin: Coin) -> u8 {
+    //you can match on any combination of your enum
+    match coin {
+        Coin::Penny => 1,
+        Coin::Nickel(date) if date < 1920 => 50,
+        Coin::Nickel(date) if date >= 1920 => 5,
+        Coin::Dime(ref text) if text == "scratched" => 5,
+        Coin::Dime(text) => {
+            println!("{}", text);
+            10
+        }
+        Coin::Quarter(UsState::Alaska) => {
+            println!("State quarter from Alaska");
+            25
+        }
+        Coin::Quarter(_state) => {
+            println!("State quarter from elsewhere");
+            25
+        }
+        //matches are exhaustive, so if you don't cover all your use cases you need a catch all
+        _ => 5,
+    }
+}
 
+fn main() {
+    println!("{}", value_in_cents(Coin::Quarter(UsState::Alabama)));
+    println!("{}", value_in_cents(Coin::Dime(String::from("scratched"))));
+    println!("{}", value_in_cents(Coin::Dime(String::from("A+"))));
+    println!("{}", value_in_cents(Coin::Nickel(1921)));
+    println!("{}", value_in_cents(Coin::Nickel(2000)));
+
+    match 94 as u32 {
+        1 | 2 => println!("one or two"),
+        3...4 => println!("three or four"),
+        11 => println!("11"),
+        12..=44 => println!("12 to 44 inclusive"),
+        _ => println!("The rest"),
+    }
+}
+```
