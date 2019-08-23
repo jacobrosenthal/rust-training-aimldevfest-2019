@@ -44,7 +44,46 @@ OPTIONS:
 ```
 
 ## Cross compiling
-We get cross compiling generally for free. The hard part is usually finding a linker. Check our recent meetup post on [cross compiling to a raspberry pi](https://rust.azdevs.org/2019-07-24/) But the general gist is, when you're tooling is set up its can be as easy as `cargo build --target armv7-unknown-linux-gnueabihf`
+We can generally cross compile 'for free' if rust already has the target were interested in. [Rust Platform Support](https://forge.rust-lang.org/platform-support.html) is a great tool to see the status of various targets.
+
+To get one of those supported targets on our machine all we have to do is `rustup target add` and we can often just use system LLVM to link most all bare metal no_std (freestanding or unhosted) targets like Cortex devices. And if not cross platform toolchains are generally very available. See the [Rust Embedded book](https://rust-embedded.github.io/book/intro/install/macos.html) for more on these targets.
+
+As an aside, if you want to check out no_std raspberry pi stuff, I recommend [Phillip Oppermans blog series](http://os.phil-opp.com) which is basically a CS Degree in building an operating system from scratch on the raspberry pi.
+
+For hosted linux on the raspberry pi though `rustup target add armv7-unknown-linux-gnueabihf` gets us started. Now it should be as easy as `cargo build --target armv7-unknown-linux-gnueabihf` but if we try that well see
+```bash
+   Compiling pi-example v0.1.0 (/Users/jacobrosenthal/Downloads/pi-example)
+error: linker `arm-linux-gnueabihf-gcc` not found
+  |
+  = note: No such file or directory (os error 2)
+error: aborting due to previous error
+error: Could not compile `pi-example`.
+To learn more, run the command again with --verbose.
+```
+
+So we clearly need a arm-linux-gnueabihf-gcc. If were in linux its probably actually [not that hard to get the raspberry pi toolchain linker](https://hackernoon.com/compiling-rust-for-the-raspberry-pi-49fdcd7df658). Something like `sudo apt-get install gcc-4.7-multilib-arm-linux-gnueabihf` would probably work
+
+Then create a .cargo/config file and add the following to specify the linker, and the default target so you don’t have to specify --target every time.
+```text
+[build]
+target = "armv7-unknown-linux-gnueabihf"
+
+[target.armv7-unknown-linux-gnueabihf]
+linker = "arm-linux-gnueabihf-gcc-4.7"
+```
+
+and now `cargo build` should work for you! 
+
+But on Mac or Windows that toolchain is for some reason just not commonly hosted anywhere. The best Ive found is this million page medium article [Setup GCC 8.1 Cross Compiler Toolchain for Raspberry Pi 3 on macOS High Sierra](https://medium.com/coinmonks/setup-gcc-8-1-cross-compiler-toolchain-for-raspberry-pi-3-on-macos-high-sierra-cb3fc8b6443e)
+
+But you know whats better than doing all that yourself and polluting your machine? Having someone else do work for you and packaging it in a reusable cross platform way. Maybe with something like .. a docker container.. Enter [Cross](https://github.com/rust-embedded/cross)
+
+Cross hasn’t had an update in a while, so I recommend installing from git head with: `cargo install --force --git https://github.com/rust-embedded/cross cross`
+
+And assuming your target is supported you can simply swap your cargo command for a cross command like
+```bash
+cross build --target=armv7-unknown-linux-gnueabihf
+```
 
 ## ffi
 Rust can consume C ABI or freeze its output to C ABI, so anything (Golang, Python, Node) could consume Rust code, and Rust could consume any C, C++, etc that you have already built. [rust-ffi-examples](https://github.com/alexcrichton/rust-ffi-examples) has examples for all your favorite languages.
