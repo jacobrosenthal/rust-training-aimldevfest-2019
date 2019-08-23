@@ -26,7 +26,7 @@ fn main() {
         if 1 + 1 == 2 {
             "sane"
         } else {
-            "insance"
+            "insane"
         });
 }
 ```
@@ -53,6 +53,31 @@ fn square_if_over_10(i: i32) -> i32 {
         i * i
     } else {
         i
+    }
+}
+```
+
+## Match
+When you would reach for a switch statement, match is what you want in Rust. Matching is incredibly powerful and combines boolean operators as well as the range syntax from before.
+
+```rust,editable
+fn main() {
+
+    let number:u32 = 11;
+    // ^ Try some different values for `number`
+
+    match number {
+        1 | 2 => println!("one or two"),
+        3...4 => println!("three or four"),
+        // you can use block syntax as well
+        11 => {
+            println!("11");
+            println!("and only 11")
+        }
+        12..=44 => println!("12 to 44 inclusive"),
+        // matching is exhaustive so if you miss a case Rust will complain
+        // or use catch all 'default' case
+        _ => println!("The rest"),
     }
 }
 ```
@@ -89,7 +114,7 @@ fn main() {
 ```
 
 ## For?
-Those above contrived loop examples seem like perfect cases for a for loop right? Well, `for` is one of the places that Rust takes a familar control flow construct and completely rethinks how it should work. The below example might look more similar to Python:
+Those above contrived loop examples seem like perfect cases for a for loop right? Well, `for` is one of the places that Rust takes a familiar control flow construct and completely rethinks how it should work. The below example might look more similar to Python and uses the [range syntax](https://doc.rust-lang.org/std/ops/struct.Range.html)
 
 ```rust,editable
 fn main() {
@@ -100,6 +125,3 @@ fn main() {
 ```
 
 There's a good reason they look similar too! Much like Python, iterators are use all over the place. You won't find the familiar `for ( ; ; ) {}` construct, but don't worry; Rust's iterators are vastly more powerful, and safe. The next section takes us on a deep dive into iterators.
-
-
-

@@ -1,5 +1,4 @@
-
-# anatomy of Rust program and some workflow
+# Anatomy
 
 We’ve got a few tools to get to know
 * rustup - manage tools and versions of toolchains

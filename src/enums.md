@@ -1,4 +1,4 @@
-# enums, matching, options
+# Enum
 So we’ve seen enums are good at constraining a type between a limited set of values and they can also hold values, like an error or a type, which makes them algebraic datatypes. Rust Enums are liked [tagged unions for the C](http://patshaughnessy.net/2018/3/15/how-rust-implements-tagged-unions) folks but implemented in such a way that you cant hurt yourself.
 
 TODO have craig go on and on about enums
@@ -94,8 +94,7 @@ Now finish out the the FilterString impl to make all this work
 
 # enum playground
 
-You've started to aquatint yourself with enums in the error handling playground, but theres so much more it is worth spending some more time in the enum playground here to get your mind around how powerful the [pattern syntax](https://doc.rust-lang.org/book/ch18-03-pattern-syntax.html) is.
-TODO change this stolen example from https://doc.rust-lang.org/book/ch06-02-match.html
+You've started to acquaint yourself with matching in the previous sections but enums with [destructuring](https://doc.rust-lang.org/book/ch18-03-pattern-syntax.html#destructuring-nested-structs-and-enums) and [match guards](https://doc.rust-lang.org/book/ch18-03-pattern-syntax.html#extra-conditionals-with-match-guards) is so powerful it is worth revising in this altered example from the [Rust book on matching](https://doc.rust-lang.org/book/ch06-02-match.html)
 ```rust,editable
 enum UsState {
     Alabama,
@@ -114,8 +113,8 @@ fn value_in_cents(coin: Coin) -> u8 {
     //you can match on any combination of your enum
     match coin {
         Coin::Penny => 1,
-        Coin::Nickel(date) if date < 1920 => 50,
-        Coin::Nickel(date) if date >= 1920 => 5,
+        Coin::Nickel(date) if date < 1930 => 50,
+        Coin::Nickel(_) => 5,
         Coin::Dime(ref text) if text == "scratched" => 5,
         Coin::Dime(text) => {
             println!("{}", text);
@@ -129,8 +128,6 @@ fn value_in_cents(coin: Coin) -> u8 {
             println!("State quarter from elsewhere");
             25
         }
-        //matches are exhaustive, so if you don't cover all your use cases you need a catch all
-        _ => 5,
     }
 }
 
@@ -140,13 +137,5 @@ fn main() {
     println!("{}", value_in_cents(Coin::Dime(String::from("A+"))));
     println!("{}", value_in_cents(Coin::Nickel(1921)));
     println!("{}", value_in_cents(Coin::Nickel(2000)));
-
-    match 94 as u32 {
-        1 | 2 => println!("one or two"),
-        3...4 => println!("three or four"),
-        11 => println!("11"),
-        12..=44 => println!("12 to 44 inclusive"),
-        _ => println!("The rest"),
-    }
 }
 ```
