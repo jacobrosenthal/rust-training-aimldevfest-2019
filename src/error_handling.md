@@ -2,7 +2,7 @@
 
 
 Let's take our config options from the command line with runtime args instead of hard coding it at compile time. Search the standard library for [args](https://doc.rust-lang.org/std/env/fn.args.html) finds args come in as a iterator of a collection. We'll talk about iterators later, but for now we can for loop over them, or get the `nth()` value. Just like C command line args the 0th argument is the name of the binary and the rest are your arguments. 
-```rust,ignore, no_run
+```rust,ignore,no_run
 use std::env; // explicit use (import) finally
 
 fn options() -> Opt {
@@ -31,7 +31,7 @@ We have two related types commingled in [error handling](https://doc.rust-lang.o
 
 
 Rust doesn’t have exceptions, but rather the [Result type](https://doc.rust-lang.org/std/result/index.html) which can be used to propagate either the error or the result and looks like this:
-```
+```rust,no_run
 pub enum Result<T, E> {
     Ok(T),
     Err(E),
@@ -39,7 +39,7 @@ pub enum Result<T, E> {
 ```
 
 And Rust doesn't have Null but rather the [Option type](https://doc.rust-lang.org/std/option/enum.Option.html) which can be used to propagate either the value (Some), or the lack of one (None)
-```
+```rust,no_run
 pub enum Option<T> {
     None,
     Some(T),
@@ -66,7 +66,7 @@ Another option is to make it someone else’s problem by simply handing the Opti
 Theres even an exit early helper for this, the [? operator](https://doc.rust-lang.org/book/ch09-02-recoverable-errors-with-result.html#a-shortcut-for-propagating-errors-the--operator). This was previously the [try! macro](https://doc.rust-lang.org/std/macro.try.html) but that has been deprecated though you may still see it in code.
 
 Our `nth()` is an Option of Some or None so lets just hand an optional back up the chain to our main function. At least this way we can decide what to do with it there.
-```rust, ignore, no_run
+```rust,ignore,no_run
 fn options() -> Option<Opt> { //<-return Option wrapping our Opt struct
 
     Some(Opt {
@@ -77,8 +77,8 @@ fn options() -> Option<Opt> { //<-return Option wrapping our Opt struct
 ```
 
 But now we've made it main's problem to deal with. Its silly but in this case, lets just unwrap there anyway. Were back to just blowing up, but at least our deep nested library or function call isn't blowing up, our top level binary is.
-```rust, ignore, no_run
-  let options = options().unwrap();
+```rust,ignore,no_run
+let options = options().unwrap();
 ```
 
 
@@ -90,37 +90,36 @@ But generally if you can do control flow on your errors you should. The way we o
 So we often will exhaustively match them with [match pattern](https://doc.rust-lang.org/rust-by-example/flow_control/match.html) which is very similar to an exhaustive switch statement.
 
 You could write it this way, revealing the options if they exist, and doing some control flow like explicitly panicing if they don’t:
-```rust, ignore, no_run
-	//let options = options().unwrap();
+```rust,ignore,no_run
+//let options = options().unwrap();
 
-    if let options = match options() {
-        Ok(options) => options
-        Err(error) => panic!(error),
-    };
+if let options = match options() {
+    Ok(options) => options
+    Err(error) => panic!(error),
+};
 
-    println!("{} {}", options.input_path, options.output_path);
+println!("{} {}", options.input_path, options.output_path);
 ```
 The Option type is actually an enum type so we lets take a full digression through enums and matching in the next section.
-
 
 # error handling playground
 
 Its worth spending some time in the option result playground here to get your mind around all this
 
-```rust
+```rust,editable
 use std::io::ErrorKind;
 
 fn main() {
     let first_arg = Some("cat.jpg");
     let second_arg: Option<String> = None;
     let good_val: Result<u32, std::io::ErrorKind> = Ok(22);
-    let definately_error: Result<u32, std::io::ErrorKind> = Err(ErrorKind::Other);
+    let definitely_error: Result<u32, std::io::ErrorKind> = Err(ErrorKind::Other);
 
     first_arg.unwrap();
     good_val.unwrap();
     //second_arg.unwrap(); // no good
 
-    //matching is exaustive in order
+    //matching is exhaustive in order
     match first_arg {
         Some(val) => println!("first_arg: {}", val),
         None => {
@@ -131,7 +130,7 @@ fn main() {
     }
 
     // as we've said, results are similar, just two different variants
-    match definately_error {
+    match definitely_error {
         Ok(val) => println!("cant image how we got here: {}", val),
         Err(e) => println!("{:?}", e),
     };
@@ -142,7 +141,7 @@ fn main() {
     }
 
     // theres also a ton of combinators
-    if good_val.is_ok() && definately_error.is_err() {
+    if good_val.is_ok() && definitely_error.is_err() {
         println!("some convoluted example here");
     }
 }

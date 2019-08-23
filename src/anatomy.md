@@ -19,7 +19,7 @@ edition = "2018"
 [dependencies]
 ```
 In src folder we have main.rs, a Rust file. In this case it generated a simple hello world. 
-```rust,editable
+```rust
 fn main() {
     println!("Hello, world!");
 }

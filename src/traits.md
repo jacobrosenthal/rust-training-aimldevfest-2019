@@ -1,7 +1,7 @@
 # traits
 
 But hey this seems wordy, lets just print our whole struct in one formatter.
-```rust, ignore, no_run
+```rust,ignore,no_run
 //println!(
 //    "input_path:{} output_path:{}",
 //    options.input_path, options.output_path
@@ -59,7 +59,7 @@ impl Shout for Opt {
 ```
 
 Now anytime this trait is in namespace, which in our case it is because it defined in this same file, it is available on all instances of Opt. Lets call it:
-```rust,no_run,ignore
+```rust,ignore,no_run
 //println!("{}", options);
 options.shout();
 ```
@@ -69,32 +69,31 @@ CAT.JPG TEST.PNG
 ```
 > The separation of definition from implementation is incredibly powerful. This way if we make our trait public anyone downstream can customize our function for their architecture or edge case. This keeps Rust from amongst other things passing around huge config structs full of lifecycle callbacks and other configuration overrides.
 
-OK. So we can comment out our toy shout example and go back to fixing Display error. As a reminder it said
+So we can comment out our toy shout example and go back to fixing Display error. 
+As a reminder rustc said
 ```text
    = help: the trait `std::fmt::Display` is not implemented for `Opt`
 ```
 Looking in the std documentation we find [Display](https://doc.rust-lang.org/std/fmt/trait.Display.html) which shows us an example like below. Recall when we implement traits, the function definition was set in stone by the trait. In this case they pass us self (whatever type this method was called on, in this case Point, in our case Opt) and a second arg name f which well use the write! (just like `println!` except it sticks the output in its first argument) to print into.
 
-Again we want to be able to call
-```rust,ignore,no_play
-println!("{}", options);
-```
-My result looks like
-```text
-(cat.jpg, test.png)
-```
-
-We're really only responsible for the returning something from the method. In the case of the Display trait that freedom largely pertains to the format string and which args we choose to print. So swap out these Point things for our Opt stuff.
+We're really only responsible for the returning something from the method. In the case of the Display trait that freedom largely pertains to the format string and which args we choose to print.
 ```rust,ignore,no_run
 use std::fmt;
 
 impl fmt::Display for Point {
-    //Were still punting on the & and &mut but it doesn'nt matter here as the function definition is set in stone by the trait
+    //Were still punting on the & and &mut but it doesn't matter here as the function definition is set in stone by the trait
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "({}, {})", self.x, self.y) // notice no semicolon, were just passing the Result back
     }
 }
 ```
+
+Again we want to be able to call:
+```rust,ignore,no_run
+println!("{}", options);
+```
+
+So swap out these Point things for our Opt stuff.
 
 And with that you've:
  - created a new type and defined and implemented traits for it

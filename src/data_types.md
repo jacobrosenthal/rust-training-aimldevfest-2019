@@ -19,7 +19,7 @@ First, note we don’t need to import anything (we call it `use`) to use this ty
 
 Also notice we didn't have to explicitly type our variable. What Rust *can* figure it out, *it will* and so its entirely idiomatic to omit type annotations. However if you or the compiler are having trouble or getting odd type errors, start annotating some of your types like to see if you can give the compiler a hand. Its also a great way to figure out what type you actually have in case you're not sure, let the compiler (or linter) tell you.
 
-```rust,no_run
+```rust,editable
 fn main() {
     let input_path = String::from("cat.jpg");
     let output_path:String = String::from("test.png");
@@ -84,7 +84,7 @@ fn main() {
 ``` 
 
 We use semicolons to end expressions. We prefer to leave off semicolons in order to implicitly return the expression saving us the temporary variable like so:
-```rust,ignore, no_run
+```rust,ignore,no_run
 fn options() -> Opt {
 
     Opt {

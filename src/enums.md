@@ -94,9 +94,9 @@ Now finish out the the FilterString impl to make all this work
 
 # enum playground
 
-You've started to aqaint yourself with enums in the error handling playground, but theres so much more it is worth spending some more time in the enum playground here to get your mind around how powerful the [pattern syntax](https://doc.rust-lang.org/book/ch18-03-pattern-syntax.html) is.
+You've started to aquatint yourself with enums in the error handling playground, but theres so much more it is worth spending some more time in the enum playground here to get your mind around how powerful the [pattern syntax](https://doc.rust-lang.org/book/ch18-03-pattern-syntax.html) is.
 TODO change this stolen example from https://doc.rust-lang.org/book/ch06-02-match.html
-```rust
+```rust,editable
 enum UsState {
     Alabama,
     Alaska,
@@ -129,7 +129,7 @@ fn value_in_cents(coin: Coin) -> u8 {
             println!("State quarter from elsewhere");
             25
         }
-        //matches are exaustive, so if you don't cover all your use cases you need a catch all
+        //matches are exhaustive, so if you don't cover all your use cases you need a catch all
         _ => 5,
     }
 }
