@@ -54,7 +54,11 @@ fn main() {
 }
 ```
 
-If you want even more combinators, make sure to check out the [docs](https://doc.rust-lang.org/std/iter/trait.Iterator.html). And, if you want even more combinators, checkout the [itertools](https://docs.rs/itertools/0.8.0/itertools/) crate!
+
+Note: Rust actually has a combinator just for multiplicative products `product()`, and for sums: `sum()`.
+
+
+If you want even more combinators like these, make sure to check out the [docs](https://doc.rust-lang.org/std/iter/trait.Iterator.html). And, if you want even more combinators, checkout the [itertools](https://docs.rs/itertools/0.8.0/itertools/) crate!
 
 ## Enumeration combinator
 Sometimes, you miss your familar C-style for loop with its convenient access to the index; but don't run away yet, Rust has the `enumerate()` combinator for just this problem. The Iterator trait provides a combinator, called `enumerate` just for this purpose (very similar to Python's `enumerate()`).
@@ -93,3 +97,80 @@ fn main() {
     }
 }
 ```
+
+## Thinking in iterators
+You might be very familiar with this kind of nested for loop in C/C++:
+```c,ignore
+for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 3; j++) {
+        compute_something(data[i, j]);
+    }
+}
+```
+
+There are multiple ways to express this loop in Rust using iterators, each with its own advantages. First, we can directly translate incrementing indices into rust [Ranges](https://doc.rust-lang.org/std/ops/struct.Range.html).
+```rust,editable
+fn main() {
+    for i in 0..3 {
+        for j in 0..3 {
+            println!("{}, {}", i, j);
+        }
+    }
+}
+```
+
+Or, we can use iterator combinators to combine multiple ranges into a tuple for each element. This lets the computation code or body of the loop not care about how each element is generated. The elements of the combined iterator can be easily stored in a Vec, or broken up into chunks for parallel operation, or filtered by some predicate.
+```rust,editable
+fn main() {
+    (0..3).for_each(|i|
+        (0..3).for_each(|j| println!("{}, {}", i, j)));
+}
+```
+
+As a quick preview, this could be done in parallel across CPU cores with a simple change:
+```rust,ignore,mdbook-runnable
+#extern crate rayon;
+use rayon::prelude::*;
+
+fn main() {
+    (0..3).into_par_iter()
+        .for_each(|i| (0..3).for_each(|j| println!("{}, {}", i, j)));
+}
+```
+Notice that the output order changes when we re-run the example, since the computation is distributed across multiple cores. We'll talk more about parallel iterators soon.
+
+## Move closures
+In a lot of Rust code, you never have to worry about move your local variables get captured into a closure (environment capture). However, it does seem to pop-up more often when working on complicated iterator chains. For example:
+
+```rust,editable
+fn main() {
+    (0..3).flat_map(|i|
+        (0..3).map(move |j| (i, j)))
+        .for_each(|idx| println!("{:?}", idx));
+}
+```
+
+What's that `move` keyword doing? Let's check out the compiler output without it.
+
+```ignore
+error[E0373]: closure may outlive the current function, but it borrows `i`, which is owned by the current function
+ --> src/main.rs:2:36
+  |
+2 |     (0..3).flat_map(|i| (0..3).map(|j| (i, j)))
+  |                                    ^^^  - `i` is borrowed here
+  |                                    |
+  |                                    may outlive borrowed value `i`
+  |
+note: closure is returned here
+ --> src/main.rs:2:25
+  |
+2 |     (0..3).flat_map(|i| (0..3).map(|j| (i, j)))
+  |                         ^^^^^^^^^^^^^^^^^^^^^^
+help: to force the closure to take ownership of `i` (and any other referenced variables), use the `move` keyword
+  |
+2 |     (0..3).flat_map(|i| (0..3).map(move |j| (i, j)))
+  |                                    ^^^^^^^^
+```
+Basically, the compiler needs to know that the when `j` is moved into the inner closure that single-ownership is not violated. When we write `move` it indicates that the ownership is now inside the closure, and that the outer code will not use the moved values. This contrasts with the default closure capture where the variables are borrowed. In this case, borrowing doesn't work because `i` is only temporary.
+
+For our example with inegers, it makes no difference. But, if we'ire iterating over large data structures with complicated internal state, it makes a huge difference. Lucky for us, the compiler error points out exactly what we need to do. As you write more Rust, you will start to get a feel for the `move` closure, but in the beginning, the compiler really helps point out what we need to do.
