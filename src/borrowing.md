@@ -1,9 +1,13 @@
 # Borrowing
 The borrow checker is probably Rust's most distinctive feature. To enable zero cost abstractions, Rust does not have a garbage collector. However, Rust also doesn't rely on explicit calls to `free()` like C. Instead Rust enforces "ownership" for all memory objects. The rules of the ownership system are pretty simple:
-    1. There is only ever one owner of a memory object at a time (struct, enum, primitive, etc)
-    2. Immutable (read-only) ownership can be borrowed multiple places simultaneously
-    3. Mutable (writable) ownership can only be borrowed once at a time and exclusively
-    4. An object must live at least as long as all of its borrows
+
+1. There is only ever one owner of a memory object at a time (struct, enum, primitive, etc)
+
+2. Immutable (read-only) ownership can be borrowed multiple places simultaneously
+
+3. Mutable (writable) ownership can only be borrowed once at a time and exclusively
+
+4. An object must live at least as long as all of its borrows
 
 ## Rule #1: single owner
 ```rust,editable,ignore
