@@ -92,9 +92,9 @@ For compiling C to Rust, you'll be using [rust-bindgen](https://github.com/rust-
 
 Generally speaking, we can get some Rust bindings generated 'for free' from the C headers. IE given the C header doggo.h bindgen can (often) produce a Rust module you can call from your existing code.
 
-Its common to run bindgen as a bash command line you can maintain your upstream by live patch your header file. Then when confident you can hook into the [Rust build system](https://doc.rust-lang.org/cargo/reference/build-scripts.html) to script bindgen as well as [gcc](https://crates.io/crates/cc) or cc in a build.rs to create (and cache) artifacts as part of your build process.
+Its common to run bindgen as a bash command line you can maintain your upstream by live patch your header file. Then when confident you can hook into the [Rust build system](https://doc.rust-lang.org/cargo/reference/build-scripts.html) to script bindgen as well as [gcc](https://crates.io/crates/cc) or cc in a build.rs to create (and cache) artifacts as part of your build process. You'll generally seperately create a crate second higher level idoimatic rust api which consumes the generated bindings.
 
-Common libraries, often dynamically linked, exist in the crates.io repository, denoted with by -sys naming, with higher level cleaner apis are generally written separately on top of these packages.
+You'll find a lot of common libraries either statically built or dynamically linked in the crates.io repository denoted by the -sys naming scheme:
 * https://crates.io/crates/openssl-sys
 * https://crates.io/crates/libz-sys
 * https://crates.io/crates/curl-sys
@@ -103,9 +103,46 @@ You’ll want to get well acquainted with the [unsafe keyword](https://doc.rust-
 
 You can also go the other way, call your Rust code from C. A common helper library is [cbindgen](https://github.com/eqrion/cbindgen)
 
-## type states
+## macros (Metaprogramming)
 
-## generics
+We've been glossing over [macros](https://doc.rust-lang.org/1.30.0/book/2018-edition/appendix-04-macros.html) up til now. A big difference from C/C++ macros is that Rust macros are hygienic so you can't hurt yourself using them..except for compile times.
 
-## networking
+Declaritive macros are your meat and potatos code generation great for DSLs and variadic functions.
+You've seen these function-like macros already with `println!()`
 
+Procedural macros deliver you the entire abstract syntax tree for you to mutate and return. You've seen these already with built in attribute-like macros like `#[derive(Debug)]`
+
+Generally you'll use [cargo-expand](https://github.com/dtolnay/cargo-expand) to expand macros to the console so you can see what you're generating.
+
+For instance, we implemented Display manually before. You may have seen by now you can implement Debug on a type for free if underlying types support it by using the `#[derive(Debug)]` attribute macro. Using cargo expand we can see what that did for us:
+```rust
+#[derive(Debug)]
+struct S;
+
+fn main() {
+}
+```
+
+```rust,ignore
+#![feature(prelude_import)]
+#![no_std]
+#[prelude_import]
+use ::std::prelude::v1::*;
+#[macro_use]
+extern crate std as std;
+struct S;
+#[automatically_derived]
+#[allow(unused_qualifications)]
+impl ::core::fmt::Debug for S {
+    fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
+        match *self {
+            S => {
+                let mut debug_trait_builder = f.debug_tuple("S");
+                debug_trait_builder.finish()
+            }
+        }
+    }
+}
+
+fn main() { }
+```
