@@ -25,7 +25,7 @@ Let's get going!
 ## Input parameters
 To specify the input and output image paths, we'll parse args from `std::env::args()` using the same method we explored earlier.
 
-```rust,editable
+```rust,editable,ignore,mdbook-runnable
 use std::env;
 
 struct Opt {
@@ -88,7 +88,7 @@ This pattern is pretty typical for crates, both to encapsulate their possible er
 
 If you want to handle errors in specific ways, you can use a match statement. You can even ignore some errors if you want and just panic, usually only if you're writing an app, not a library. If you're writing a library, you typically want to encapsulate errors and pass them back to the caller for handling.
 
-```rust,editable
+```rust,editable,mdbook-runnable,ignore
 extern crate image; // once again, limitation of Rust playground
 
 fn main() {
@@ -360,7 +360,7 @@ This is a great time to build a new trait! We can create a trait with a new `get
 ```rust,ignore
 trait LumaFloat {
     fn get_float_luma(&self, x: u32, y: u32) -> f32;
-    fn put_float_luma(&self, x: u32, y: u32, luma: f32);
+    fn put_float_luma(&mut self, x: u32, y: u32, luma: f32);
 }
 
 impl LumaFloat for GrayImage {
@@ -368,7 +368,7 @@ impl LumaFloat for GrayImage {
         self.get_pixel(x, y)[0] as f32 / 255.0
     }
 
-    fn put_float_luma(&self, x: u32, y: u32, luma: f32) {
+    fn put_float_luma(&mut self, x: u32, y: u32, luma: f32) {
         self.put_pixel(x, y, Luma([(luma * 255.0) as u8]));
     }
 }
