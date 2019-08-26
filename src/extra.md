@@ -103,9 +103,46 @@ You’ll want to get well acquainted with the [unsafe keyword](https://doc.rust-
 
 You can also go the other way, call your Rust code from C. A common helper library is [cbindgen](https://github.com/eqrion/cbindgen)
 
-## type states
+## macros (Metaprogramming)
 
-## generics
+We've been glossing over [macros](https://doc.rust-lang.org/1.30.0/book/2018-edition/appendix-04-macros.html) up til now. A big difference from C/C++ macros is that Rust macros are hygienic so you can't hurt yourself using them..except for compile times.
 
-## networking
+Declaritive macros are your meat and potatos code generation great for DSLs and variadic functions.
+You've seen these function-like macros already with `println!()`
 
+Procedural macros deliver you the entire abstract syntax tree for you to mutate and return. You've seen these already with built in attribute-like macros like `#[derive(Debug)]`
+
+Generally you'll use [cargo-expand](https://github.com/dtolnay/cargo-expand) to expand macros to the console so you can see what you're generating.
+
+For instance, we implemented Display manually before. You may have seen by now you can implement Debug on a type for free if underlying types support it by using the `#[derive(Debug)]` attribute macro. Using cargo expand we can see what that did for us:
+```rust
+#[derive(Debug)]
+struct S;
+
+fn main() {
+}
+```
+
+```rust,ignore
+#![feature(prelude_import)]
+#![no_std]
+#[prelude_import]
+use ::std::prelude::v1::*;
+#[macro_use]
+extern crate std as std;
+struct S;
+#[automatically_derived]
+#[allow(unused_qualifications)]
+impl ::core::fmt::Debug for S {
+    fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
+        match *self {
+            S => {
+                let mut debug_trait_builder = f.debug_tuple("S");
+                debug_trait_builder.finish()
+            }
+        }
+    }
+}
+
+fn main() { }
+```
