@@ -9,8 +9,7 @@
 - [traits](./traits.md)
 - [external dependencies](./external_dependencies.md)
 - [Enums and algebraic data types](./enums.md)
-
-- [Borrwing, cloning, and scopes](./borrowing.md)
+- [Borrowing, cloning, and scopes](./borrowing.md)
 - [code organization, modules](./todo.md)
 - [Control Structures](./control.md)
 - [Iterators](./iterators.md)
