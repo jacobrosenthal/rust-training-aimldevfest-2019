@@ -92,9 +92,9 @@ For compiling C to Rust, you'll be using [rust-bindgen](https://github.com/rust-
 
 Generally speaking, we can get some Rust bindings generated 'for free' from the C headers. IE given the C header doggo.h bindgen can (often) produce a Rust module you can call from your existing code.
 
-Its common to run bindgen as a bash command line you can maintain your upstream by live patch your header file. Then when confident you can hook into the [Rust build system](https://doc.rust-lang.org/cargo/reference/build-scripts.html) to script bindgen as well as [gcc](https://crates.io/crates/cc) or cc in a build.rs to create (and cache) artifacts as part of your build process.
+Its common to run bindgen as a bash command line you can maintain your upstream by live patch your header file. Then when confident you can hook into the [Rust build system](https://doc.rust-lang.org/cargo/reference/build-scripts.html) to script bindgen as well as [gcc](https://crates.io/crates/cc) or cc in a build.rs to create (and cache) artifacts as part of your build process. You'll generally seperately create a crate second higher level idoimatic rust api which consumes the generated bindings.
 
-Common libraries, often dynamically linked, exist in the crates.io repository, denoted with by -sys naming, with higher level cleaner apis are generally written separately on top of these packages.
+You'll find a lot of common libraries either statically built or dynamically linked in the crates.io repository denoted by the -sys naming scheme:
 * https://crates.io/crates/openssl-sys
 * https://crates.io/crates/libz-sys
 * https://crates.io/crates/curl-sys
