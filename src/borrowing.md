@@ -10,7 +10,7 @@ The borrow checker is probably Rust's most distinctive feature. To enable zero c
 4. An object must live at least as long as all of its borrows
 
 ## Rule #1: single owner
-```rust,editable,ignore
+```rust,editable,ignore,mdbook-runnable
 fn eat(s: String) {
     println!("Eating {}", s);
 }
@@ -59,7 +59,7 @@ fn main() {
 ## Rule #3: mutable borrows are exclusive
 Only a mutable borrow for an object can exist at a time. This prevents many subtles errors where internal state is mutated while other does not expect it. In C++, modifying a container while iterating through it is a classic example.
 
-```rust,editable,ignore
+```rust,editable,ignore,mdbook-runnable
 fn main() {
     let mut number: usize = 32;
 
@@ -90,7 +90,7 @@ fn main() {
 ## Rule #4: lifetime >= borrow time
 In the example below, we borrow a temporary value inside the if statement branches. The temporary value does not last beyond the if statement branch, so the compiler tells us that our borrow is invalid. We can't borrow an object that doesn't exist.
 
-```rust,editable,ignore
+```rust,editable,ignore,mdbook-runnable
 fn main() {
     let borrowed = if 1 + 1 == 2 {
         let msg = "The world is sane.";
@@ -129,7 +129,7 @@ fn main() {
 ## Lifetimes and scopes
 One last thing to note about lifetimes is that they are tied to scopes. So a borrow must exist in a scope at or below the level of the ownership.
 
-```rust,editable,ignore
+```rust,editable,ignore,mdbook-runnable
 fn main() {
     let mut number: usize = 32;
     {
