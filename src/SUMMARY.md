@@ -10,7 +10,7 @@
 - [external dependencies](./external_dependencies.md)
 - [Enums and algebraic data types](./enums.md)
 
-- [borrow checker, scopes, raii, clone](./todo.md)
+- [Borrwing, cloning, and scopes](./borrowing.md)
 - [code organization, modules](./todo.md)
 - [Control Structures](./control.md)
 - [Iterators](./iterators.md)
