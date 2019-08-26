@@ -1,4 +1,4 @@
-# options and results
+# Option and Result
 
 
 Let's take our config options from the command line with runtime args instead of hard coding it at compile time. Search the standard library for [args](https://doc.rust-lang.org/std/env/fn.args.html) finds args come in as a iterator of a collection. We'll talk about iterators later, but for now we can for loop over them, or get the `nth()` value. Just like C command line args the 0th argument is the name of the binary and the rest are your arguments. 
