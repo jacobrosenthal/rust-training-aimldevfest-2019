@@ -54,9 +54,16 @@ fn main() {
 }
 ```
 
-
 Note: Rust actually has a combinator just for multiplicative products `product()`, and for sums: `sum()`.
 
+```rust,editable
+fn main() {
+    let v: Vec<usize> = (0..5)
+        .map(|i| i * 2)
+        .collect();
+    println!("{:?}", v);
+}
+```
 
 If you want even more combinators like these, make sure to check out the [docs](https://doc.rust-lang.org/std/iter/trait.Iterator.html). And, if you want even more combinators, checkout the [itertools](https://docs.rs/itertools/0.8.0/itertools/) crate!
 

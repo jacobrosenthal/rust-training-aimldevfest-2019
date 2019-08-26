@@ -12,6 +12,7 @@
 - [borrow checker, scopes, raii, clone](./todo.md)
 - [code organization, modules](./todo.md)
 - [Control Structures](./control.md)
+- [Vec, an intro to generics](./vec_generics.md)
 - [Iterators](./iterators.md)
 - [Example: Image Processing](./sobel.md)
 - [rayon](./todo.md)
