@@ -135,8 +135,8 @@ fn main() {
 ```
 
 As a quick preview, this could be done in parallel across CPU cores with a simple change:
-```rust,editable
-extern crate rayon; // just for Rust playground, not required in Rust 2018
+```rust,ignore,mdbook-runnable
+#extern crate rayon;
 use rayon::prelude::*;
 
 fn main() {
@@ -158,7 +158,8 @@ fn main() {
 ```
 
 What's that `move` keyword doing? Let's check out the compiler output without it.
-```
+
+```ignore
 error[E0373]: closure may outlive the current function, but it borrows `i`, which is owned by the current function
  --> src/main.rs:2:36
   |
