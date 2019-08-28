@@ -47,21 +47,7 @@ fn main() {
 ```
 
 ## Loading the input image
-We're going to use a Rust crate called "image" for loading and saving various image formats from files. To use it, we simply add it to the dependencies section of our `Cargo.toml`.
-
-```toml
-[dependencies]
-image = "0.22.1"
-```
-
-Notice here we allow new patch versions, but lock the major and minor versions. This is typical unless you have more specific requirements between crates.
-
-To actually open the image, we're going to need to find out which function to use in the image crate. Rust makes this quite easy, since crates use a standard documentation format that is searchable. Additionally, the front page of the docs usually include examples for common tasks. If you don't see examples on the front page of the docs, check the Github readme. Many package publishers forget to include the readme content. Let's take a look at the [image crate docs](https://docs.rs/image/0.22.1/image/).
-
-### From the image crate readme:
-![Example code for loading image](./images/images-example.png)
-
-Let's adapt this to our needs. We need to load an image and write an output image. For now we can just write the input, but we'll change that soon.
+For now, let's just write the input to the output, passthrough, using the image create we looked at earlier.
 
 ```rust,ignore
 let input_image = image::open(&opts.input_path)
