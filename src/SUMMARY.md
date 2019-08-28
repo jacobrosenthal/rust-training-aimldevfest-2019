@@ -15,5 +15,5 @@
 - [Vec, an intro to generics](./vec_generics.md)
 - [Iterators](./iterators.md)
 - [Example: Image Processing](./sobel.md)
-- [rayon](./todo.md)
+- [Rayon](./rayon.md)
 - [extra credit](./extra.md)
