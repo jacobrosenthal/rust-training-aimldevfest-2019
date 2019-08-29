@@ -107,6 +107,8 @@ You probably saw in the previous chapters that to import rayon we used `use rayo
 
 This a common pattern in Rust crates to create an easy way to import a group of functions, traits, etc that are commonly all used together. For example, the standard library also uses this pattern for `std::io::prelude::*`, which includes most functions, traits, and structs necessary for file I/O.
 
+If we take a look at the [rayon docs](https://docs.rs/rayon/1.1.0/rayon/prelude/index.html), you'll see exactly this pattern.
+
 You create a prelude by creating a module, just like other modules. However, typically prelude modules consist solely of `pub use` statements.
 
 ```rust,ignore
