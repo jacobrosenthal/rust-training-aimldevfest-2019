@@ -18,8 +18,6 @@ That may sound complicated, but it boils down to this: multiply each pixel in th
 
 To do this for a whole image, we slide the matrix A around so that the pixel we're processing is the center.
 
-TODO: Create simple diagram of the kernel sliding over the image
-
 Let's get going!
 
 ## Input parameters
@@ -42,7 +40,7 @@ fn options() -> Option<Opt> {
 }
 
 fn main() {
-    let opts = options().expect("Failed to parse command options!");
+    let optionss = options().expect("Failed to parse command options!");
 }
 ```
 
@@ -50,15 +48,12 @@ fn main() {
 For now, let's just write the input to the output, passthrough, using the image create we looked at earlier.
 
 ```rust,ignore
-let input_image = image::open(&opts.input_path)
+let input_image = image::open(&options.input_path)
     .expect("Failed to open input image file");
 
-input_image.save(&opts.output_path)
+input_image.save(&options.output_path)
     .expect("Failed to save output image to file");
 ```
-
-Notice we changed the `unwrap()` to `expect()` with a message. In a `main()` function, `unwrap()` is ok, but `expect()` is preferable to give a short message.
-
 ## Converting to grayscale (or luma)
 In order to apply our Sobel operator from above, we're going to need an image in grayscale, with one value per pixel. We also eventually need to the values to be floating-point, but first let's convert to grayscale. Converting an RGB image to grayscale requires specific weights per component, but luckily the image create already implements this for us. We just need to figure out how to use it. Let's take a look at the docs again.
 
@@ -143,17 +138,17 @@ fn convolve(kernel: &[[f32; 3]; 3], pixels: &[[f32; 3]; 3]) -> f32 {
 
 Notice that both the kernel and pixels are borrowed, not moved, since the kernel will be re-used for all pixels. At least while starting out in Rust, prefer borrowing to moving unless you have a good reason.
 
-Now it's time to put some meat into the function. Here we use `zip` to combine two iterators into one iterator that yields tuple elements. Since kernel and pixels are nested arrays, `kernel.iter()` and `pixels.iter()` both give iterators over elements of type `[f32; 3]`. So, the tuple parameter `(kernel_row, input_row)` has type `([f32; 3], [f32; 3])`. Therefore in the closure, we iterate and zip once again, to yield elements of type `(f32, f32)` that we can multiply together. Finally we use the sum combinator to add all the products up.
+Now it's time to put some meat into the function. Here we use `zip` to combine two iterators into one iterator that yields tuple elements. Since kernel and pixels are nested arrays, `kernel.iter()` and `pixels.iter()` both give iterators over elements of type `[f32; 3]`. So, the tuple parameter `(kernel_col, input_col)` has type `([f32; 3], [f32; 3])`. Therefore in the closure, we iterate and zip once again, to yield elements of type `(f32, f32)` that we can multiply together. Finally we use the sum combinator to add all the products up.
 
 ```rust,ignore
 fn convolve(kernel: &[[f32; 3]; 3], pixels: &[[f32; 3]; 3]) -> f32 {
     let accumulator: f32 = kernel
         .iter()
         .zip(pixels.iter())
-        .flat_map(|(kernel_row, input_row)| {
-            kernel_row
+        .flat_map(|(kernel_col, input_col)| {
+            kernel_col
                 .iter()
-                .zip(input_row.iter())
+                .zip(input_col.iter())
                 .map(|(k, p)| k * p)
         })
         .sum();
@@ -163,6 +158,16 @@ fn convolve(kernel: &[[f32; 3]; 3], pixels: &[[f32; 3]; 3]) -> f32 {
 ```
 
 Let's write a quick sanity test for our convolution function. Typically, tests are separated into a "tests" module, but kept inline with the code they verify. So, in our main file we can create a module, and mark it so that it is only compiled in the test configuration. Any function marked with `#[test]` will be run as a test.
+```rust,ignore
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_convolution() {
+
+    }
+```
 
 ```rust,ignore
 #[cfg(test)]
@@ -176,8 +181,8 @@ mod tests {
             [4.0, 5.0, 6.0],
             [7.0, 8.0, 9.0]
         ];
-        assert_eq!(convolution(&SOBEL_KERNEL_X, &pixels), 24.0);
-        assert_eq!(convolution(&SOBEL_KERNEL_Y, &pixels), 8.0);
+        assert_eq!(convolve(&SOBEL_KERNEL_X, &pixels), 3.0);
+        assert_eq!(convolve(&SOBEL_KERNEL_Y, &pixels), 1.0);
     }
 }
 ```
@@ -202,6 +207,10 @@ This might seem over-complicated. However, by abstracting away the underlying st
 For our case, we just have a GrayImage with pixels of type `Luma<u8>` that implement the `Pixel` trait. So we should be able to fetch a pixel pretty easily. Here's a go:
 
 ```rust,ignore
+use image::Pixel; // trait for '.channels()'
+
+...
+
 let input_image = image::open(&opts.input_path)
     .expect("Failed to open input image file");
 
@@ -285,11 +294,12 @@ If we crop the output image, we can easily adapt our code. The ImageBuffer struc
 use image::GenericImage;
 
 fn sobel_filter(input: &GrayImage) -> GrayImage {
-    let mut result = input.sub_image(1, 1, input.width() - 2, input.height() - 2)
+    let mut result = input
+        .sub_image(1, 1, input.width() - 2, input.height() - 2)
         .to_image();
 
     for x in 1..(input.width() - 1) {
-        for y in 1..input.height() - 1) {
+        for y in 1..(input.height() - 1) {
             let pixels = [
                 [input.get_pixel(x - 1, y - 1).channels()[0],
                  input.get_pixel(x - 1, y).channels()[0],
@@ -307,17 +317,19 @@ fn sobel_filter(input: &GrayImage) -> GrayImage {
 }
 ```
 
-Cool. No more overflows. We should get the convolution in there!
+Cool. No more overflows. We should get the convolution in there! Oh, and did you find a place where clone might be handy?
 
 ```rust,ignore
 use image::GenericImage;
 
 fn sobel_filter(input: &GrayImage) -> GrayImage {
-    let mut result = input.sub_image(1, 1, input.width() - 2, input.height() - 2)
+    let mut result = input
+        .clone()
+        .sub_image(1, 1, input.width() - 2, input.height() - 2)
         .to_image();
 
     for x in 1..(input.width() - 1) {
-        for y in 1..input.height() - 1) {
+        for y in 1..(input.height() - 1) {
             let pixels = [
                 [input.get_pixel(x - 1, y - 1).channels()[0],
                  input.get_pixel(x - 1, y).channels()[0],
@@ -363,14 +375,16 @@ impl LumaFloat for GrayImage {
 Now in our Sobel filter function, things get a lot cleaner. We can also add a couple lines to compute the magnitude of the gradient and store it back to the resulting image.
 
 ```rust,ignore
-use image::GenericImage;
+use image::{GenericImage, GrayImage, Pixel, Luma};
 
 fn sobel_filter(input: &GrayImage) -> GrayImage {
-    let mut result = input.sub_image(1, 1, input.width() - 2, input.height() - 2)
+    let mut result = input
+        .clone()
+        .sub_image(1, 1, input.width() - 2, input.height() - 2)
         .to_image();
 
     for x in 1..(input.width() - 1) {
-        for y in 1..input.height() - 1) {
+        for y in (1..input.height() - 1) {
             let pixels = [
                 [input.get_float_luma(x - 1, y - 1),
                  input.get_float_luma(x - 1, y),

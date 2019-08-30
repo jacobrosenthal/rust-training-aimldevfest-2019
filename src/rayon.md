@@ -43,13 +43,17 @@ We can create an iterator that yields every pixel (X, Y) and `par_iter()` on tha
 
 ```rust,ignore
 fn sobel_filter(input: &GrayImage) -> GrayImage {
-    let mut result = input.sub_image(1, 1, input.width() - 2, input.height() - 2)
+    let mut result = input
+        .clone()
+        .sub_image(1, 1, input.width() - 2, input.height() - 2)
         .to_image();
 
-    let pixels_iter = (1..(image.width() - 1))
-        .flat_map(|x| (1..(image.height() - 1)).map(|y| (x, y)));
+    let pixels_iter = (1..(input.width() - 1)).into_par_iter()
+        .flat_map(move |x| (1..(input.height() - 1))
+            .into_par_iter()
+            .map(move |y| (x, y)));
 
-    pixels_iter.into_par_iter().for_each(|(x, y) {
+    pixels_iter.for_each(|(x, y)| {
         let pixels = [
             [input.get_float_luma(x - 1, y - 1),
                 input.get_float_luma(x - 1, y),
@@ -77,13 +81,17 @@ One way we can get around this is to collect the convolution results (the comput
 
 ```rust,ignore
 fn sobel_filter(input: &GrayImage) -> GrayImage {
-    let mut result = input.sub_image(1, 1, input.width() - 2, input.height() - 2)
+    let mut result = input
+        .clone()
+        .sub_image(1, 1, input.width() - 2, input.height() - 2)
         .to_image();
 
-    let pixels_iter = (1..(image.width() - 1))
-        .flat_map(|x| (1..(image.height() - 1)).map(|y| (x, y)));
+    let pixels_iter = (1..(input.width() - 1)).into_par_iter()
+        .flat_map(move |x| (1..(input.height() - 1))
+            .into_par_iter()
+            .map(move |y| (x, y)));
 
-    let convolved_pixels: Vec<(u32, u32, f32) = pixels_iter.into_par_iter()
+    let convolved_pixels: Vec<(u32, u32, f32)> = pixels_iter
         .map(|(x, y)| {
             let pixels = [
                 [input.get_float_luma(x - 1, y - 1),
@@ -103,7 +111,7 @@ fn sobel_filter(input: &GrayImage) -> GrayImage {
     }).collect();
 
     for (x, y, magnitude) in convolved_pixels.iter() {
-        result.put_float_luma(x - 1, y - 1, magnitude);
+        result.put_float_luma(x - 1, y - 1, *magnitude);
     }
 
     result
@@ -117,33 +125,37 @@ Since we're processing an image, we can easily chunk the work by column or row.
 
 ```rust,ignore
 fn sobel_filter(input: &GrayImage) -> GrayImage {
-    let mut result = input.sub_image(1, 1, input.width() - 2, input.height() - 2)
+    let mut result = input
+        .clone()
+        .sub_image(1, 1, input.width() - 2, input.height() - 2)
         .to_image();
 
-    let convolved_pixels: Vec<(u32, u32, f32)> = (1..(image.width() - 1))
+    let convolved_pixels: Vec<(u32, u32, f32)> = (1..(input.width() - 1))
         .into_par_iter()
         .flat_map(|x| {
-            (1..(image.height() - 1)).map(|y| {
-                let pixels = [
-                    [input.get_float_luma(x - 1, y - 1),
-                    input.get_float_luma(x - 1, y),
-                    input.get_float_luma(x - 1, y + 1)],
-                    [input.get_float_luma(x, y - 1),
-                    input.get_float_luma(x, y),
-                    input.get_float_luma(x, y + 1)],
-                    [input.get_float_luma(x + 1, y - 1),
-                    input.get_float_luma(x + 1, y),
-                    input.get_float_luma(x + 1, y + 1)]];
+            (1..(input.height() - 1))
+                .into_par_iter()
+                .map(move |y| {
+                    let pixels = [
+                        [input.get_float_luma(x - 1, y - 1),
+                        input.get_float_luma(x - 1, y),
+                        input.get_float_luma(x - 1, y + 1)],
+                        [input.get_float_luma(x, y - 1),
+                        input.get_float_luma(x, y),
+                        input.get_float_luma(x, y + 1)],
+                        [input.get_float_luma(x + 1, y - 1),
+                        input.get_float_luma(x + 1, y),
+                        input.get_float_luma(x + 1, y + 1)]];
 
-                let gradient_x = convolve(&SOBEL_KERNEL_X, &pixels);
-                let gradient_y = convolve(&SOBEL_KERNEL_Y, &pixels);
-                let magnitude = (gradient_x.powi(2) + gradient_y.powi(2)).sqrt();
-                (x, y, magnitude)
-            })
+                    let gradient_x = convolve(&SOBEL_KERNEL_X, &pixels);
+                    let gradient_y = convolve(&SOBEL_KERNEL_Y, &pixels);
+                    let magnitude = (gradient_x.powi(2) + gradient_y.powi(2)).sqrt();
+                    (x, y, magnitude)
+                })
         }).collect();
 
     for (x, y, magnitude) in convolved_pixels.iter() {
-        result.put_float_luma(x - 1, y - 1, magnitude);
+        result.put_float_luma(x - 1, y - 1, *magnitude);
     }
 
     result
