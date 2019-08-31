@@ -34,11 +34,15 @@ fn main() {
 }
 ```
 
-`flat_map` iterates through iterators and concatenates them one after the other, or "flattens" them.
+`flat_map` iterates through iterators like n dimensional structures and concatenates them one after the other, or "flattens" them.
 ```rust,editable
 fn main() {
-    for i in (1..5).flat_map(|i| 0..i) {
-        println!("{}", i);
+
+    let v = vec![vec![0, 1], vec![14, 15], vec![4, 5]];
+
+    //flat_map gives a closure where we could transform, instead we just return it
+    for i in v.iter().flat_map(|j| j) {
+        println!("{:?}", i);
     }
 }
 ```
