@@ -139,3 +139,4 @@ fn main() {
     println!("{}", value_in_cents(Coin::Nickel(2000)));
 }
 ```
+You may ask is this just a toy example? But think back to our filter example. Lets say FilterType also took a f32 as some kind of compression ratio and a few more arguments. Now you've got 2 or 3 arguments to a function and or now you're creating a filter config struct and a validate function with a bunch of if statements to try to catch all the possible improper configurations, and probably a bunch of tests to make sure it can't be used incorrectly. Algebraic Enums wrapping all the necessary data to make that constrained selection work and match statements does almost all of that for us. Reach for Algebraic enums and match statements like this whenever you would reach for a configuration struct and some kind of validate function.
