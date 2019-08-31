@@ -65,12 +65,11 @@ options.shout();
 ```
 and well should see something like
 ```text
-CAT.JPG TEST.PNG
+CAT.JPG OUT.PNG
 ```
 > The separation of definition from implementation is incredibly powerful. This way if we make our trait public anyone downstream can customize our function for their architecture or edge case. This keeps Rust from amongst other things passing around huge config structs full of lifecycle callbacks and other configuration overrides.
 
-So we can comment out our toy shout example and go back to fixing Display error. 
-As a reminder rustc said
+Back to our real problem. As a reminder rustc said
 ```text
    = help: the trait `std::fmt::Display` is not implemented for `Opt`
 ```
@@ -87,13 +86,12 @@ impl fmt::Display for Point {
     }
 }
 ```
-
 Again we want to be able to call:
 ```rust,ignore,no_run
 println!("{}", options);
 ```
 
-So swap out these Point things for our Opt stuff.
+EXERCISE: Implement `fmt::Display` for `Opt` just like the example above did for Point
 
 And with that you've:
  - created a new type and defined and implemented traits for it

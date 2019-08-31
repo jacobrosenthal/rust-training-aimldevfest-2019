@@ -22,7 +22,7 @@ Also notice we didn't have to explicitly type our variable. What Rust *can* figu
 ```rust,editable
 fn main() {
     let input_path = String::from("cat.jpg");
-    let output_path:String = String::from("test.png");
+    let output_path:String = String::from("out.png");
     println!("Hello, world!");
 }
 ```
@@ -31,13 +31,13 @@ So now how to print those variables to console.  In Rust our printf `%` formatti
 ```rust,editable
 fn main() {
     let input_path = String::from("cat.jpg");
-    let output_path = String::from("test.png");
+    let output_path = String::from("out.png");
     println!("{} {}", input_path, output_path);
 }
 ```
 Running this we find that we do have a Display implementation for String and pretty printing results in rather clean output in this case:
 ```text
-cat.jpg test.png
+cat.jpg out.png
 ```
 
 Objects, we call them structs, should be very familiar. You can define a new struct in any scope you like and we can name and type their members.
@@ -51,12 +51,13 @@ fn main() {
 
     let options = Opt {
         input_path: String::from("cat.jpg"),
-        output_path: String::from("test.png"),
+        output_path: String::from("out.png"),
     };
 
     println!("{} {}", options.input_path, options.output_path);
 }
 ```
+EXERCISE: Get this all implemented in your training project
 
 Notice we access our struct members with dot notation, and there is no default new constructor or overloading in Rust. Though in practice, for functions where it makes sense many developers will offer and occasionally make their struct private to require the usage of a new or other constructor. So note, `String::new()` totally exists and would have made you an empty string.
 
@@ -72,7 +73,7 @@ fn options() -> Opt {
 
     let options = Opt {
         input_path: String::from("cat.jpg"),
-        output_path: String::from("test.png"),
+        output_path: String::from("out.png"),
     };
     return options;
 }
@@ -89,9 +90,10 @@ fn options() -> Opt {
 
     Opt {
         input_path: String::from("cat.jpg"),
-        output_path: String::from("test.png"),
+        output_path: String::from("out.png"),
     }
 }
 ```
+EXERCISE: Implement the `options()` function to clean up your main.
 
 But what if our options creation could fail? Lets talk about error handling in rust.

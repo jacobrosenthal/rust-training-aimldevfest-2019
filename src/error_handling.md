@@ -16,12 +16,12 @@ fn options() -> Opt {
 
 And then note you can pass args around cargo to the binary were trying to run like:
 ```bash
-$ cargo run -- cat.jpg test.png
+$ cargo run -- cat.jpg out.png
     Finished dev [unoptimized + debuginfo] target(s) in 0.01s
-     Running `target/debug/training cat.jpg test.png `
+     Running `target/debug/training cat.jpg out.png `
 target/debug/training
 cat.jpg
-test.png
+out.png
 ```
 
 So what is this unwrap. The problem is the nth argument may or may not be there.. 
@@ -51,7 +51,9 @@ Were going to skip Result here, as our `nth()` method returns an Option, but the
 
 ## Option 1, panic! unwrap and expect
 
-There *is* a minimal runtime in Rust, which means if were not careful we can and will blow up at runtime. This is called a panic and is handled in the panic handler, which on hosted platforms includes unwinding and backtraces. Run our program again, this time not passing arguments
+There *is* a minimal runtime in Rust, which means if were not careful we can and will blow up at runtime. This is called a panic and is handled in the panic handler, which on hosted platforms includes unwinding and backtraces. You can fire it on purpose with `panic!()` or by `unwrap()` on a None or Err value. 
+
+EXERCISE: Run our program again, this time not passing any command line arguments
 ```text
 thread 'main' panicked at 'called `Option::unwrap()` on a `None` value', src/libcore/option.rs:347:21
 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace.
@@ -63,36 +65,39 @@ Explicitly panicing like we see above may very well be an option when the error 
 
 Another option is to make it someone else’s problem by simply handing the Option or Result back up the chain. 
 
-Theres even an exit early helper for this, the [? operator](https://doc.rust-lang.org/book/ch09-02-recoverable-errors-with-result.html#a-shortcut-for-propagating-errors-the--operator). This was previously the [try! macro](https://doc.rust-lang.org/std/macro.try.html) but that has been deprecated though you may still see it in code.
+Theres even an early return helper for this, the [? operator](https://doc.rust-lang.org/book/ch09-02-recoverable-errors-with-result.html#a-shortcut-for-propagating-errors-the--operator). This was previously the [try! macro](https://doc.rust-lang.org/std/macro.try.html) but that has been deprecated though you may still see it in code.
 
 Our `nth()` is an Option of Some or None so lets just hand an optional back up the chain to our main function. At least this way we can decide what to do with it there.
 ```rust,ignore,no_run
 fn options() -> Option<Opt> { //<-return Option wrapping our Opt struct
 
-    Some(Opt {
-        input_path: env::args().nth(1).expect("first argument input file"),
-        output_path: env::args().nth(2).expect("second argument output file"),
+    Some(Opt { //<-Now we wrap our good return in Some
+        input_path: env::args().nth(1)?, //<-unwrap becomes ? early return of None
+        output_path: env::args().nth(2)?, //<-unwrap becomes ? early return of None
     })
 }
 ```
-
-But now we've made it main's problem to deal with. Its silly but in this case, lets just unwrap there anyway. Were back to just blowing up, but at least our deep nested library or function call isn't blowing up, our top level binary is.
-```rust,ignore,no_run
-let options = options().unwrap();
+EXERCISE: Have our options function return an Option of Opt. But we still get an error up in main now.
+```text
+error[E0609]: no field `input_path` on type `std::option::Option<Opt>`
+  --> src/main.rs:93:44
 ```
 
+Were passing an Option back to main, but now we need to deal with it there
 
 ## option 3, handle it
-Someone has to do some control flow on this error somewhere.. Well thats actually not true, we can even return these from the main function where Rust will unwrap them behind the scenes and print the result. 
+Someone has to do some control flow on this error somewhere.. Well thats actually not true, we can even return these from the main function where Rust will unwrap them behind the scenes and print the result, but generally if you can do control flow on your errors you should. 
 
-But generally if you can do control flow on your errors you should. The way we often do that is through matching or combinators.
+We often will often match Options and Results with the [match pattern](https://doc.rust-lang.org/rust-by-example/flow_control/match.html) which is very similar to an exhaustive switch statement.
 
-So we often will exhaustively match them with [match pattern](https://doc.rust-lang.org/rust-by-example/flow_control/match.html) which is very similar to an exhaustive switch statement.
-
-You could write it this way, revealing the options if they exist, and doing some control flow like explicitly panicing if they don’t:
+These two solutions are equivalent as they both panic if we don't get a good value. However you can easily see how you will be using match if you need to take some positive action on bad values.
 ```rust,ignore,no_run
-//let options = options().unwrap();
+let options = options().unwrap();
 
+println!("{} {}", options.input_path, options.output_path);
+```
+
+```rust,ignore,no_run
 if let options = match options() {
     Ok(options) => options
     Err(error) => panic!(error),
@@ -100,6 +105,9 @@ if let options = match options() {
 
 println!("{} {}", options.input_path, options.output_path);
 ```
+
+EXERCISE: Implement one of these solutions to satisfy the Rust compiler.
+
 The Option type is actually an enum type so we lets take a full digression through enums and matching in the next section.
 
 # error handling playground

@@ -30,7 +30,7 @@ before finally saving out like:
 img.save(options.output_path).unwrap();
 ```
 
-Finding a cat picture and assembling the pieces is left as a exercise for reader.
+EXERCISE: Finding a cat picture and assembling the pieces is left as a exercise for reader.
 
 
 So obviously we'd like to take resize from the command line, which means wed like a match statement to go from a command line argument String to a FilterType Enum, and we need to update our Opt struct to hold it. Wed like to resize based on command line input constrained to one of these types.
@@ -90,7 +90,7 @@ fn options() -> Option<Opt> {
     })
 }
 ```
-Now finish out the the FilterString impl to make all this work
+EXERCISE: Now finish out the the FilterString impl to make all this work
 
 # enum playground
 
