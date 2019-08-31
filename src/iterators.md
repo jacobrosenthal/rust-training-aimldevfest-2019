@@ -1,7 +1,7 @@
 # Iterators
 Iterators are one of the most powerful features in Rust! They are also a gateway drug to functional programming.
 
-The last example from the control flow section used a simple iterator, called a `Range` (similar to `range() in Python).
+The last example from the control flow section used a simple iterator, called a `Range` (similar to `range()` in Python).
 
 ```rust,editable
 fn main() {

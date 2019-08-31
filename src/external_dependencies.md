@@ -6,6 +6,11 @@ Lets have our code load in an image from the filesystem. Searching in the standa
 image = "0.22.1"
 ```
 
+Then in whatever file we can use this dependency:
+```rust,ignore
+use image;
+```
+
 The Cargo toml manifest version field is described here https://doc.rust-lang.org/cargo/reference/manifest.html#the-version-field where we learn Cargo uses [semantic versioning](https://semver.org) which allows us to version and lock dependencies at the level of risk were comfortable with. From the spec:
 ```text
 Given a version number MAJOR.MINOR.PATCH, increment the:
