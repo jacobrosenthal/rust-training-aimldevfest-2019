@@ -31,20 +31,12 @@ We have two related types commingled in [error handling](https://doc.rust-lang.o
 
 
 Rust doesn’t have exceptions, but rather the [Result type](https://doc.rust-lang.org/std/result/index.html) which can be used to propagate either the error or the result and looks like this:
-```rust,no_run
-pub enum Result<T, E> {
-    Ok(T),
-    Err(E),
-}
-```
+![Result Type](./images/result.png)
+
 
 And Rust doesn't have Null but rather the [Option type](https://doc.rust-lang.org/std/option/enum.Option.html) which can be used to propagate either the value (Some), or the lack of one (None)
-```rust,no_run
-pub enum Option<T> {
-    None,
-    Some(T),
-}
-```
+![Option Type](./images/option.png)
+
 
 Were going to skip Result here, as our `nth()` method returns an Option, but they’re very similar in how they’re handled as they’re both implemented as enums. We basically have three possibilities for dealing with both:
 

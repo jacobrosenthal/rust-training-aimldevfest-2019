@@ -10,15 +10,7 @@ let img = image::open(options.input_path).unwrap();
 ```
 
 Then we can use any of the many handy methods including a [resize method](https://docs.rs/image/0.22.1/image/enum.DynamicImage.html#method.resize) Authors tend to reach for enums often in constraining input to functions. Here FilterType Enum could be one of the following sampling filter:
-```rust,no_run
-pub enum FilterType {
-    Nearest,
-    Triangle,
-    CatmullRom,
-    Gaussian,
-    Lanczos3,
-}
-```
+![Filter Type](./images/filtertype.png)
 
 So something like
 ```rust,ignore,no_run
