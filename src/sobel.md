@@ -28,19 +28,18 @@ use std::env;
 
 struct Opt {
     input_path: String,
-    output_path: String
+    output_path: String,
 }
-
 
 fn options() -> Option<Opt> {
     Some(Opt {
         input_path: env::args().nth(1)?,
-        output_path: env::args().nth(2)?
+        output_path: env::args().nth(2)?,
     })
 }
 
 fn main() {
-    let optionss = options().expect("Failed to parse command options!");
+    let options = options().expect("Failed to parse command options!");
 }
 ```
 
@@ -69,8 +68,8 @@ This pattern is pretty typical for crates, both to encapsulate their possible er
 
 If you want to handle errors in specific ways, you can use a match statement. You can even ignore some errors if you want and just panic, usually only if you're writing an app, not a library. If you're writing a library, you typically want to encapsulate errors and pass them back to the caller for handling.
 
-```rust,editable,mdbook-runnable,ignore
-extern crate image; // once again, limitation of Rust playground
+```rust,ignore
+# extern crate image; // once again, limitation of Rust playground
 
 fn main() {
     let image = match image::open("filename.png") {
@@ -93,12 +92,12 @@ For example, we can make our processing code later only accept `GrayImage` as in
 ![to_luma method](./images/to_luma.png)
 
 ```rust,ignore
-let input_image = image::open(&opts.input_path)
+let input_image = image::open(&options.input_path)
     .expect("Failed to open input image file");
 
 let gray_image = input_image.to_luma();
 
-gray_image.save(&opts.output_path)
+gray_image.save(&options.output_path)
     .expect("Failed to save output image to file");
 ```
 
@@ -167,6 +166,7 @@ mod tests {
     fn test_convolution() {
 
     }
+}
 ```
 
 ```rust,ignore
@@ -211,14 +211,14 @@ use image::Pixel; // trait for '.channels()'
 
 ...
 
-let input_image = image::open(&opts.input_path)
+let input_image = image::open(&options.input_path)
     .expect("Failed to open input image file");
 
 let gray_image = input_image.to_luma();
 
 println!("Pixel 0, 0: {}", gray_image.get_pixel(0, 0).channels()[0]);
 
-gray_image.save(&opts.output_path)
+gray_image.save(&options.output_path)
     .expect("Failed to save output image to file");
 ```
 
@@ -227,6 +227,8 @@ Generally, well-written Rust crates provide comprehensive types like this to cov
 Now that we can grab pixels, let's write a function that takes the pixel values and calls our convolution function. First we'll start with this signature, and copying the input. We need a place to store the resulting convolved pixel values, and we want an image of the same dimensions and data types. `clone()` is an easy way to get that. Notice that `result` is declared as `mut` since we will be modifying its contents.
 
 ```rust,ignore
+use image::GrayImage;
+
 fn sobel_filter(input: &GrayImage) -> GrayImage {
     let mut result = input.clone();
 
@@ -262,14 +264,14 @@ fn sobel_filter(input: &GrayImage) -> GrayImage {
 We'll need to throw a call into `fn main()` to use this:
 
 ```rust,ignore
-let input_image = image::open(&opts.input_path)
+let input_image = image::open(&options.input_path)
     .expect("Failed to open input image file");
 
 let gray_image = input_image.to_luma();
 
-let output_image = sobel_filter(&gray_iamge);
+let output_image = sobel_filter(&gray_image);
 
-output_image.save(&opts.output_path)
+output_image.save(&options.output_path)
     .expect("Failed to save output image to file");
 ```
 
@@ -375,7 +377,7 @@ impl LumaFloat for GrayImage {
 Now in our Sobel filter function, things get a lot cleaner. We can also add a couple lines to compute the magnitude of the gradient and store it back to the resulting image.
 
 ```rust,ignore
-use image::{GenericImage, GrayImage, Pixel, Luma};
+use image::{GenericImage, GrayImage, Luma};
 
 fn sobel_filter(input: &GrayImage) -> GrayImage {
     let mut result = input
@@ -384,7 +386,7 @@ fn sobel_filter(input: &GrayImage) -> GrayImage {
         .to_image();
 
     for x in 1..(input.width() - 1) {
-        for y in (1..input.height() - 1) {
+        for y in 1..input.height() - 1 {
             let pixels = [
                 [input.get_float_luma(x - 1, y - 1),
                  input.get_float_luma(x - 1, y),
