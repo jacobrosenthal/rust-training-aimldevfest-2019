@@ -10,15 +10,7 @@ let img = image::open(options.input_path).unwrap();
 ```
 
 Then we can use any of the many handy methods including a [resize method](https://docs.rs/image/0.22.1/image/enum.DynamicImage.html#method.resize) Authors tend to reach for enums often in constraining input to functions. Here FilterType Enum could be one of the following sampling filter:
-```rust,no_run
-pub enum FilterType {
-    Nearest,
-    Triangle,
-    CatmullRom,
-    Gaussian,
-    Lanczos3,
-}
-```
+![Filter Type](./images/filtertype.png)
 
 So something like
 ```rust,ignore,no_run
@@ -30,7 +22,7 @@ before finally saving out like:
 img.save(options.output_path).unwrap();
 ```
 
-Finding a cat picture and assembling the pieces is left as a exercise for reader.
+EXERCISE: Finding a cat picture and assembling the pieces is left as a exercise for reader.
 
 
 So obviously we'd like to take resize from the command line, which means wed like a match statement to go from a command line argument String to a FilterType Enum, and we need to update our Opt struct to hold it. Wed like to resize based on command line input constrained to one of these types.
@@ -90,7 +82,7 @@ fn options() -> Option<Opt> {
     })
 }
 ```
-Now finish out the the FilterString impl to make all this work
+EXERCISE: Now finish out the the FilterString impl to make all this work
 
 # enum playground
 
@@ -139,3 +131,4 @@ fn main() {
     println!("{}", value_in_cents(Coin::Nickel(2000)));
 }
 ```
+You may ask is this just a toy example? But think back to our filter example. Lets say FilterType also took a f32 as some kind of compression ratio and a few more arguments. Now you've got 2 or 3 arguments to a function and or now you're creating a filter config struct and a validate function with a bunch of if statements to try to catch all the possible improper configurations, and probably a bunch of tests to make sure it can't be used incorrectly. Algebraic Enums wrapping all the necessary data to make that constrained selection work and match statements does almost all of that for us. Reach for Algebraic enums and match statements like this whenever you would reach for a configuration struct and some kind of validate function.

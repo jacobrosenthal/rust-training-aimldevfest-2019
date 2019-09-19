@@ -46,6 +46,8 @@ This guide will cover:
    
     ![Installing Rust language server](./images/install/rustupfmt.png)
 
+   4. Enable format on save in VScode settings. Code->Preferences->Settings->Text Editor->Formatting->Format On Save
+
 ## Test out the Rust installation
 
 1. Open a command prompt window

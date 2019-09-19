@@ -5,7 +5,7 @@ We’ve got a few tools to get to know
 * rustc - rust compiler
 * cargo - manage modules locally and remotely and drives rustc
 
-Open a terminal and create a new package with `cargo new training` and go to that directory with `cd training`
+EXERCISE: Open a terminal and create a new package with `cargo new training` and go to that directory with `cd training`
 
 Now we have a Cargo.toml which defines our project, not unlike a package.json if you're familiar with Node.js, it defines dependencies we're using and other project information:
 ```toml
@@ -55,4 +55,3 @@ $ ./main
 Hello, world!
 ```
 However in practice almost no projects are single files require merging multiple modules from within our project and without and thus Cargo is THE way we interact with Rust.
-
