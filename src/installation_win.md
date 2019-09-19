@@ -46,8 +46,6 @@ This guide will cover:
    
     ![Installing Rust language server](./images/install/rustupfmt.png)
 
-   4. Enable format on save in VScode settings. Code->Preferences->Settings->Text Editor->Formatting->Format On Save
-
 ## Test out the Rust installation
 
 1. Open a command prompt window
@@ -119,7 +117,7 @@ The steps below configure GVim 8.x on Windows to support Rust and use the Rust L
             \ })
     endif
    ```
-4. Make sure `filetype plugin indent on` and `syntax enable` are also in your vimrc
+4. Make sure `filetype plugin indent on` and `syntax enable` and lets add format on save as well like `let g:rustfmt_autosave = 1`
 5. Restart GVim or reload your vimrc
 6. Open a Rust file and test our autocompletion (for example start typing `use std::`)
 
@@ -144,3 +142,5 @@ The steps below configure VS Code on Windows to support Rust and use the Rust La
    2. Try the incremental compilation (for example `println!("Hello, world!") blah blah 42 42` should show an inline error)
    
     ![VS Code Rust autocompletion and incremental compilation](./images/install/vscode_rust2.png)
+
+5.  Enable format on save in VScode settings. Code->Preferences->Settings->Text Editor->Formatting->Format On Save
