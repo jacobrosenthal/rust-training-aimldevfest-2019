@@ -7,7 +7,7 @@ A lot of collections like array have a `.iter()` method available so you can get
 
 ```rust,editable
 fn main() {
-    let array: [i32; 3] = [3, 2, 1];
+    let array = [3.0, 2.0, 1.0];
     let iter = array.iter();
     println!("{:?}", iter);
 }
@@ -18,9 +18,9 @@ This allows you to deal with values one at a time. This is really important for 
 Lets get the `sum()` of our array
 ```rust,editable
 fn main() {
-    let array: [i32; 3] = [3, 2, 1];
+    let array = [3.0, 2.0, 1.0];
     let iter = array.iter();
-    let total: i32 = iter.sum();
+    let total: f32 = iter.sum();
     println!("{:?}", total);
 }
 ```
@@ -31,11 +31,11 @@ But wait.. why this doesn't work?
 
 ```rust,no_run
 fn main() {
-    let array: [i32; 3] = [3, 2, 1];
+    let array = [3.0, 2.0, 1.0];
     let iter = array.iter();
     iter.map(|val| {
         println!("{:?}", val);
-        val + 1
+        val + 1.0
     });
 }
 ```
@@ -46,7 +46,7 @@ warning: unused `std::iter::Map` that must be used
    |
 85 | /     iter.map(|val| {
 86 | |         println!("{:?}", val);
-87 | |         val + 1
+87 | |         val + 1.0
 88 | |     });
    | |_______^
    |
@@ -58,11 +58,11 @@ It turns out `println!()` and `sum()` both consume iterators so we got lucky up 
 
 ```rust,editable
 fn main() {
-    let array: [i32; 3] = [3, 2, 1];
+    let array = [3.0, 2.0, 1.0];
 
     for i in array.iter().map(|val| {
         println!("{:?}", val);
-        val + 1
+        val + 1.0
     }) {
         println!("{:?}", i);
     }
@@ -75,10 +75,27 @@ It gets more complex from here. `zip()` combines a value from two different iter
 
 ```rust,editable
 fn main() {
-    let array1: [i32; 3] = [3, 2, 1];
-    let array2: [i32; 3] = [4, 5, 6];
+    let array1 = [3.0, 2.0, 1.0];
+    let array2 = [4.0, 5.0, 6.0];
 
     for i in array1.iter().zip(array2.iter()) {
+        println!("{:?}", i);
+    }
+}
+```
+
+`flat_map` iterates through iterators like n dimensional structures and concatenates them one after the other, or "flattens" them.
+```rust,editable
+fn main() {
+
+    let array: [[f32; 3]; 3] = [
+            [1.0, 2.0, 3.0],
+            [4.0, 5.0, 6.0],
+            [7.0, 8.0, 9.0]
+        ];
+
+    //flat_map gives a closure where we could transform, instead we just return it
+    for i in array.iter().flat_map(|j| j) {
         println!("{:?}", i);
     }
 }

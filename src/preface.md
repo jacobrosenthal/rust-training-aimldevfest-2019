@@ -1,12 +1,11 @@
+# Sobel Edge Detection
 
+Rust is a systems language pursuing the trifecta: safety, concurrency, and speed. This makes it well suited to machine learning and data science tasks. Rust experience will not be required, only existing programming experience. 
 
-Rust is a safe, typed, compiled, general programming language.
-* Safe is a very overloaded term in Rust, but by default Rust uses static analysis at compile time to enforces rules about memory usage. Traditionally, managing your own memory in languages like C++ and Objective-C has been very tedious and still error prone. Rust's solution to this, The borrow checker, is probably the defining feature of the Rust language. You have to spend a little more time annotating your code to say who owns a variable at any given time with the borrow checker keeping you honest the whole time. It's like pair programming with a friend.
-* Typed - As opposed to languages like javascript, Rust forces you to state the types of variables going into and out of functions. This helps you organize your intentions and acts much like a set of tests to make sure your code makes sense.
-* Compiled - Rust has to do all its work up front at compile time and turns into a binary immediately. Compiles can be slow sometimes, but our code runs fast, and anywhere, as a result. [obligatory xkcd](https://xkcd.com/303/) 
-* General. Much like most modern languages these days it's not strictly functional or object oriented (OO). Further it can be deployed almost anywhere. We can write backend server code, embedded microcontroller applications, and with WASM, even front end web applications, cloud functions and blockchains.
+We'll spend half the session on a with an introduction to Rust and the rest using functional programming style to develop a machine learning primitive called Convolve which can be used for many tasks including edge detection, sharpening, blur and more. 
 
-Our audience are professional developers cross training from languages such as C, C++, Python and Golang.
+Our main goal will be the [Sobel operator](https://en.wikipedia.org/wiki/Sobel_operator). In a Sobel operator pixels in an image are 'convolved' with the Sobel kernel to produce an output that hilights edges.
 
-We will build on and link heavily to the [Rust Book](https://doc.rust-lang.org/book/) and [Standard Library documentation](https://doc.rust-lang.org/std/) but if you ever get lost you should take it upon yourself to head back there to find clarification. A huge part of why Rust is so powerful is its evolving, responsive, tested, up to date and clear documentation. Many thanks to the tireless authors of those resources. 
+![After Sobel](./images/valve_sobel.png)
 
+[Convolution](https://en.wikipedia.org/wiki/Kernel_(image_processing)#Convolution) is an incredibly common machine learning operation and maybe you'll walk away understanding a little more about whats going on in convolutional neural networks.
