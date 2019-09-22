@@ -22,9 +22,9 @@ fn main() {
     println!("{:?}", opt);
 }
 ```
-Running `cargo run -- -i cat.jpg -o test.png` results in
+Running `cargo run -- -i valve.png -o valve_sobel.png` results in
 ```text
-Opt { input_path: "cat.jpg", output_path: "test.png" }
+Opt { input_path: "valve.png", output_path: "valve_sobel.png" }
 ```
 and running `cargo run -- --help`
 ```text

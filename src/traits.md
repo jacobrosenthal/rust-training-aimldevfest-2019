@@ -65,7 +65,7 @@ options.shout();
 ```
 and well should see something like
 ```text
-CAT.JPG OUT.PNG
+VALVE.PNG VALVE_SOBEL.PNG
 ```
 > The separation of definition from implementation is incredibly powerful. This way if we make our trait public anyone downstream can customize our function for their architecture or edge case. This keeps Rust from amongst other things passing around huge config structs full of lifecycle callbacks and other configuration overrides.
 

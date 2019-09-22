@@ -1,8 +1,6 @@
 # Enum
 So we’ve seen enums are good at constraining a type between a limited set of values and they can also hold values, like an error or a type, which makes them algebraic datatypes. Rust Enums are liked [tagged unions for the C](http://patshaughnessy.net/2018/3/15/how-rust-implements-tagged-unions) folks but implemented in such a way that you cant hurt yourself.
 
-TODO have craig go on and on about enums
-
 Looking through the image documentation, we can [open an image](https://docs.rs/image/0.22.1/image/fn.open.html), get back a ImageResult containing a [DynamicImage type](https://docs.rs/image/0.22.1/image/enum.DynamicImage.html).
 ```rust,ignore,no_run
 //just unwrap our Result as written we have to have a value or we would have already blown up
@@ -22,7 +20,7 @@ before finally saving out like:
 img.save(options.output_path).unwrap();
 ```
 
-EXERCISE: Finding a cat picture and assembling the pieces is left as a exercise for reader.
+EXERCISE: Finding a picture and assembling the pieces is left as a exercise for reader.
 
 
 So obviously we'd like to take resize from the command line, which means wed like a match statement to go from a command line argument String to a FilterType Enum, and we need to update our Opt struct to hold it. Wed like to resize based on command line input constrained to one of these types.

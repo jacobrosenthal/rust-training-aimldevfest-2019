@@ -10,7 +10,7 @@ The top of the [Rust standard library page](https://doc.rust-lang.org/std/) has 
 From that example we have our String constructor:
 ```rust,no_run
 fn main() {
-    let input_path = String::from("cat.jpg");
+    let input_path = String::from("valve.png");
     println!("Hello, world!");
 }
 ```
@@ -21,8 +21,8 @@ Also notice we didn't have to explicitly type our variable. What Rust *can* figu
 
 ```rust,editable
 fn main() {
-    let input_path = String::from("cat.jpg");
-    let output_path:String = String::from("out.png");
+    let input_path = String::from("valve.png");
+    let output_path:String = String::from("valve_sobel.png");
     println!("Hello, world!");
 }
 ```
@@ -30,14 +30,14 @@ fn main() {
 So now how to print those variables to console.  In Rust our printf `%` formatting character is `{}`. Following the `println!()` documentation down the rabbit hole will send us to the [formatters section](https://doc.rust-lang.org/std/fmt/index.html) page and we find all the formatters which you would expect like hex `{:x}`, binary `{:b}`, etc. We're going to focus on the 'empty' Display formatter `{}` for now which is a kind of a pretty printer in Rust. As long as whomever wrote our type implemented the Display pretty printer trait this will work great (cue ominous music).
 ```rust,editable
 fn main() {
-    let input_path = String::from("cat.jpg");
-    let output_path = String::from("out.png");
+    let input_path = String::from("valve.png");
+    let output_path = String::from("valve_sobel.png");
     println!("{} {}", input_path, output_path);
 }
 ```
 Running this we find that we do have a Display implementation for String and pretty printing results in rather clean output in this case:
 ```text
-cat.jpg out.png
+valve.png valve_sobel.png
 ```
 
 Objects, we call them structs, should be very familiar. You can define a new struct in any scope you like and we can name and type their members.
@@ -50,8 +50,8 @@ struct Opt {
 fn main() {
 
     let options = Opt {
-        input_path: String::from("cat.jpg"),
-        output_path: String::from("out.png"),
+        input_path: String::from("valve.png"),
+        output_path: String::from("valve_sobel.png"),
     };
 
     println!("{} {}", options.input_path, options.output_path);
@@ -72,8 +72,8 @@ struct Opt {
 fn options() -> Opt {
 
     let options = Opt {
-        input_path: String::from("cat.jpg"),
-        output_path: String::from("out.png"),
+        input_path: String::from("valve.png"),
+        output_path: String::from("valve_sobel.png"),
     };
     return options;
 }
@@ -89,8 +89,8 @@ We use semicolons to end expressions. We prefer to leave off semicolons in order
 fn options() -> Opt {
 
     Opt {
-        input_path: String::from("cat.jpg"),
-        output_path: String::from("out.png"),
+        input_path: String::from("valve.png"),
+        output_path: String::from("valve_sobel.png"),
     }
 }
 ```

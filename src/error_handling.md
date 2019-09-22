@@ -16,12 +16,12 @@ fn options() -> Opt {
 
 And then note you can pass args around cargo to the binary were trying to run like:
 ```bash
-$ cargo run -- cat.jpg out.png
+$ cargo run -- valve.png valve_sobel.png
     Finished dev [unoptimized + debuginfo] target(s) in 0.01s
-     Running `target/debug/training cat.jpg out.png `
+     Running `target/debug/training valve.png valve_sobel.png `
 target/debug/training
-cat.jpg
-out.png
+valve.png
+valve_sobel.png
 ```
 
 So what is this unwrap. The problem is the nth argument may or may not be there.. 
@@ -110,7 +110,7 @@ Its worth spending some time in the option result playground here to get your mi
 use std::io::ErrorKind;
 
 fn main() {
-    let first_arg = Some("cat.jpg");
+    let first_arg = Some("valve.png");
     let second_arg: Option<String> = None;
     let good_val: Result<u32, std::io::ErrorKind> = Ok(22);
     let definitely_error: Result<u32, std::io::ErrorKind> = Err(ErrorKind::Other);

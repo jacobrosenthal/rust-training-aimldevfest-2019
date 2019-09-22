@@ -101,9 +101,9 @@ For example, we can make our processing code later only accept `GrayImage` as in
 let input_image = image::open(&options.input_path)
     .expect("Failed to open input image file");
 
-let gray_image = input_image.to_luma();
+let input_image = input_image.to_luma();
 
-gray_image.save(&options.output_path)
+input_image.save(&options.output_path)
     .expect("Failed to save output image to file");
 ```
 
@@ -211,11 +211,11 @@ For our case, we just have a GrayImage with pixels of type `Luma<u8>` that imple
 let input_image = image::open(&options.input_path)
     .expect("Failed to open input image file");
 
-let gray_image = input_image.to_luma();
+let input_image = input_image.to_luma();
 
-println!("Pixel 0, 0: {}", gray_image.get_pixel(0, 0).channels()[0]);
+println!("Pixel 0, 0: {}", input_image.get_pixel(0, 0).channels()[0]);
 
-gray_image.save(&options.output_path)
+input_image.save(&options.output_path)
     .expect("Failed to save output image to file");
 ```
 
@@ -273,11 +273,11 @@ We'll need to throw a call into `fn main()` to use this:
 let input_image = image::open(&options.input_path)
     .expect("Failed to open input image file");
 
-let gray_image = input_image.to_luma();
+let input_image = input_image.to_luma();
 
-let output_image = sobel_filter(&gray_image);
+let input_image = sobel_filter(&input_image);
 
-output_image.save(&options.output_path)
+input_image.save(&options.output_path)
     .expect("Failed to save output image to file");
 ```
 
