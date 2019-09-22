@@ -45,7 +45,7 @@ Were going to skip Result here, as our `nth()` method returns an Option, but the
 
 There *is* a minimal runtime in Rust, which means if were not careful we can and will blow up at runtime. This is called a panic and is handled in the panic handler, which on hosted platforms includes unwinding and backtraces. You can fire it on purpose with `panic!()` or by `unwrap()` on a None or Err value. 
 
-EXERCISE: Run our program again, this time not passing any command line arguments
+**EXERCISE: Run our program again, this time not passing any command line arguments**
 ```text
 thread 'main' panicked at 'called `Option::unwrap()` on a `None` value', src/libcore/option.rs:347:21
 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace.
@@ -69,7 +69,9 @@ fn options() -> Option<Opt> { //<-return Option wrapping our Opt struct
     })
 }
 ```
-EXERCISE: Have our options function return an Option of Opt. But we still get an error up in main now.
+**EXERCISE: Have our options function return an Option of Opt.**
+
+But we still get an error up in main now.
 ```text
 error[E0609]: no field `input_path` on type `std::option::Option<Opt>`
   --> src/main.rs:93:44
@@ -98,7 +100,7 @@ if let options = match options() {
 println!("{} {}", options.input_path, options.output_path);
 ```
 
-EXERCISE: Implement one of these solutions to satisfy the Rust compiler.
+**EXERCISE: Implement one of these solutions to satisfy the Rust compiler.**
 
 The Option type is actually an enum type so we lets take a full digression through enums and matching in the next section.
 

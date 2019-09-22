@@ -1,4 +1,4 @@
-#Iterators
+# Iterators
 
 
 Iterators are one of the most powerful features in Rust! They are also a gateway drug to functional programming.
@@ -54,7 +54,7 @@ warning: unused `std::iter::Map` that must be used
    = note: iterators are lazy and do nothing unless consumed
 ```
 
-It turns out `println!()` and `sum()` both consume iterators so we got lucky up until now. `map()` just vitits each. Someone needs to pull our values through. Another consumer is our good old `for in` construct. Lets use that:
+It turns out `println!()` and `sum()` both consume iterators so we got lucky up until now. `map()` just visits each. Someone needs to pull our values through. Another consumer is our good old `for in` construct. Lets use that:
 
 ```rust,editable
 fn main() {

@@ -1,7 +1,7 @@
 # Testing
 
 
-[Convolving a kernel with an image](https://en.wikipedia.org/wiki/Kernel_(image_processing)) is an incredibly common operation in all kinds of image processing. With it we can implement all the machine learning greatest hits, which for images as you can see includes [edge detection sharpen, blur and more](https://en.wikipedia.org/wiki/Kernel_(image_processing)#Details). Convolution should remind you of Convolution Nueral nets and might give you an idea how those work too.
+[Convolving a kernel with an image](https://en.wikipedia.org/wiki/Kernel_(image_processing)) is an incredibly common operation in all kinds of image processing. With it we can implement all the machine learning greatest hits, which for images as you can see includes [edge detection sharpen, blur and more](https://en.wikipedia.org/wiki/Kernel_(image_processing)#Details). Convolution should remind you of Convolution Neural nets and might give you an idea how those work too.
 
 Did you notice the Identity Kernel on the page? That kernel returns back the result unchanged. That would be a helpful test. We can define the kernels multiple ways, but for now let's use a fixed size array of fixed size arrays. This preserves the row and column structure of the kernels. We'll use the const keyword to define these as constant, static data outside of any function. The compiler will not let us in any way mutate this data.
 

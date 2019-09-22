@@ -57,7 +57,7 @@ fn main() {
 ```
 
 ## Rule #3: mutable borrows are exclusive
-Only a mutable borrow for an object can exist at a time. This prevents many subtles errors where internal state is mutated while other does not expect it. In C++, modifying a container while iterating through it is a classic example.
+Only a mutable borrow for an object can exist at a time. This prevents many subtle errors where internal state is mutated while other does not expect it. In C++, modifying a container while iterating through it is a classic example.
 
 ```rust,editable,ignore,mdbook-runnable
 fn main() {

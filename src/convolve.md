@@ -9,7 +9,7 @@ fn convolve(kernel: &[[f32; 3]; 3], pixels: &[[f32; 3]; 3]) -> f32 {
 }
 ```
 
-Exercise: Finish out the convolve function we stubbed earlier. You'll need everything we went through on the iterators page so head back there and think hard on how you can create an iterator fom both pixels and kernel, multiply each element of each matrix and return the sum of the results.
+**Exercise: Finish out the convolve function we stubbed earlier. You'll need everything we went through on the iterators page so head back there and think hard on how you can create an iterator fom both pixels and kernel, multiply each element of each matrix and return the sum of the results.**
 
 <details><summary>Uncollapse for a hint. But try first!</summary>
 <p>

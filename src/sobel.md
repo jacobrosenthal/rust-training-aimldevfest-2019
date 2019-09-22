@@ -179,7 +179,7 @@ fn sobel_filter(input: &GrayImage) -> GrayImage {
                 ],
             ];
 
-            // normalize divisor of 8.0 for sobel
+            // normalize divisor of 8.0 for Sobel
             let gradient_x = convolve(&SOBEL_KERNEL_X, &pixels) / 8.0;
             let gradient_y = convolve(&SOBEL_KERNEL_Y, &pixels) / 8.0;
         }
@@ -222,7 +222,7 @@ fn sobel_filter(input: &GrayImage) -> GrayImage {
                 ],
             ];
 
-            // normalize divisor of 8.0 for sobel
+            // normalize divisor of 8.0 for Sobel
             let gradient_x = convolve(&SOBEL_KERNEL_X, &pixels) / 8.0;
             let gradient_y = convolve(&SOBEL_KERNEL_Y, &pixels) / 8.0;
             let magnitude = (gradient_x.powi(2) + gradient_y.powi(2)).sqrt();

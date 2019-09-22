@@ -2,7 +2,7 @@
 At this point, we're starting to pollute one Rust source file with a few unrelated operations and imports. Rust makes it pretty easy to refactor code into a hierarchy of modules, and sprinkle in encapsulation where appropriate.
 
 ## What's a module?
-A module is very simliar to a C++ namespace, in that it is a named scope containing declarations of structs, enums, functions, traits, etc.
+A module is very similar to a C++ namespace, in that it is a named scope containing declarations of structs, enums, functions, traits, etc.
 
 Let's take a quick look:
 
@@ -87,7 +87,7 @@ fn function_in_submodule() {
 ```
 
 ## Let's refactor the Sobel filter program
-We can refactor the sobel filter function, convolution function, and kernels into separate modules.
+We can refactor the Sobel filter function, convolution function, and kernels into separate modules.
 
 This way, the main module is only concerned with user input and calling out to the other modules to execute.
 

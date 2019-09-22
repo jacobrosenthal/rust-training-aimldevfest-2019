@@ -57,7 +57,7 @@ fn main() {
     println!("{} {}", options.input_path, options.output_path);
 }
 ```
-EXERCISE: Get this all implemented in your training project
+**EXERCISE: Get this all implemented in your training project**
 
 Notice we access our struct members with dot notation, and there is no default new constructor or overloading in Rust. Though in practice, for functions where it makes sense many developers will offer and occasionally make their struct private to require the usage of a new or other constructor. So note, `String::new()` totally exists and would have made you an empty string.
 
@@ -94,6 +94,6 @@ fn options() -> Opt {
     }
 }
 ```
-EXERCISE: Implement the `options()` function to clean up your main.
+**EXERCISE: Implement the `options()` function to clean up your main.**
 
 But what if our options creation could fail? Lets talk about error handling in rust.
