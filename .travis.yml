@@ -1,3 +1,4 @@
+# you need to add GH_TOKEN added in Travis https://docs.travis-ci.com/user/deployment/pages/
 sudo: false
 dist: trusty
 language: rust
@@ -22,6 +23,3 @@ deploy:
   keep_history: false
   on:
     branch: master
-env:
-  matrix:
-    secure: gRTE55+a3iwO+FqaQ41IYUwKsynJDsEgI3mUcKSebulHUmo+NamozmEhG9F2p8eIH3i6qSkXKS/MNJ79Jd36UCyZhhrdQny/nE2t+hl54Zbv999j6bS+AM92Y97N+Yy80lwCFkvlDgyA6HOFdhucgU1yvedunYgxMZt1xc2Z68nPxuekGMI0GBiw3s7kIC5LnbEQDFHwpMtNXeXEQbNiS0/e1xlupuJ+7hBR/fsd6nQP9TXOgoFAEyJGaE27lO1pb7jTPqjmLOixcQUvQBZSnqr3YJTqUiHkKjtLtL8qGUGXApR1AVtPjd1vZLAu2FwdAwrjf7taq0UOrZHxcTtFh+6TU+32956yelCnb1QXqiv4loNoF9rIICsPjl8G2tYLkQrn0SBhA092pSZH2tD5miTCrswNkT0Jy9QIbI58myg2gtbdX50xh//cB9oIruHMfam5OwlqIb/B1Ty/XUcjNxtgu9iccuT2lGQmwdxbuRpUnqB/sukrwXO1lv1nxvOHQAUwn0sRYJyde2XK7Fba7mqKzwD2GeaVno9/nZFreh8x8MwrUuQKtFI3KuSRYdHljtx44+SdlZ3dD0HrAAZU789AychdTB6+e8KX+JvezvdHP75/o5LQhOOHZRqnN1O+Wiu9Jvn5rut+6AHCACMHdoZ4oZJJqlxa+sKTZlX8cN8=
