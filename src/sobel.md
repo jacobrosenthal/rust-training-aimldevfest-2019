@@ -47,6 +47,12 @@ fn main() {
 For now, let's just write the input to the output, passthrough, using the image create we looked at earlier.
 
 ```rust,ignore
+use image::Pixel; // trait for '.channels()'
+
+...
+
+let options = options().expect("Failed to parse command options!");
+
 let input_image = image::open(&options.input_path)
     .expect("Failed to open input image file");
 
@@ -141,16 +147,13 @@ Now it's time to put some meat into the function. Here we use `zip` to combine t
 
 ```rust,ignore
 fn convolve(kernel: &[[f32; 3]; 3], pixels: &[[f32; 3]; 3]) -> f32 {
-    let accumulator: f32 = kernel
+    kernel
         .iter()
         .zip(pixels.iter())
         .flat_map(|(kernel_col, input_col)| {
-            kernel_col
-                .iter()
-                .zip(input_col.iter())
-                .map(|(k, p)| k * p)
+            kernel_col.iter().zip(input_col.iter()).map(|(k, p)| k * p)
         })
-        .sum();
+        .sum()
 }
 ```
 
@@ -205,10 +208,6 @@ This might seem over-complicated. However, by abstracting away the underlying st
 For our case, we just have a GrayImage with pixels of type `Luma<u8>` that implement the `Pixel` trait. So we should be able to fetch a pixel pretty easily. Here's a go:
 
 ```rust,ignore
-use image::Pixel; // trait for '.channels()'
-
-...
-
 let input_image = image::open(&options.input_path)
     .expect("Failed to open input image file");
 
@@ -237,21 +236,30 @@ fn sobel_filter(input: &GrayImage) -> GrayImage {
 To start with, let's just create the block of pixels to feed the convolution for each center pixel.
 
 ```rust,ignore
+use image::GrayImage;
+
 fn sobel_filter(input: &GrayImage) -> GrayImage {
     let mut result = input.clone();
 
     for x in 0..input.width() {
         for y in 0..input.height() {
             let pixels = [
-                [input.get_pixel(x - 1, y - 1).channels()[0],
-                 input.get_pixel(x - 1, y).channels()[0],
-                 input.get_pixel(x - 1, y + 1).channels()[0]],
-                [input.get_pixel(x, y - 1).channels()[0],
-                 input.get_pixel(x, y).channels()[0],
-                 input.get_pixel(x, y + 1).channels()[0]],
-                [input.get_pixel(x + 1, y - 1).channels()[0],
-                 input.get_pixel(x + 1, y).channels()[0],
-                 input.get_pixel(x + 1, y + 1).channels()[0]]];
+                [
+                    input.get_pixel(x - 1, y - 1).channels()[0],
+                    input.get_pixel(x - 1, y).channels()[0],
+                    input.get_pixel(x - 1, y + 1).channels()[0],
+                ],
+                [
+                    input.get_pixel(x, y - 1).channels()[0],
+                    input.get_pixel(x, y).channels()[0],
+                    input.get_pixel(x, y + 1).channels()[0],
+                ],
+                [
+                    input.get_pixel(x + 1, y - 1).channels()[0],
+                    input.get_pixel(x + 1, y).channels()[0],
+                    input.get_pixel(x + 1, y + 1).channels()[0],
+                ],
+            ];
         }
     }
 
@@ -291,7 +299,7 @@ As the [Wikipedia page on convolution kernels](https://en.wikipedia.org/wiki/Ker
 If we crop the output image, we can easily adapt our code. The ImageBuffer struct implements the GenericImage trait which has a function called `sub_image` that gives us a view into rectangular section of an image. With a `SubImage` we can call `to_image()` to get a cropped `ImageBuffer` back out.
 
 ```rust,ignore
-use image::GenericImage;
+use image::{GenericImage, GrayImage};
 
 fn sobel_filter(input: &GrayImage) -> GrayImage {
     let mut result = input
@@ -301,15 +309,22 @@ fn sobel_filter(input: &GrayImage) -> GrayImage {
     for x in 1..(input.width() - 1) {
         for y in 1..(input.height() - 1) {
             let pixels = [
-                [input.get_pixel(x - 1, y - 1).channels()[0],
-                 input.get_pixel(x - 1, y).channels()[0],
-                 input.get_pixel(x - 1, y + 1).channels()[0]],
-                [input.get_pixel(x, y - 1).channels()[0],
-                 input.get_pixel(x, y).channels()[0],
-                 input.get_pixel(x, y + 1).channels()[0]],
-                [input.get_pixel(x + 1, y - 1).channels()[0],
-                 input.get_pixel(x + 1, y).channels()[0],
-                 input.get_pixel(x + 1, y + 1).channels()[0]]];
+                [
+                    input.get_pixel(x - 1, y - 1).channels()[0],
+                    input.get_pixel(x - 1, y).channels()[0],
+                    input.get_pixel(x - 1, y + 1).channels()[0],
+                ],
+                [
+                    input.get_pixel(x, y - 1).channels()[0],
+                    input.get_pixel(x, y).channels()[0],
+                    input.get_pixel(x, y + 1).channels()[0],
+                ],
+                [
+                    input.get_pixel(x + 1, y - 1).channels()[0],
+                    input.get_pixel(x + 1, y).channels()[0],
+                    input.get_pixel(x + 1, y + 1).channels()[0],
+                ],
+            ];
         }
     }
 
@@ -317,10 +332,10 @@ fn sobel_filter(input: &GrayImage) -> GrayImage {
 }
 ```
 
-Cool. No more overflows. We should get the convolution in there! Usually, we also divide by a constant value to "normalize" the result (really just make sure it is within the 0.0-1.0 range). For the Sobel operator on a 3x3 block of pixels, a divisor of 8.0 works well. Oh, and did you find a place where clone might be handy?
+Oh, and did you find a place where clone might be handy?. Cool. No more overflows. We should get the convolution in there! Usually, we also divide by a constant value to "normalize" the result (really just make sure it is within the 0.0-1.0 range). For the Sobel operator on a 3x3 block of pixels, a divisor of 8.0 works well.
 
 ```rust,ignore
-use image::GenericImage;
+use image::{GenericImage, GrayImage, Pixel};
 
 fn sobel_filter(input: &GrayImage) -> GrayImage {
     let mut result = input
@@ -331,16 +346,24 @@ fn sobel_filter(input: &GrayImage) -> GrayImage {
     for x in 1..(input.width() - 1) {
         for y in 1..(input.height() - 1) {
             let pixels = [
-                [input.get_pixel(x - 1, y - 1).channels()[0],
-                 input.get_pixel(x - 1, y).channels()[0],
-                 input.get_pixel(x - 1, y + 1).channels()[0]],
-                [input.get_pixel(x, y - 1).channels()[0],
-                 input.get_pixel(x, y).channels()[0],
-                 input.get_pixel(x, y + 1).channels()[0]],
-                [input.get_pixel(x + 1, y - 1).channels()[0],
-                 input.get_pixel(x + 1, y).channels()[0],
-                 input.get_pixel(x + 1, y + 1).channels()[0]]];
+                [
+                    input.get_pixel(x - 1, y - 1).channels()[0],
+                    input.get_pixel(x - 1, y).channels()[0],
+                    input.get_pixel(x - 1, y + 1).channels()[0],
+                ],
+                [
+                    input.get_pixel(x, y - 1).channels()[0],
+                    input.get_pixel(x, y).channels()[0],
+                    input.get_pixel(x, y + 1).channels()[0],
+                ],
+                [
+                    input.get_pixel(x + 1, y - 1).channels()[0],
+                    input.get_pixel(x + 1, y).channels()[0],
+                    input.get_pixel(x + 1, y + 1).channels()[0],
+                ],
+            ];
 
+            // normalize divisor of 8.0 for sobel
             let gradient_x = convolve(&SOBEL_KERNEL_X, &pixels) / 8.0;
             let gradient_y = convolve(&SOBEL_KERNEL_Y, &pixels) / 8.0;
         }
@@ -350,32 +373,10 @@ fn sobel_filter(input: &GrayImage) -> GrayImage {
 }
 ```
 
-Uh oh. Now we have a different problem. Our `GrayImage` gives us `u8` from `get_pixel(x, y).channels()[0]`, but `convolve` expects the pixels to be f32. In fact, our convolution also expects the pixels to be in the range \[0.0-1.1\].
-
-## LumaFloat trait
-This is a great time to build a new trait! We can create a trait with a new `get_float_luma()` function and implement it for GrayImage. Since we're also going to be writing pixels to the output image, let's also add a `put_float_luma()` method.
+Uh oh. Now we have a different problem. Our `GrayImage` gives us `u8` from `get_pixel(x, y).channels()[0]`, but `convolve` expects the pixels to be f32. In fact, our convolution also expects the pixels to be in the range \[0.0-1.1\]. We can also add a couple lines to compute the magnitude of the gradient and store it back to the resulting image.
 
 ```rust,ignore
-trait LumaFloat {
-    fn get_float_luma(&self, x: u32, y: u32) -> f32;
-    fn put_float_luma(&mut self, x: u32, y: u32, luma: f32);
-}
-
-impl LumaFloat for GrayImage {
-    fn get_float_luma(&self, x: u32, y: u32) -> f32 {
-        self.get_pixel(x, y)[0] as f32 / 255.0
-    }
-
-    fn put_float_luma(&mut self, x: u32, y: u32, luma: f32) {
-        self.put_pixel(x, y, Luma([(luma * 255.0) as u8]));
-    }
-}
-```
-
-Now in our Sobel filter function, things get a lot cleaner. We can also add a couple lines to compute the magnitude of the gradient and store it back to the resulting image.
-
-```rust,ignore
-use image::{GenericImage, GrayImage, Luma};
+use image::{GenericImage, GrayImage, Luma, Pixel};
 
 fn sobel_filter(input: &GrayImage) -> GrayImage {
     let mut result = input
@@ -386,20 +387,28 @@ fn sobel_filter(input: &GrayImage) -> GrayImage {
     for x in 1..(input.width() - 1) {
         for y in 1..input.height() - 1 {
             let pixels = [
-                [input.get_float_luma(x - 1, y - 1),
-                 input.get_float_luma(x - 1, y),
-                 input.get_float_luma(x - 1, y + 1)],
-                [input.get_float_luma(x, y - 1),
-                 input.get_float_luma(x, y),
-                 input.get_float_luma(x, y + 1)],
-                [input.get_float_luma(x + 1, y - 1),
-                 input.get_float_luma(x + 1, y),
-                 input.get_float_luma(x + 1, y + 1)]];
+                [
+                    input.get_pixel(x - 1, y - 1).channels()[0] as f32,
+                    input.get_pixel(x - 1, y).channels()[0] as f32,
+                    input.get_pixel(x - 1, y + 1).channels()[0] as f32,
+                ],
+                [
+                    input.get_pixel(x, y - 1).channels()[0] as f32,
+                    input.get_pixel(x, y).channels()[0] as f32,
+                    input.get_pixel(x, y + 1).channels()[0] as f32,
+                ],
+                [
+                    input.get_pixel(x + 1, y - 1).channels()[0] as f32,
+                    input.get_pixel(x + 1, y).channels()[0] as f32,
+                    input.get_pixel(x + 1, y + 1).channels()[0] as f32,
+                ],
+            ];
 
             let gradient_x = convolve(&SOBEL_KERNEL_X, &pixels) / 8.0;
             let gradient_y = convolve(&SOBEL_KERNEL_Y, &pixels) / 8.0;
             let magnitude = (gradient_x.powi(2) + gradient_y.powi(2)).sqrt();
-            result.put_float_luma(x - 1, y - 1, magnitude);
+            //place our pixel off by one because of crop
+            result.put_pixel(x - 1, y - 1, Luma([(magnitude) as u8]));
         }
     }
 
