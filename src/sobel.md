@@ -125,7 +125,7 @@ const SOBEL_KERNEL_Y: [[f32; 3]; 3] = [
 ```
 
 ## Convolution
-As we explored above, the convolution operator for a kernel and a block of pixels boils down to a pretty simple series of operations. First we multiple each value from the kernel matrix with its corresponding value in the block of pixels, and then, we sum up all the products. Usually, we also divide by a constant value to "normalize" the result (really just make sure it is within the 0.0-1.0 range). For the Sobel operator on a 3x3 block of pixels, a divisor of 8.0 works well.
+As we explored above, the convolution operator for a kernel and a block of pixels boils down to a pretty simple series of operations. First we multiple each value from the kernel matrix with its corresponding value in the block of pixels, and then, we sum up all the products. 
 
 Let's start with the function signature:
 
@@ -151,8 +151,6 @@ fn convolve(kernel: &[[f32; 3]; 3], pixels: &[[f32; 3]; 3]) -> f32 {
                 .map(|(k, p)| k * p)
         })
         .sum();
-    // normalize
-    accumulator / 8.0
 }
 ```
 
@@ -181,8 +179,8 @@ mod tests {
             [4.0, 5.0, 6.0],
             [7.0, 8.0, 9.0]
         ];
-        assert_eq!(convolve(&SOBEL_KERNEL_X, &pixels), 3.0);
-        assert_eq!(convolve(&SOBEL_KERNEL_Y, &pixels), 1.0);
+        assert_eq!(convolve(&SOBEL_KERNEL_X, &pixels), 24.0);
+        assert_eq!(convolve(&SOBEL_KERNEL_Y, &pixels), 8.0);
     }
 }
 ```
@@ -319,7 +317,7 @@ fn sobel_filter(input: &GrayImage) -> GrayImage {
 }
 ```
 
-Cool. No more overflows. We should get the convolution in there! Oh, and did you find a place where clone might be handy?
+Cool. No more overflows. We should get the convolution in there! Usually, we also divide by a constant value to "normalize" the result (really just make sure it is within the 0.0-1.0 range). For the Sobel operator on a 3x3 block of pixels, a divisor of 8.0 works well. Oh, and did you find a place where clone might be handy?
 
 ```rust,ignore
 use image::GenericImage;
@@ -343,8 +341,8 @@ fn sobel_filter(input: &GrayImage) -> GrayImage {
                  input.get_pixel(x + 1, y).channels()[0],
                  input.get_pixel(x + 1, y + 1).channels()[0]]];
 
-            let gradient_x = convolve(&SOBEL_KERNEL_X, &pixels);
-            let gradient_y = convolve(&SOBEL_KERNEL_Y, &pixels);
+            let gradient_x = convolve(&SOBEL_KERNEL_X, &pixels) / 8.0;
+            let gradient_y = convolve(&SOBEL_KERNEL_Y, &pixels) / 8.0;
         }
     }
 
@@ -398,8 +396,8 @@ fn sobel_filter(input: &GrayImage) -> GrayImage {
                  input.get_float_luma(x + 1, y),
                  input.get_float_luma(x + 1, y + 1)]];
 
-            let gradient_x = convolve(&SOBEL_KERNEL_X, &pixels);
-            let gradient_y = convolve(&SOBEL_KERNEL_Y, &pixels);
+            let gradient_x = convolve(&SOBEL_KERNEL_X, &pixels) / 8.0;
+            let gradient_y = convolve(&SOBEL_KERNEL_Y, &pixels) / 8.0;
             let magnitude = (gradient_x.powi(2) + gradient_y.powi(2)).sqrt();
             result.put_float_luma(x - 1, y - 1, magnitude);
         }
