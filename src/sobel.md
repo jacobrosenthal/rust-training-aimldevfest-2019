@@ -100,7 +100,7 @@ Well, in Rust debug builds, the primitive integer types are checked for overflow
 And, just like now, the overflow checks in debug builds help catch bugs early on.
 
 ## Handling the edges
-The overflow is happening because of the `x - 1` and `y - 1` when x or y is zero. This is indicative of a bigger question: how should we handle the edges of the image?
+The overflow is happening because of the `x - 1` and `y - 1` when x or y is zero. Remember, the kernel includes one pixel left, right, up and down from the one its currently operating on. When were on the far border of our image that pixel doesn't exist. This is indicative of a bigger question: how should we handle the edges of the image?
 
 As the [Wikipedia page on convolution kernels](https://en.wikipedia.org/wiki/Kernel_(image_processing)#Edge_Handling) explains, there are several ways:
 - Extend the image by duplicating pixels at the edge
@@ -189,7 +189,10 @@ fn sobel_filter(input: &GrayImage) -> GrayImage {
 }
 ```
 
-Uh oh. Now we have a different problem. Our `GrayImage` gives us `u8` from `get_pixel(x, y).channels()[0]`, but `convolve` expects the pixels to be f32. In fact, our convolution also expects the pixels to be in the range \[0.0-1.1\]. We can also add a couple lines to compute the magnitude of the gradient and store it back to the resulting image.
+Uh oh. Now we have a different problem. Our `GrayImage` gives us `u8` from `get_pixel(x, y).channels()[0]`, but `convolve` expects the pixels to be f32.
+We can explicitly cast that with 'as f32'.
+
+We can also add a couple lines to combine our two kernels into a single magnitude with the sum of squares. Then well need to turn our resulting f32 into a u8 Luma type before storing it back into the resulting image.
 
 ```rust,ignore
 use image::{GenericImage, GrayImage, Luma, Pixel};
