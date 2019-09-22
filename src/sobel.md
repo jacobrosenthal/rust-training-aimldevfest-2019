@@ -47,9 +47,7 @@ fn main() {
 For now, let's just write the input to the output, passthrough, using the image create we looked at earlier.
 
 ```rust,ignore
-use image::Pixel; // trait for '.channels()'
-
-...
+use image;
 
 let options = options().expect("Failed to parse command options!");
 
@@ -63,30 +61,6 @@ input_image.save(&options.output_path)
 In order to apply our Sobel operator from above, we're going to need an image in grayscale, with one value per pixel. We also eventually need to the values to be floating-point, but first let's convert to grayscale. Converting an RGB image to grayscale requires specific weights per component, but luckily the image create already implements this for us. We just need to figure out how to use it. Let's take a look at the docs again.
 
 ![image::load docs](./images/image-load-doc.png)
-
-### Quick look at custom error types and Result aliases
-
-The `load` function returns an `ImageResult`. This is a custom Result enum in the image crate, which is just a shortcut for `Result<DynamicImage, ImageError>` where `ImageError` is another enum in the crate with all the possible errors.
-
-This pattern is pretty typical for crates, both to encapsulate their possible errors in one enum and to create a type alias for Result to simplify declarations. If you click on `ImageError` in the docs, you can see the detailed definition of the possible errors.
-
-![image::ImageError docs](./images/image-err.png)
-
-If you want to handle errors in specific ways, you can use a match statement. You can even ignore some errors if you want and just panic, usually only if you're writing an app, not a library. If you're writing a library, you typically want to encapsulate errors and pass them back to the caller for handling.
-
-```rust,ignore
-# extern crate image; // once again, limitation of Rust playground
-
-fn main() {
-    let image = match image::open("filename.png") {
-        Err(image::ImageError::UnsupportedError(s)) =>
-            panic!("Try a different format: {}", s),
-        Err(_) =>
-            panic!("Failed to load image file!"),
-        Ok(img) => img
-    };
-}
-```
 
 ### to_luma() method
 From looking at the [docs](https://docs.rs/image/0.22.1/image/enum.DynamicImage.html#method.to_luma) on `image::open` we now know that it returns a `DynamicImage` type. If we peek at the `DynamicImage` docs we'll find a function called `to_luma()`, which is exactly what we want. Notice it returns a different type, `GrayImage`.
@@ -208,6 +182,8 @@ This might seem over-complicated. However, by abstracting away the underlying st
 For our case, we just have a GrayImage with pixels of type `Luma<u8>` that implement the `Pixel` trait. So we should be able to fetch a pixel pretty easily. Here's a go:
 
 ```rust,ignore
+use image::Pixel; // trait for '.channels()'
+
 let input_image = image::open(&options.input_path)
     .expect("Failed to open input image file");
 
@@ -224,7 +200,7 @@ Generally, well-written Rust crates provide comprehensive types like this to cov
 Now that we can grab pixels, let's write a function that takes the pixel values and calls our convolution function. First we'll start with this signature, and copying the input. We need a place to store the resulting convolved pixel values, and we want an image of the same dimensions and data types. `clone()` is an easy way to get that. Notice that `result` is declared as `mut` since we will be modifying its contents.
 
 ```rust,ignore
-use image::GrayImage;
+use image::{GrayImage, Pixel};
 
 fn sobel_filter(input: &GrayImage) -> GrayImage {
     let mut result = input.clone();
@@ -236,7 +212,7 @@ fn sobel_filter(input: &GrayImage) -> GrayImage {
 To start with, let's just create the block of pixels to feed the convolution for each center pixel.
 
 ```rust,ignore
-use image::GrayImage;
+use image::{GrayImage, Pixel};
 
 fn sobel_filter(input: &GrayImage) -> GrayImage {
     let mut result = input.clone();
@@ -299,14 +275,16 @@ As the [Wikipedia page on convolution kernels](https://en.wikipedia.org/wiki/Ker
 If we crop the output image, we can easily adapt our code. The ImageBuffer struct implements the GenericImage trait which has a function called `sub_image` that gives us a view into rectangular section of an image. With a `SubImage` we can call `to_image()` to get a cropped `ImageBuffer` back out.
 
 ```rust,ignore
-use image::{GenericImage, GrayImage};
+use image::{GenericImage, GrayImage, Pixel};
 
 fn sobel_filter(input: &GrayImage) -> GrayImage {
     let mut result = input
         .sub_image(1, 1, input.width() - 2, input.height() - 2)
         .to_image();
 
+    //start convolve in 1 pixel
     for x in 1..(input.width() - 1) {
+        //start convolve in 1 pixel
         for y in 1..(input.height() - 1) {
             let pixels = [
                 [
@@ -343,7 +321,9 @@ fn sobel_filter(input: &GrayImage) -> GrayImage {
         .sub_image(1, 1, input.width() - 2, input.height() - 2)
         .to_image();
 
+    //start convolve in 1 pixel
     for x in 1..(input.width() - 1) {
+        //start convolve in 1 pixel
         for y in 1..(input.height() - 1) {
             let pixels = [
                 [
@@ -384,7 +364,9 @@ fn sobel_filter(input: &GrayImage) -> GrayImage {
         .sub_image(1, 1, input.width() - 2, input.height() - 2)
         .to_image();
 
+    //start convolve in 1 pixel
     for x in 1..(input.width() - 1) {
+        //start convolve in 1 pixel
         for y in 1..input.height() - 1 {
             let pixels = [
                 [
@@ -404,6 +386,7 @@ fn sobel_filter(input: &GrayImage) -> GrayImage {
                 ],
             ];
 
+            // normalize divisor of 8.0 for sobel
             let gradient_x = convolve(&SOBEL_KERNEL_X, &pixels) / 8.0;
             let gradient_y = convolve(&SOBEL_KERNEL_Y, &pixels) / 8.0;
             let magnitude = (gradient_x.powi(2) + gradient_y.powi(2)).sqrt();
