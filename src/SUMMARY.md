@@ -3,6 +3,8 @@
 [Preface](./preface.md)
 
 - [Installation (Windows)](./installation_win.md)
+- [Installation (Mac)](./installation_mac.md)
+- [Installation (Linux)](./installation_linux.md)
 - [Anatomy](./anatomy.md)
 - [Data types](./data_types.md)
 - [Option and Result](./error_handling.md)
