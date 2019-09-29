@@ -92,9 +92,9 @@ println!("{} {}", options.input_path, options.output_path);
 ```
 
 ```rust,ignore,no_run
-if let options = match options() {
-    Ok(options) => options
-    Err(error) => panic!(error),
+let options = match options() {
+    Some(val) => val,
+    None => panic!("Please enter an image file as the first option to this program"),
 };
 
 println!("{} {}", options.input_path, options.output_path);

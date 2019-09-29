@@ -31,11 +31,11 @@ mod tests {
 
     #[test]
     fn test_convolution_identity() {
-		let pixels: [[f32; 3]; 3] = 
-		    [1.0, 2.0, 3.0],
-		    [4.0, 5.0, 6.0],
-		    [7.0, 8.0, 9.0]
-		];
+        let pixels: [[f32; 3]; 3] = [
+            [1.0, 2.0, 3.0],
+            [4.0, 5.0, 6.0],
+            [7.0, 8.0, 9.0]
+        ];
         assert_eq!(convolve(&IDENTITY, &pixels), 5.0);
     }
 }
@@ -46,7 +46,7 @@ Now lets stub out our convolve function. Notice that both the kernel and pixels 
 
 ```rust, ignore
 fn convolve(kernel: &[[f32; 3]; 3], pixels: &[[f32; 3]; 3]) -> f32 {
-    5
+    5.0
 }
 ```
 Run the tests with `cargo test` and we should see passing tests.
