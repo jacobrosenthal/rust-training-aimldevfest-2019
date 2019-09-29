@@ -1,0 +1,362 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Borrowing, cloning, and scopes - rust-training-aug19</title>
+        
+
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        
+
+        
+    </head>
+    <body class="light">
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "";
+            var default_theme = "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            document.body.className = theme;
+            document.querySelector('html').className = theme + ' js';
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="affix"><a href="preface.html">Preface</a></li><li><a href="installation_win.html"><strong aria-hidden="true">1.</strong> Installation (Windows)</a></li><li><a href="installation_mac.html"><strong aria-hidden="true">2.</strong> Installation (Mac)</a></li><li><a href="installation_linux.html"><strong aria-hidden="true">3.</strong> Installation (Linux)</a></li><li><a href="anatomy.html"><strong aria-hidden="true">4.</strong> Anatomy</a></li><li><a href="data_types.html"><strong aria-hidden="true">5.</strong> Data types</a></li><li><a href="error_handling.html"><strong aria-hidden="true">6.</strong> Option and Result</a></li><li><a href="external_dependencies.html"><strong aria-hidden="true">7.</strong> External dependencies</a></li><li><a href="borrowing.html" class="active"><strong aria-hidden="true">8.</strong> Borrowing, cloning, and scopes</a></li><li><a href="testing.html"><strong aria-hidden="true">9.</strong> Testing</a></li><li><a href="iterators.html"><strong aria-hidden="true">10.</strong> Iterators</a></li><li><a href="convolve.html"><strong aria-hidden="true">11.</strong> Convolve</a></li><li><a href="sobel.html"><strong aria-hidden="true">12.</strong> Sobel</a></li><li><a href="extra.html"><strong aria-hidden="true">13.</strong> Extra: Arguments libraries</a></li><li><a href="org.html"><strong aria-hidden="true">14.</strong> Extra: Code Organization &amp; Modules</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar" class="menu-bar">
+                    <div id="menu-bar-sticky-container">
+                        <div class="left-buttons">
+                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                                <i class="fa fa-paint-brush"></i>
+                            </button>
+                            <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                                <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            </ul>
+                            
+                            <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                                <i class="fa fa-search"></i>
+                            </button>
+                            
+                        </div>
+
+                        <h1 class="menu-title">rust-training-aug19</h1>
+
+                        <div class="right-buttons">
+                            <a href="print.html" title="Print this book" aria-label="Print this book">
+                                <i id="print-button" class="fa fa-print"></i>
+                            </a>
+                            
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1><a class="header" href="#borrowing" id="borrowing">Borrowing</a></h1>
+<p>The borrow checker is probably Rust's most distinctive feature. To enable zero cost abstractions, Rust does not have a garbage collector. However, Rust also doesn't rely on explicit calls to <code>free()</code> like C. Instead Rust enforces &quot;ownership&quot; for all memory objects. The rules of the ownership system are pretty simple:</p>
+<ol>
+<li>
+<p>There is only ever one owner of a memory object at a time (struct, enum, primitive, etc)</p>
+</li>
+<li>
+<p>Immutable (read-only) ownership can be borrowed multiple places simultaneously</p>
+</li>
+<li>
+<p>Mutable (writable) ownership can only be borrowed once at a time and exclusively</p>
+</li>
+<li>
+<p>An object must live at least as long as all of its borrows</p>
+</li>
+</ol>
+<h2><a class="header" href="#rule-1-single-owner" id="rule-1-single-owner">Rule #1: single owner</a></h2>
+<pre><pre class="playpen"><code class="language-rust editable ignore mdbook-runnable">fn eat(s: String) {
+    println!(&quot;Eating {}&quot;, s);
+}
+
+fn main() {
+    let food = String::from(&quot;salad&quot;);
+    eat(food);
+    eat(food);
+}
+</code></pre></pre>
+<p>The compiler error tells us exactly what's wrong. The <code>fn eat(s: String)</code> signature says that <code>s</code> will be moved into the function upon calling. In other words, the function <code>eat</code> will take ownership of <code>s</code>. Unless we pass ownership back to the caller, ownership will remain there. This is called &quot;consuming&quot; a parameter.</p>
+<p>Here's how we can pass ownership back:</p>
+<pre><pre class="playpen"><code class="language-rust editable">fn eat(s: String) -&gt; String {
+    println!(&quot;Eating {}&quot;, s);
+    s
+}
+
+fn main() {
+    let food = String::from(&quot;salad&quot;);
+    let owned_food = eat(food);
+    eat(owned_food);
+}
+</code></pre></pre>
+<h2><a class="header" href="#rule-2-multiple-immutable-borrows" id="rule-2-multiple-immutable-borrows">Rule #2: multiple immutable borrows</a></h2>
+<p>If we change the function signature to borrow <code>s</code> instead, the problem goes away.</p>
+<pre><pre class="playpen"><code class="language-rust editable">fn stare_at(s: &amp;String) {
+    println!(&quot;Drooling over {}&quot;, s);
+}
+
+fn main() {
+    let food = String::from(&quot;donut&quot;);
+    let another_ref = &amp;food;
+    stare_at(&amp;food);
+    stare_at(&amp;food);
+    stare_at(another_ref);
+}
+</code></pre></pre>
+<h2><a class="header" href="#rule-3-mutable-borrows-are-exclusive" id="rule-3-mutable-borrows-are-exclusive">Rule #3: mutable borrows are exclusive</a></h2>
+<p>Only a mutable borrow for an object can exist at a time. This prevents many subtle errors where internal state is mutated while other does not expect it. In C++, modifying a container while iterating through it is a classic example.</p>
+<pre><pre class="playpen"><code class="language-rust editable ignore mdbook-runnable">fn main() {
+    let mut number: usize = 32;
+
+    let borrowed = &amp;number;
+    println!(&quot;Borrowed: {}&quot;, borrowed);
+
+    let mut_borrowed = &amp;mut number;
+    *mut_borrowed = 59;
+    println!(&quot;Mut borrowed: {}&quot;, mut_borrowed);
+    println!(&quot;Borrowed: {}&quot;, borrowed);
+}
+</code></pre></pre>
+<p>You'll notice the compiler gave us an error because we have an immutable borrow out there when we try to mutably borrow number. Any additional borrows, mutable or not, will make a mutable borrow invalid.</p>
+<p>When we have an exclusive mutable borrow, all is good.</p>
+<pre><pre class="playpen"><code class="language-rust editable">fn main() {
+    let mut number: usize = 32;
+
+    let mut_borrowed = &amp;mut number;
+    *mut_borrowed = 59;
+    println!(&quot;Mut borrowed: {}&quot;, mut_borrowed);
+}
+</code></pre></pre>
+<h2><a class="header" href="#rule-4-lifetime--borrow-time" id="rule-4-lifetime--borrow-time">Rule #4: lifetime &gt;= borrow time</a></h2>
+<p>In the example below, we borrow a temporary value inside the if statement branches. The temporary value does not last beyond the if statement branch, so the compiler tells us that our borrow is invalid. We can't borrow an object that doesn't exist.</p>
+<pre><pre class="playpen"><code class="language-rust editable ignore mdbook-runnable">fn main() {
+    let borrowed = if 1 + 1 == 2 {
+        let msg = &quot;The world is sane.&quot;;
+        &amp;msg
+    } else {
+        let msg = &quot;The world is insane!&quot;;
+        &amp;msg
+    };
+}
+</code></pre></pre>
+<h2><a class="header" href="#the-learning-curve" id="the-learning-curve">The learning curve</a></h2>
+<p>Many new Rustaceans report that the fighting the borrow checker is the hardest part of learning Rust, and kind of like hitting a wall. Programmers coming from C/C++ tend to have a hard time because they know exactly what they want to do, but the Rust compiler &quot;won't let them do it&quot;.</p>
+<p>Over time, the borrowing rules and working with the borrow checker become second nature. In fact, the borrow checker enforces rules that well-written C++ code should abide by anyway. Working with the borrow checker is kind of like pair programming with a memory ownership expert.</p>
+<p>The borrowing rules prevent all kinds of common C++ memory and security errors. For example, you can't create a dangling borrow, the compiler won't let you. In C/C++, you can quite easily create a dangling pointer!</p>
+<h2><a class="header" href="#cloning" id="cloning">Cloning</a></h2>
+<p>While you are learning Rust, you will face another temptation: clone everything! The <code>Clone</code> trait in Rust provides the method <code>clone()</code> which creates a copy of any objects that implements <code>Clone</code>. When something is cloned, the borrows on the original do not apply to the new copy.</p>
+<pre><pre class="playpen"><code class="language-rust editable">fn main() {
+    let mut number: usize = 32;
+
+    let cloned = number.clone();
+    println!(&quot;Cloned: {}&quot;, cloned);
+
+    let mut_borrowed = &amp;mut number;
+    *mut_borrowed = 59;
+    println!(&quot;Mut borrowed: {}&quot;, mut_borrowed);
+    println!(&quot;Cloned: {}&quot;, cloned);
+}
+</code></pre></pre>
+<h2><a class="header" href="#lifetimes-and-scopes" id="lifetimes-and-scopes">Lifetimes and scopes</a></h2>
+<p>One last thing to note about lifetimes is that they are tied to scopes. So a borrow must exist in a scope at or below the level of the ownership.</p>
+<pre><pre class="playpen"><code class="language-rust editable ignore mdbook-runnable">fn main() {
+    let mut number: usize = 32;
+    {
+        let borrowed = &amp;number; // works!
+        println!(&quot;It works: {}&quot;, borrowed);
+    }
+
+    {
+        let number2: usize = 64;
+    }
+    let borrowed2 = &amp;number2; // fails!
+}
+</code></pre></pre>
+<p>Also, Rust allows a scope to return a value. This is useful for temporarily borrowing a value in a limited scope and computing some value without creating a whole separate function for it.</p>
+<pre><pre class="playpen"><code class="language-rust editable">fn main() {
+    let number: usize = 32;
+    let new_number = {
+        let borrowed = &amp;number;
+        borrowed + 16
+    };
+    println!(&quot;{}&quot;, new_number);
+}
+</code></pre></pre>
+<p>Prior to Rust 2018 edition, it used to be common to use scopes to explicitly end borrows. The below code shows how we can use an extra scope (curly braces) to end a borrow early to allow a mutable borrow. With Rust 2018, the compiler is actually smart enough to detect this on its own, so we don't worry about it much unless you have a specific case the compiler can't figure out.</p>
+<pre><pre class="playpen"><code class="language-rust editable">fn main() {
+    let mut number: usize = 32;
+
+    {
+        let borrowed = &amp;number;
+        println!(&quot;Borrowed: {}&quot;, borrowed);
+    } // borrow ends here
+
+    // no living borrows, so &amp;mut is ok!
+    let mut_borrowed = &amp;mut number;
+    *mut_borrowed = 59;
+    println!(&quot;Mut borrowed: {}&quot;, mut_borrowed);
+}
+</code></pre></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+                            <a rel="prev" href="external_dependencies.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+
+                        
+                            <a rel="next" href="testing.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+                    <a href="external_dependencies.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+                    <a href="testing.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                
+            </nav>
+
+        </div>
+
+        
+
+        
+
+        
+        <script src="ace.js" type="text/javascript" charset="utf-8"></script>
+        <script src="editor.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mode-rust.js" type="text/javascript" charset="utf-8"></script>
+        <script src="theme-dawn.js" type="text/javascript" charset="utf-8"></script>
+        <script src="theme-tomorrow_night.js" type="text/javascript" charset="utf-8"></script>
+        
+
+        
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        
+
+        
+
+    </body>
+</html>
