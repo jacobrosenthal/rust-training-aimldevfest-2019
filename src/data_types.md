@@ -8,16 +8,39 @@ The top of the [Rust standard library page](https://doc.rust-lang.org/std/) has 
 
 > While you totally can thrash around on stack overflow, and we all do, there really is an authoritative source that you should check first.
 
-From that example we have our String constructor:
+From that example we have our String constructor.
 
 ```rust,no_run
 fn main() {
     let input_path = String::from("valve.png");
-    println!("Hello, world!");
+    println!("{:?}", input_path);
 }
 ```
 
-First, note we don’t need to import anything (we call it `use`) to use this type. A portion of the standard library is in our namespace automatically, which we call the [prelude](https://doc.rust-lang.org/std/prelude/index.html). Basically Rust puts `use std::prelude::v1::*;` at the top of your file and you get access to those members. By no means is everything in there, but a lot is, which is what kept you from explicitly writing `use std::string::String` at the top of your file in this case.
+First, note we don’t need to import anything (we call it `use`) to use this `String` type. A portion of the standard library is in our namespace automatically, which we call the [prelude](https://doc.rust-lang.org/std/prelude/index.html). Basically Rust puts `use std::prelude::v1::*;` at the top of your file and you get access to those members. By no means is everything in there, but a lot is, which is what kept you from explicitly writing `use std::string::String` at the top of your file in this case. The `println!` macro came from there as well. You don't have to for this tutorial, but if you wanted to install a cargo tool called [cargo-expand](https://github.com/dtolnay/cargo-expand) you could see the end result of your code with all macros and preludes included but before it has been optimized to machine code.
+
+```bash
+$ cargo install cargo-expand
+..
+$ cargo expand
+#![feature(prelude_import)]
+#[prelude_import]
+use std::prelude::rust_2018::*;
+#[macro_use]
+extern crate std;
+fn main() {
+    let input_path = String::from("valve.png");
+    {
+        ::std::io::_print(::core::fmt::Arguments::new_v1(
+            &["", "\n"],
+            &match (&input_path,) {
+                (arg0,) => [::core::fmt::ArgumentV1::new(arg0, ::core::fmt::Debug::fmt)],
+            },
+        ));
+    };
+}
+$
+```
 
 Also notice we didn't have to explicitly type our variable. What Rust *can* figure it out, *it will* and so its entirely idiomatic to omit type annotations. However if you or the compiler are having trouble or getting odd type errors, start annotating some of your types like to see if you can give the compiler a hand. Its also a great way to figure out what type you actually have in case you're not sure, let the compiler (or linter) tell you.
 
@@ -68,8 +91,7 @@ fn main() {
 
 Notice we access our struct members with dot notation, and there is no default new constructor or overloading in Rust. Though in practice, for functions where it makes sense many developers will offer and occasionally make their struct private to require the usage of a new or other constructor. So note, `String::new()` totally exists and would have made you an empty string.
 
-
-Lets start modularizing our main by putting our options creation in a function. Function syntax is just like we see in the main function, but can return an expression from a function by leaving off the semicolon and annotating the return type:
+Lets start modularizing our main by putting our options creation in a function. Function syntax is just like we see in the main function, but can return an expression from a function by leaving off the semicolon and annotating the return type.
 
 ```rust,editable
 struct Opt {
@@ -92,7 +114,7 @@ fn main() {
 }
 ```
 
-We use semicolons to end expressions. We prefer to leave off semicolons in order to implicitly return the expression saving us the temporary variable like so:
+We use semicolons to end expressions. We prefer to leave off semicolons in order to implicitly return the expression saving us the temporary variable like so.
 
 ```rust,ignore,no_run
 fn options() -> Opt {
