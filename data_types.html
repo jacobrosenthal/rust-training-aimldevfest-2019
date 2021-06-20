@@ -1,9 +1,12 @@
 <!DOCTYPE HTML>
-<html lang="en" class="sidebar-visible no-js">
+<html lang="en" class="sidebar-visible no-js light">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
         <title>Data types - rust-training-aug19</title>
+                
+
+        <!-- Custom HTML head -->
         
 
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
@@ -11,17 +14,17 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff" />
 
-        <link rel="shortcut icon" href="favicon.png">
-        <link rel="stylesheet" href="css/variables.css">
+                <link rel="icon" href="favicon.svg">
+                        <link rel="shortcut icon" href="favicon.png">
+                <link rel="stylesheet" href="css/variables.css">
         <link rel="stylesheet" href="css/general.css">
         <link rel="stylesheet" href="css/chrome.css">
-        <link rel="stylesheet" href="css/print.css" media="print">
-
+                <link rel="stylesheet" href="css/print.css" media="print">
+        
         <!-- Fonts -->
         <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
-        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
-        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
-
+                <link rel="stylesheet" href="fonts/fonts.css">
+        
         <!-- Highlight.js Stylesheets -->
         <link rel="stylesheet" href="highlight.css">
         <link rel="stylesheet" href="tomorrow-night.css">
@@ -29,14 +32,12 @@
 
         <!-- Custom theme stylesheets -->
         
-
-        
-    </head>
-    <body class="light">
+            </head>
+    <body>
         <!-- Provide site root to javascript -->
         <script type="text/javascript">
             var path_to_root = "";
-            var default_theme = "light";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
         </script>
 
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
@@ -60,8 +61,11 @@
             var theme;
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
-            document.body.className = theme;
-            document.querySelector('html').className = theme + ' js';
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
         </script>
 
         <!-- Hide / unhide sidebar before it is displayed -->
@@ -78,8 +82,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="affix"><a href="preface.html">Preface</a></li><li><a href="installation_win.html"><strong aria-hidden="true">1.</strong> Installation (Windows)</a></li><li><a href="installation_mac.html"><strong aria-hidden="true">2.</strong> Installation (Mac)</a></li><li><a href="installation_linux.html"><strong aria-hidden="true">3.</strong> Installation (Linux)</a></li><li><a href="anatomy.html"><strong aria-hidden="true">4.</strong> Anatomy</a></li><li><a href="data_types.html" class="active"><strong aria-hidden="true">5.</strong> Data types</a></li><li><a href="error_handling.html"><strong aria-hidden="true">6.</strong> Option and Result</a></li><li><a href="external_dependencies.html"><strong aria-hidden="true">7.</strong> External dependencies</a></li><li><a href="borrowing.html"><strong aria-hidden="true">8.</strong> Borrowing, cloning, and scopes</a></li><li><a href="testing.html"><strong aria-hidden="true">9.</strong> Testing</a></li><li><a href="iterators.html"><strong aria-hidden="true">10.</strong> Iterators</a></li><li><a href="convolve.html"><strong aria-hidden="true">11.</strong> Convolve</a></li><li><a href="sobel.html"><strong aria-hidden="true">12.</strong> Sobel</a></li><li><a href="extra.html"><strong aria-hidden="true">13.</strong> Extra: Arguments libraries</a></li><li><a href="org.html"><strong aria-hidden="true">14.</strong> Extra: Code Organization &amp; Modules</a></li></ol>
-            </div>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="preface.html">Preface</a></li><li class="chapter-item expanded "><a href="installation_win.html"><strong aria-hidden="true">1.</strong> Installation (Windows)</a></li><li class="chapter-item expanded "><a href="installation_mac.html"><strong aria-hidden="true">2.</strong> Installation (Mac)</a></li><li class="chapter-item expanded "><a href="installation_linux.html"><strong aria-hidden="true">3.</strong> Installation (Linux)</a></li><li class="chapter-item expanded "><a href="anatomy.html"><strong aria-hidden="true">4.</strong> Anatomy</a></li><li class="chapter-item expanded "><a href="data_types.html" class="active"><strong aria-hidden="true">5.</strong> Data types</a></li><li class="chapter-item expanded "><a href="error_handling.html"><strong aria-hidden="true">6.</strong> Option and Result</a></li><li class="chapter-item expanded "><a href="external_dependencies.html"><strong aria-hidden="true">7.</strong> External dependencies</a></li><li class="chapter-item expanded "><a href="borrowing.html"><strong aria-hidden="true">8.</strong> Borrowing, cloning, and scopes</a></li><li class="chapter-item expanded "><a href="testing.html"><strong aria-hidden="true">9.</strong> Testing</a></li><li class="chapter-item expanded "><a href="iterators.html"><strong aria-hidden="true">10.</strong> Iterators</a></li><li class="chapter-item expanded "><a href="convolve.html"><strong aria-hidden="true">11.</strong> Convolve</a></li><li class="chapter-item expanded "><a href="sobel.html"><strong aria-hidden="true">12.</strong> Sobel</a></li><li class="chapter-item expanded "><a href="extra.html"><strong aria-hidden="true">13.</strong> Extra: Arguments libraries</a></li><li class="chapter-item expanded "><a href="org.html"><strong aria-hidden="true">14.</strong> Extra: Code Organization &amp; Modules</a></li></ol>            </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
@@ -87,44 +90,40 @@
 
             <div class="page">
                 
-                <div id="menu-bar" class="menu-bar">
-                    <div id="menu-bar-sticky-container">
-                        <div class="left-buttons">
-                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
-                                <i class="fa fa-bars"></i>
-                            </button>
-                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
-                                <i class="fa fa-paint-brush"></i>
-                            </button>
-                            <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
-                                <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
-                                <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
-                                <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
-                                <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
-                                <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
-                            </ul>
-                            
-                            <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
-                                <i class="fa fa-search"></i>
-                            </button>
-                            
-                        </div>
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                                                <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                                            </div>
 
-                        <h1 class="menu-title">rust-training-aug19</h1>
+                    <h1 class="menu-title">rust-training-aug19</h1>
 
-                        <div class="right-buttons">
-                            <a href="print.html" title="Print this book" aria-label="Print this book">
-                                <i id="print-button" class="fa fa-print"></i>
-                            </a>
-                            
-                        </div>
+                    <div class="right-buttons">
+                                                <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                                                                        
                     </div>
                 </div>
 
-                
-                <div id="search-wrapper" class="hidden">
+                                <div id="search-wrapper" class="hidden">
                     <form id="searchbar-outer" class="searchbar-outer">
-                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
                     </form>
                     <div id="searchresults-outer" class="searchresults-outer hidden">
                         <div id="searchresults-header" class="searchresults-header"></div>
@@ -133,7 +132,6 @@
                     </div>
                 </div>
                 
-
                 <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
                 <script type="text/javascript">
                     document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
@@ -145,29 +143,50 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1><a class="header" href="#data-types" id="data-types">Data types</a></h1>
+                        <h1 id="data-types"><a class="header" href="#data-types">Data types</a></h1>
 <p>We’ve got all the datatypes you would expect but you might want to glance through the Rust book <a href="https://doc.rust-lang.org/book/ch03-01-variables-and-mutability.html">chapter on variables, functions, and control flow</a> just to update your mental models to Rust notation</p>
 <p>We have signed and unsigned scalar types like u32 and i32 and we've got Strings. Variables are instantiated with let syntax, and notably are immutable by default.</p>
 <p>The top of the <a href="https://doc.rust-lang.org/std/">Rust standard library page</a> has a search box. Entering String there we find <a href="https://doc.rust-lang.org/std/string/struct.String.html#method.from">std::string::String</a> with a bunch of example usage right there for us. You can edit those examples and run them right in your browser to confirm your understanding and even click the [src] link in the upper right corner and be taken straight to the Rust implementation.</p>
 <blockquote>
 <p>While you totally can thrash around on stack overflow, and we all do, there really is an authoritative source that you should check first.</p>
 </blockquote>
-<p>From that example we have our String constructor:</p>
-<pre><pre class="playpen"><code class="language-rust no_run">fn main() {
+<p>From that example we have our String constructor.</p>
+<pre><pre class="playground"><code class="language-rust no_run">fn main() {
     let input_path = String::from(&quot;valve.png&quot;);
-    println!(&quot;Hello, world!&quot;);
+    println!(&quot;{:?}&quot;, input_path);
 }
 </code></pre></pre>
-<p>First, note we don’t need to import anything (we call it <code>use</code>) to use this type. A portion of the standard library is in our namespace automatically, which we call the <a href="https://doc.rust-lang.org/std/prelude/index.html">prelude</a>. Basically Rust puts <code>use std::prelude::v1::*;</code> at the top of your file and you get access to those members. By no means is everything in there, but a lot is, which is what kept you from explicitly writing <code>use std::string::String</code> at the top of your file in this case.</p>
+<p>First, note we don’t need to import anything (we call it <code>use</code>) to use this <code>String</code> type. A portion of the standard library is in our namespace automatically, which we call the <a href="https://doc.rust-lang.org/std/prelude/index.html">prelude</a>. Basically Rust puts <code>use std::prelude::v1::*;</code> at the top of your file and you get access to those members. By no means is everything in there, but a lot is, which is what kept you from explicitly writing <code>use std::string::String</code> at the top of your file in this case. The <code>println!</code> macro came from there as well. You don't have to for this tutorial, but if you wanted to install a cargo tool called <a href="https://github.com/dtolnay/cargo-expand">cargo-expand</a> you could see the end result of your code with all macros and preludes included but before it has been optimized to machine code.</p>
+<pre><code class="language-bash">$ cargo install cargo-expand
+..
+$ cargo expand
+#![feature(prelude_import)]
+#[prelude_import]
+use std::prelude::rust_2018::*;
+#[macro_use]
+extern crate std;
+fn main() {
+    let input_path = String::from(&quot;valve.png&quot;);
+    {
+        ::std::io::_print(::core::fmt::Arguments::new_v1(
+            &amp;[&quot;&quot;, &quot;\n&quot;],
+            &amp;match (&amp;input_path,) {
+                (arg0,) =&gt; [::core::fmt::ArgumentV1::new(arg0, ::core::fmt::Debug::fmt)],
+            },
+        ));
+    };
+}
+$
+</code></pre>
 <p>Also notice we didn't have to explicitly type our variable. What Rust <em>can</em> figure it out, <em>it will</em> and so its entirely idiomatic to omit type annotations. However if you or the compiler are having trouble or getting odd type errors, start annotating some of your types like to see if you can give the compiler a hand. Its also a great way to figure out what type you actually have in case you're not sure, let the compiler (or linter) tell you.</p>
-<pre><pre class="playpen"><code class="language-rust editable">fn main() {
+<pre><pre class="playground"><code class="language-rust editable">fn main() {
     let input_path = String::from(&quot;valve.png&quot;);
     let output_path:String = String::from(&quot;valve_sobel.png&quot;);
     println!(&quot;Hello, world!&quot;);
 }
 </code></pre></pre>
 <p>So now how to print those variables to console.  In Rust our printf <code>%</code> formatting character is <code>{}</code>. Following the <code>println!()</code> documentation down the rabbit hole will send us to the <a href="https://doc.rust-lang.org/std/fmt/index.html">formatters section</a> page and we find all the formatters which you would expect like hex <code>{:x}</code>, binary <code>{:b}</code>, etc. We're going to focus on the 'empty' Display formatter <code>{}</code> for now which is a kind of a pretty printer in Rust. As long as whomever wrote our type implemented the Display pretty printer trait this will work great (cue ominous music).</p>
-<pre><pre class="playpen"><code class="language-rust editable">fn main() {
+<pre><pre class="playground"><code class="language-rust editable">fn main() {
     let input_path = String::from(&quot;valve.png&quot;);
     let output_path = String::from(&quot;valve_sobel.png&quot;);
     println!(&quot;{} {}&quot;, input_path, output_path);
@@ -177,7 +196,7 @@
 <pre><code class="language-text">valve.png valve_sobel.png
 </code></pre>
 <p>Objects, we call them structs, should be very familiar. You can define a new struct in any scope you like and we can name and type their members.</p>
-<pre><pre class="playpen"><code class="language-rust editable">struct Opt {
+<pre><pre class="playground"><code class="language-rust editable">struct Opt {
     input_path: String,
     output_path: String,
 }
@@ -192,10 +211,10 @@ fn main() {
     println!(&quot;{} {}&quot;, options.input_path, options.output_path);
 }
 </code></pre></pre>
-<p><strong>EXERCISE: Get this all implemented in your training project</strong></p>
+<p><strong>EXERCISE: Get this all implemented in your training project.</strong></p>
 <p>Notice we access our struct members with dot notation, and there is no default new constructor or overloading in Rust. Though in practice, for functions where it makes sense many developers will offer and occasionally make their struct private to require the usage of a new or other constructor. So note, <code>String::new()</code> totally exists and would have made you an empty string.</p>
-<p>Lets start modularizing our main by putting our options creation in a function. Function syntax is just like we see in the main function, but can return an expression from a function by leaving off the semicolon and annotating the return type:</p>
-<pre><pre class="playpen"><code class="language-rust editable">struct Opt {
+<p>Lets start modularizing our main by putting our options creation in a function. Function syntax is just like we see in the main function, but can return an expression from a function by leaving off the semicolon and annotating the return type.</p>
+<pre><pre class="playground"><code class="language-rust editable">struct Opt {
     input_path: String,
     output_path: String,
 }
@@ -214,7 +233,7 @@ fn main() {
     println!(&quot;{} {}&quot;, options.input_path, options.output_path);
 }
 </code></pre></pre>
-<p>We use semicolons to end expressions. We prefer to leave off semicolons in order to implicitly return the expression saving us the temporary variable like so:</p>
+<p>We use semicolons to end expressions. We prefer to leave off semicolons in order to implicitly return the expression saving us the temporary variable like so.</p>
 <pre><code class="language-rust ignore no_run">fn options() -&gt; Opt {
 
     Opt {
@@ -230,65 +249,54 @@ fn main() {
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                        
-                            <a rel="prev" href="anatomy.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                                    <a rel="prev" href="anatomy.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
                         
-
-                        
-                            <a rel="next" href="error_handling.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                                    <a rel="next" href="error_handling.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         
-
                         <div style="clear: both"></div>
                     </nav>
                 </div>
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                
-                    <a href="anatomy.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                    <a rel="prev" href="anatomy.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
                 
-
-                
-                    <a href="error_handling.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                    <a rel="next" href="error_handling.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
-                
-            </nav>
+                            </nav>
 
         </div>
 
         
-
         
-
         
-        <script src="ace.js" type="text/javascript" charset="utf-8"></script>
+                <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        
+                <script src="ace.js" type="text/javascript" charset="utf-8"></script>
         <script src="editor.js" type="text/javascript" charset="utf-8"></script>
         <script src="mode-rust.js" type="text/javascript" charset="utf-8"></script>
         <script src="theme-dawn.js" type="text/javascript" charset="utf-8"></script>
         <script src="theme-tomorrow_night.js" type="text/javascript" charset="utf-8"></script>
         
-
-        
-        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+                <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
         
-
         <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
         <script src="book.js" type="text/javascript" charset="utf-8"></script>
 
         <!-- Custom JS scripts -->
         
-
         
-
     </body>
 </html>

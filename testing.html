@@ -1,9 +1,12 @@
 <!DOCTYPE HTML>
-<html lang="en" class="sidebar-visible no-js">
+<html lang="en" class="sidebar-visible no-js light">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
         <title>Testing - rust-training-aug19</title>
+                
+
+        <!-- Custom HTML head -->
         
 
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
@@ -11,17 +14,17 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff" />
 
-        <link rel="shortcut icon" href="favicon.png">
-        <link rel="stylesheet" href="css/variables.css">
+                <link rel="icon" href="favicon.svg">
+                        <link rel="shortcut icon" href="favicon.png">
+                <link rel="stylesheet" href="css/variables.css">
         <link rel="stylesheet" href="css/general.css">
         <link rel="stylesheet" href="css/chrome.css">
-        <link rel="stylesheet" href="css/print.css" media="print">
-
+                <link rel="stylesheet" href="css/print.css" media="print">
+        
         <!-- Fonts -->
         <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
-        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
-        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
-
+                <link rel="stylesheet" href="fonts/fonts.css">
+        
         <!-- Highlight.js Stylesheets -->
         <link rel="stylesheet" href="highlight.css">
         <link rel="stylesheet" href="tomorrow-night.css">
@@ -29,14 +32,12 @@
 
         <!-- Custom theme stylesheets -->
         
-
-        
-    </head>
-    <body class="light">
+            </head>
+    <body>
         <!-- Provide site root to javascript -->
         <script type="text/javascript">
             var path_to_root = "";
-            var default_theme = "light";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
         </script>
 
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
@@ -60,8 +61,11 @@
             var theme;
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
-            document.body.className = theme;
-            document.querySelector('html').className = theme + ' js';
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
         </script>
 
         <!-- Hide / unhide sidebar before it is displayed -->
@@ -78,8 +82,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="affix"><a href="preface.html">Preface</a></li><li><a href="installation_win.html"><strong aria-hidden="true">1.</strong> Installation (Windows)</a></li><li><a href="installation_mac.html"><strong aria-hidden="true">2.</strong> Installation (Mac)</a></li><li><a href="installation_linux.html"><strong aria-hidden="true">3.</strong> Installation (Linux)</a></li><li><a href="anatomy.html"><strong aria-hidden="true">4.</strong> Anatomy</a></li><li><a href="data_types.html"><strong aria-hidden="true">5.</strong> Data types</a></li><li><a href="error_handling.html"><strong aria-hidden="true">6.</strong> Option and Result</a></li><li><a href="external_dependencies.html"><strong aria-hidden="true">7.</strong> External dependencies</a></li><li><a href="borrowing.html"><strong aria-hidden="true">8.</strong> Borrowing, cloning, and scopes</a></li><li><a href="testing.html" class="active"><strong aria-hidden="true">9.</strong> Testing</a></li><li><a href="iterators.html"><strong aria-hidden="true">10.</strong> Iterators</a></li><li><a href="convolve.html"><strong aria-hidden="true">11.</strong> Convolve</a></li><li><a href="sobel.html"><strong aria-hidden="true">12.</strong> Sobel</a></li><li><a href="extra.html"><strong aria-hidden="true">13.</strong> Extra: Arguments libraries</a></li><li><a href="org.html"><strong aria-hidden="true">14.</strong> Extra: Code Organization &amp; Modules</a></li></ol>
-            </div>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="preface.html">Preface</a></li><li class="chapter-item expanded "><a href="installation_win.html"><strong aria-hidden="true">1.</strong> Installation (Windows)</a></li><li class="chapter-item expanded "><a href="installation_mac.html"><strong aria-hidden="true">2.</strong> Installation (Mac)</a></li><li class="chapter-item expanded "><a href="installation_linux.html"><strong aria-hidden="true">3.</strong> Installation (Linux)</a></li><li class="chapter-item expanded "><a href="anatomy.html"><strong aria-hidden="true">4.</strong> Anatomy</a></li><li class="chapter-item expanded "><a href="data_types.html"><strong aria-hidden="true">5.</strong> Data types</a></li><li class="chapter-item expanded "><a href="error_handling.html"><strong aria-hidden="true">6.</strong> Option and Result</a></li><li class="chapter-item expanded "><a href="external_dependencies.html"><strong aria-hidden="true">7.</strong> External dependencies</a></li><li class="chapter-item expanded "><a href="borrowing.html"><strong aria-hidden="true">8.</strong> Borrowing, cloning, and scopes</a></li><li class="chapter-item expanded "><a href="testing.html" class="active"><strong aria-hidden="true">9.</strong> Testing</a></li><li class="chapter-item expanded "><a href="iterators.html"><strong aria-hidden="true">10.</strong> Iterators</a></li><li class="chapter-item expanded "><a href="convolve.html"><strong aria-hidden="true">11.</strong> Convolve</a></li><li class="chapter-item expanded "><a href="sobel.html"><strong aria-hidden="true">12.</strong> Sobel</a></li><li class="chapter-item expanded "><a href="extra.html"><strong aria-hidden="true">13.</strong> Extra: Arguments libraries</a></li><li class="chapter-item expanded "><a href="org.html"><strong aria-hidden="true">14.</strong> Extra: Code Organization &amp; Modules</a></li></ol>            </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
@@ -87,44 +90,40 @@
 
             <div class="page">
                 
-                <div id="menu-bar" class="menu-bar">
-                    <div id="menu-bar-sticky-container">
-                        <div class="left-buttons">
-                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
-                                <i class="fa fa-bars"></i>
-                            </button>
-                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
-                                <i class="fa fa-paint-brush"></i>
-                            </button>
-                            <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
-                                <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
-                                <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
-                                <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
-                                <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
-                                <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
-                            </ul>
-                            
-                            <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
-                                <i class="fa fa-search"></i>
-                            </button>
-                            
-                        </div>
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                                                <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                                            </div>
 
-                        <h1 class="menu-title">rust-training-aug19</h1>
+                    <h1 class="menu-title">rust-training-aug19</h1>
 
-                        <div class="right-buttons">
-                            <a href="print.html" title="Print this book" aria-label="Print this book">
-                                <i id="print-button" class="fa fa-print"></i>
-                            </a>
-                            
-                        </div>
+                    <div class="right-buttons">
+                                                <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                                                                        
                     </div>
                 </div>
 
-                
-                <div id="search-wrapper" class="hidden">
+                                <div id="search-wrapper" class="hidden">
                     <form id="searchbar-outer" class="searchbar-outer">
-                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
                     </form>
                     <div id="searchresults-outer" class="searchresults-outer hidden">
                         <div id="searchresults-header" class="searchresults-header"></div>
@@ -133,7 +132,6 @@
                     </div>
                 </div>
                 
-
                 <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
                 <script type="text/javascript">
                     document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
@@ -145,22 +143,31 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1><a class="header" href="#testing" id="testing">Testing</a></h1>
+                        <h1 id="testing"><a class="header" href="#testing">Testing</a></h1>
 <p><a href="https://en.wikipedia.org/wiki/Kernel_(image_processing)">Convolving a kernel with an image</a> is an incredibly common operation in all kinds of image processing. With it we can implement all the machine learning greatest hits, which for images as you can see includes <a href="https://en.wikipedia.org/wiki/Kernel_(image_processing)#Details">edge detection sharpen, blur and more</a>. Convolution should remind you of Convolution Neural nets and might give you an idea how those work too.</p>
-<p>Did you notice the Identity Kernel on the page? That kernel returns back the result unchanged. That would be a helpful test. We can define the kernels multiple ways, but for now let's use a fixed size array of fixed size arrays. This preserves the row and column structure of the kernels. We'll use the const keyword to define these as constant, static data outside of any function. The compiler will not let us in any way mutate this data.</p>
-<pre><code class="language-rust ignore">
-const IDENTITY: [[f32; 3]; 3] = [
+<p>To convolve, we multiply each element in the data (lets say pixels) with the corresponding value in the kernel matrix and then add up all the results.
+<img src="./images/convolution.png" alt="convolution process" /></p>
+<p>Lets do a little test driven development in order to show off Rust's built in testing capability. So we need 2 sets of data, a kernel to convolve on our data, and some data (lets think of it as pixels). These kernels have been developed over the years in papers and are largely just avialable to copy. Did you notice the Identity Kernel on the page? That kernel, when convolved on data, simply returns back the original data unchanged. That would be an easy test to write.</p>
+<p>We can define the data in many structures including Vecs, Arrays, or a math library might offer a Matrix type of some kind. Looking at the identity kernel we need a 3x3 set of floats. For now let's use a fixed size array of fixed size arrays. This preserves the row and column structure of the kernels. We'll use the const keyword to define these as constant, static data outside of any function. The compiler will not let us in any way mutate this data.</p>
+<pre><code class="language-rust ignore">const IDENTITY: [[f32; 3]; 3] = [
     [0.0, 0.0, 0.0],
     [0.0, 1.0, 0.0],
     [0.0, 0.0, 0.0]
 ];
-
 </code></pre>
-<p>Lets just make up a fake set of pixels, 1.0 through 9.0. The convolve process for our test data and identity would start something like this</p>
-<p>That may sound complicated, but it boils down to this: multiply each pixel in the block (matrix A of pixel values) with the corresponding value in the kernel matrix, and then add up all the results.</p>
-<p><img src="./images/convolution.png" alt="convolution process" /></p>
-<p>And we can see that the result will be 5 when where all done.</p>
-<p>We all know if it compiles it ships. But let's write a quick sanity test for our convolution function too. Typically, tests are separated into a &quot;tests&quot; module, but kept inline with the code they verify. So, in our main file we can create a module, and mark it so that it is only compiled in the test configuration. Any function marked with <code>#[test]</code> will be run as a test.</p>
+<p>Now we need some test data to convolve with our identity. When we convolve we're looking at the value of interest, generally the center value, but we also take with it some amount of its nearby values in order to let those effect the value we care about. This is the value were 'convolving' around. Lets just make up a fake set of pixels, 1.0 through 9.0 where the value of interest is thus <code>5.0</code>.</p>
+<pre><code class="language-rust ignore">let pixels: [[f32; 3]; 3] = [
+    [1.0, 2.0, 3.0],
+    [4.0, 5.0, 6.0],
+    [7.0, 8.0, 9.0]
+];
+</code></pre>
+<p>We need a convolve function that takes the kernel we want to convolve around the data. We could jump in and try and write the whole thing but lets procrastinate a bit more. We need our function to have 2 arguments, the kernel and the pixel data, and we probably don't want to consume them as we might want to use them in another function so lets take borrows of those as our arguments. Further if we run the convolve steps we previously discussed above by hand, you'd expect the identity, which doesnt change our value of interest, to just return the value in this case 5.0 so let's hardcode that.</p>
+<pre><code class="language-rust ignore">fn convolve(kernel: &amp;[[f32; 3]; 3], pixels: &amp;[[f32; 3]; 3]) -&gt; f32 {
+    5.0
+}
+</code></pre>
+<p>Now we can write a test to assert that running <code>convolve()</code> indeed does return 5.0.</p>
 <pre><code class="language-rust ignore">#[cfg(test)]
 mod tests {
     use super::*;
@@ -176,77 +183,61 @@ mod tests {
     }
 }
 </code></pre>
-<p>Now lets stub out our convolve function. Notice that both the kernel and pixels are borrowed, not moved, since the kernel will be re-used for all pixels. At least while starting out in Rust, prefer borrowing to moving unless you have a good reason. Lets hardcode our expected result of 5 for now.</p>
-<pre><code class="language-rust ignore">fn convolve(kernel: &amp;[[f32; 3]; 3], pixels: &amp;[[f32; 3]; 3]) -&gt; f32 {
-    5.0
-}
-</code></pre>
-<p>Run the tests with <code>cargo test</code> and we should see passing tests.</p>
-<p>Next up well learn how to iterate over these arrays and multiply them using iterators.</p>
+<p>We can run this test with <code>cargo test</code> and we should see passing tests!</p>
+<p>We'll come back to implmenting our convolve function for real in a second, but we'll need a few more tools in our toolbox so first we learn how to iterate over these arrays and multiply them using iterators.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                        
-                            <a rel="prev" href="borrowing.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                                    <a rel="prev" href="borrowing.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
                         
-
-                        
-                            <a rel="next" href="iterators.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                                    <a rel="next" href="iterators.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         
-
                         <div style="clear: both"></div>
                     </nav>
                 </div>
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                
-                    <a href="borrowing.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                    <a rel="prev" href="borrowing.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
                 
-
-                
-                    <a href="iterators.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                    <a rel="next" href="iterators.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
-                
-            </nav>
+                            </nav>
 
         </div>
 
         
-
         
-
         
-        <script src="ace.js" type="text/javascript" charset="utf-8"></script>
+                <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        
+                <script src="ace.js" type="text/javascript" charset="utf-8"></script>
         <script src="editor.js" type="text/javascript" charset="utf-8"></script>
         <script src="mode-rust.js" type="text/javascript" charset="utf-8"></script>
         <script src="theme-dawn.js" type="text/javascript" charset="utf-8"></script>
         <script src="theme-tomorrow_night.js" type="text/javascript" charset="utf-8"></script>
         
-
-        
-        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+                <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
         
-
         <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
         <script src="book.js" type="text/javascript" charset="utf-8"></script>
 
         <!-- Custom JS scripts -->
         
-
         
-
     </body>
 </html>

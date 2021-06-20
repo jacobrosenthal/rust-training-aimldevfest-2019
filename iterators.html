@@ -1,9 +1,12 @@
 <!DOCTYPE HTML>
-<html lang="en" class="sidebar-visible no-js">
+<html lang="en" class="sidebar-visible no-js light">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
         <title>Iterators - rust-training-aug19</title>
+                
+
+        <!-- Custom HTML head -->
         
 
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
@@ -11,17 +14,17 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff" />
 
-        <link rel="shortcut icon" href="favicon.png">
-        <link rel="stylesheet" href="css/variables.css">
+                <link rel="icon" href="favicon.svg">
+                        <link rel="shortcut icon" href="favicon.png">
+                <link rel="stylesheet" href="css/variables.css">
         <link rel="stylesheet" href="css/general.css">
         <link rel="stylesheet" href="css/chrome.css">
-        <link rel="stylesheet" href="css/print.css" media="print">
-
+                <link rel="stylesheet" href="css/print.css" media="print">
+        
         <!-- Fonts -->
         <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
-        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
-        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
-
+                <link rel="stylesheet" href="fonts/fonts.css">
+        
         <!-- Highlight.js Stylesheets -->
         <link rel="stylesheet" href="highlight.css">
         <link rel="stylesheet" href="tomorrow-night.css">
@@ -29,14 +32,12 @@
 
         <!-- Custom theme stylesheets -->
         
-
-        
-    </head>
-    <body class="light">
+            </head>
+    <body>
         <!-- Provide site root to javascript -->
         <script type="text/javascript">
             var path_to_root = "";
-            var default_theme = "light";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
         </script>
 
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
@@ -60,8 +61,11 @@
             var theme;
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
-            document.body.className = theme;
-            document.querySelector('html').className = theme + ' js';
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
         </script>
 
         <!-- Hide / unhide sidebar before it is displayed -->
@@ -78,8 +82,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="affix"><a href="preface.html">Preface</a></li><li><a href="installation_win.html"><strong aria-hidden="true">1.</strong> Installation (Windows)</a></li><li><a href="installation_mac.html"><strong aria-hidden="true">2.</strong> Installation (Mac)</a></li><li><a href="installation_linux.html"><strong aria-hidden="true">3.</strong> Installation (Linux)</a></li><li><a href="anatomy.html"><strong aria-hidden="true">4.</strong> Anatomy</a></li><li><a href="data_types.html"><strong aria-hidden="true">5.</strong> Data types</a></li><li><a href="error_handling.html"><strong aria-hidden="true">6.</strong> Option and Result</a></li><li><a href="external_dependencies.html"><strong aria-hidden="true">7.</strong> External dependencies</a></li><li><a href="borrowing.html"><strong aria-hidden="true">8.</strong> Borrowing, cloning, and scopes</a></li><li><a href="testing.html"><strong aria-hidden="true">9.</strong> Testing</a></li><li><a href="iterators.html" class="active"><strong aria-hidden="true">10.</strong> Iterators</a></li><li><a href="convolve.html"><strong aria-hidden="true">11.</strong> Convolve</a></li><li><a href="sobel.html"><strong aria-hidden="true">12.</strong> Sobel</a></li><li><a href="extra.html"><strong aria-hidden="true">13.</strong> Extra: Arguments libraries</a></li><li><a href="org.html"><strong aria-hidden="true">14.</strong> Extra: Code Organization &amp; Modules</a></li></ol>
-            </div>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="preface.html">Preface</a></li><li class="chapter-item expanded "><a href="installation_win.html"><strong aria-hidden="true">1.</strong> Installation (Windows)</a></li><li class="chapter-item expanded "><a href="installation_mac.html"><strong aria-hidden="true">2.</strong> Installation (Mac)</a></li><li class="chapter-item expanded "><a href="installation_linux.html"><strong aria-hidden="true">3.</strong> Installation (Linux)</a></li><li class="chapter-item expanded "><a href="anatomy.html"><strong aria-hidden="true">4.</strong> Anatomy</a></li><li class="chapter-item expanded "><a href="data_types.html"><strong aria-hidden="true">5.</strong> Data types</a></li><li class="chapter-item expanded "><a href="error_handling.html"><strong aria-hidden="true">6.</strong> Option and Result</a></li><li class="chapter-item expanded "><a href="external_dependencies.html"><strong aria-hidden="true">7.</strong> External dependencies</a></li><li class="chapter-item expanded "><a href="borrowing.html"><strong aria-hidden="true">8.</strong> Borrowing, cloning, and scopes</a></li><li class="chapter-item expanded "><a href="testing.html"><strong aria-hidden="true">9.</strong> Testing</a></li><li class="chapter-item expanded "><a href="iterators.html" class="active"><strong aria-hidden="true">10.</strong> Iterators</a></li><li class="chapter-item expanded "><a href="convolve.html"><strong aria-hidden="true">11.</strong> Convolve</a></li><li class="chapter-item expanded "><a href="sobel.html"><strong aria-hidden="true">12.</strong> Sobel</a></li><li class="chapter-item expanded "><a href="extra.html"><strong aria-hidden="true">13.</strong> Extra: Arguments libraries</a></li><li class="chapter-item expanded "><a href="org.html"><strong aria-hidden="true">14.</strong> Extra: Code Organization &amp; Modules</a></li></ol>            </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
@@ -87,44 +90,40 @@
 
             <div class="page">
                 
-                <div id="menu-bar" class="menu-bar">
-                    <div id="menu-bar-sticky-container">
-                        <div class="left-buttons">
-                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
-                                <i class="fa fa-bars"></i>
-                            </button>
-                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
-                                <i class="fa fa-paint-brush"></i>
-                            </button>
-                            <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
-                                <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
-                                <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
-                                <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
-                                <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
-                                <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
-                            </ul>
-                            
-                            <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
-                                <i class="fa fa-search"></i>
-                            </button>
-                            
-                        </div>
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                                                <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                                            </div>
 
-                        <h1 class="menu-title">rust-training-aug19</h1>
+                    <h1 class="menu-title">rust-training-aug19</h1>
 
-                        <div class="right-buttons">
-                            <a href="print.html" title="Print this book" aria-label="Print this book">
-                                <i id="print-button" class="fa fa-print"></i>
-                            </a>
-                            
-                        </div>
+                    <div class="right-buttons">
+                                                <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                                                                        
                     </div>
                 </div>
 
-                
-                <div id="search-wrapper" class="hidden">
+                                <div id="search-wrapper" class="hidden">
                     <form id="searchbar-outer" class="searchbar-outer">
-                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
                     </form>
                     <div id="searchresults-outer" class="searchresults-outer hidden">
                         <div id="searchresults-header" class="searchresults-header"></div>
@@ -133,7 +132,6 @@
                     </div>
                 </div>
                 
-
                 <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
                 <script type="text/javascript">
                     document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
@@ -145,153 +143,186 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1><a class="header" href="#iterators" id="iterators">Iterators</a></h1>
-<p>Iterators are one of the most powerful features in Rust! They are also a gateway drug to functional programming.</p>
-<p>A lot of collections like array have a <code>.iter()</code> method available so you can get the collection as an iterator to operate on each element one at at time.</p>
-<pre><pre class="playpen"><code class="language-rust editable">fn main() {
+                        <h1 id="iterators"><a class="header" href="#iterators">Iterators</a></h1>
+<p>Iterators are one of the most powerful features in Rust! They are also a gateway drug to the functional style programming. They tend to use less memory and optimize better because the compiler can see what we're trying to do and help optimize for us. This gain in speed and reduced memory usage is really important for big datasets or constrained devices where it might be literally impossible to have the entire collection in memory at the same time.</p>
+<p>Most collections like an array can be iterated which just means getting the collection one element at a time. This imperitive style use of an iterator should look very familiar to you. Well just print each value.</p>
+<pre><pre class="playground"><code class="language-rust editable">fn main() {
     let array = [3.0, 2.0, 1.0];
-    let iter = array.iter();
-    println!(&quot;{:?}&quot;, iter);
+
+    for i in array.iter() {
+        println!(&quot;{:?}&quot;, i);
+    }
 }
 </code></pre></pre>
-<p>This allows you to deal with values one at a time. This is really important for big datasets or small constrained devices where it might be literally impossible to have the entire collection in memory at the same time.</p>
-<p>Lets get the <code>sum()</code> of our array</p>
-<pre><pre class="playpen"><code class="language-rust editable">fn main() {
+<p>One of the benefits of using iterators is all the functions we get for free. These are generally called 'combinators' but thats just a fancy name for a function that we can run against our collection. The Rust standard library provides a <a href="https://doc.rust-lang.org/std/iter/trait.Iterator.html">large selection</a> of combinators for use with iterators from summing, to sorting to reversing data and much much more.</p>
+<p>Lets reverse our array with <code>rev()</code>.</p>
+<pre><pre class="playground"><code class="language-rust editable">fn main() {
     let array = [3.0, 2.0, 1.0];
-    let iter = array.iter();
-    let total: f32 = iter.sum();
-    println!(&quot;{:?}&quot;, total);
+    for i in array.iter().rev() {
+        println!(&quot;{:?}&quot;, i);
+    }
 }
 </code></pre></pre>
-<p>The Rust standard library provides a <a href="https://doc.rust-lang.org/std/iter/trait.Iterator.html">large selection</a> of combinators for use with iterators. Theres one called <code>map()</code> that lets you define a function (closure actually) to visit each element and mutate it before returning it.</p>
-<p>But wait.. why this doesn't work?</p>
-<pre><pre class="playpen"><code class="language-rust no_run">fn main() {
+<p>If we wanted to do some custom logic like add, we could certainly do it in the for loop.</p>
+<pre><pre class="playground"><code class="language-rust editable">fn main() {
     let array = [3.0, 2.0, 1.0];
-    let iter = array.iter();
-    iter.map(|val| {
+
+    for i in array.iter() {
+        let val = i + 1.0;
         println!(&quot;{:?}&quot;, val);
-        val + 1.0
+    }
+}
+</code></pre></pre>
+<p>But thats not very functional. If we keep this up were just back at the imperitive style. Lets look at the <code>map</code> combinator instead. It lets us define a function to be run on each element one at a time, and we'll do our addition there instead. This way we can seperate concerns keeping our functions single which also has the benefit in that compiler can see better what we're doing so it can optimize better.</p>
+<pre><pre class="playground"><code class="language-rust editable">fn main() {
+    let array = [3.0, 2.0, 1.0];
+    for i in array.iter().map(|i| { i + 1.0 } ) { // &lt;- Note no semicolon, we're returning the result of our addition. Also the rust formatter will remove these uneeded brackets are needed as its only a single expression
+        println!(&quot;{:?}&quot;, i);
+    }
+}
+</code></pre></pre>
+<p>Ok now lets add AND reverse.</p>
+<pre><pre class="playground"><code class="language-rust editable">fn main() {
+    let array = [3.0, 2.0, 1.0];
+    for i in array.iter().rev().map(|i| i+ 1.0) {
+        println!(&quot;{:?}&quot;, i);
+    }
+}
+</code></pre></pre>
+<p>Very slick. How many times have you come across a for loop that you have to puzzle over for 10 minutes to understand what 5 things its doing at the same time? Chained combinators are very self documenting, because they all have names and can be read in order. Plus by not reimplementing simple functions, you don't reimplement the bugs either. Future you thanks present you.</p>
+<p>Lets get even a little bit more functional. If instead of just for looping we assign the iterator to a value, we can hold the intermediate iterator and reuse it or pass it to functions.</p>
+<pre><pre class="playground"><code class="language-rust editable">fn main() {
+    let array = [3.0, 2.0, 1.0];
+    let reversed_and_elevated = array.iter().rev().map(|i| i + 1.0);
+    println!(&quot;{:?}&quot;, reversed_and_elevated.clone()); // &lt;- we `clone` the iterator which is cheap, its not copying the datastructure just our mutation chain
+    println!(&quot;{:?}&quot;, reversed_and_elevated); // &lt;- Now we can use it again or pass it to another function
+}
+</code></pre></pre>
+<p>But as soon as you start playing with this you'll run into a common mistake that trips people up with iterators. They're 'lazily evaluated'. This means until a function consumes them, they wont actually be run. Lets slim down our example to our add function again. We'll print in our map instead of afterwards.</p>
+<pre><pre class="playground"><code class="language-rust editable">fn main() {
+    let array = [3.0, 2.0, 1.0];
+    array.iter().rev().map(|i| {
+        println!(&quot;{:?}&quot;, i);
+        i + 1.0
     });
 }
 </code></pre></pre>
-<p>What do you mean its unused?!</p>
-<pre><code class="language-text">warning: unused `std::iter::Map` that must be used
-  --&gt; src/main.rs:85:5
-   |
-85 | /     iter.map(|val| {
-86 | |         println!(&quot;{:?}&quot;, val);
-87 | |         val + 1.0
-88 | |     });
-   | |_______^
-   |
-   = note: #[warn(unused_must_use)] on by default
-   = note: iterators are lazy and do nothing unless consumed
-</code></pre>
-<p>It turns out <code>println!()</code> and <code>sum()</code> both consume iterators so we got lucky up until now. <code>map()</code> just visits each. Someone needs to pull our values through. Another consumer is our good old <code>for in</code> construct. Lets use that:</p>
-<pre><pre class="playpen"><code class="language-rust editable">fn main() {
+<p>Note nothing was printed. The <code>map()</code> wasnt run. It's not until its consumed when it will finally run that code. It turns out the <code>for in</code> loop and <code>println!</code> both consume so we hadn't noticed yet</p>
+<p>-```text
+warning: unused <code>Map</code> that must be used
+--&gt; src/main.rs:3:5
+|
+3 |     array.iter().rev().map(|i| i + 1.0);
+|     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+|
+= note: <code>#[warn(unused_must_use)]</code> on by default
+= note: iterators are lazy and do nothing unless consumed</p>
+<p>warning: 1 warning emitted
+-```</p>
+<p>There's one more way to consume an iterator. <code>collect()</code> it back into a whole new array. We actually can't collect into array data structures (yet), we need to use the more costly and powerful <code>Vec</code> type instead. This is actually the costly thing we've been avoiding all this time. It brings all the values back into memory and can take lots of compute time. For most desktop programming and small datasets its totally fine though. But when you move to the optimizing stage, or if you're running on constrained devices, you're looking to remove as many <code>collect()</code> as possible and just keep chaining iterators. We generally have to help the compiler when using collect and tell it the exact type were trying to collect into.</p>
+<pre><pre class="playground"><code class="language-rust editable">fn main() {
     let array = [3.0, 2.0, 1.0];
-
-    for i in array.iter().map(|val| {
-        println!(&quot;{:?}&quot;, val);
-        val + 1.0
-    }) {
-        println!(&quot;{:?}&quot;, i);
-    }
+    let reversed_and_elevated_array: Vec&lt;f64&gt; = array.iter().rev().map(|i| i + 1.0).collect();
+    println!(&quot;{:?}&quot;, reversed_and_elevated_array)
 }
 </code></pre></pre>
-<blockquote>
-<p>Note this is a great debugging strategy. If you get lost, throw (non mutating) map in the middle of you combinator chains to do a little print debugging.</p>
-</blockquote>
-<p>It gets more complex from here. <code>zip()</code> combines a value from two different iterators into a tuple.</p>
-<pre><pre class="playpen"><code class="language-rust editable">fn main() {
-    let array1 = [3.0, 2.0, 1.0];
-    let array2 = [4.0, 5.0, 6.0];
+<p>It gets a little more complex from here but were going to need a few more tools as we continue.  <code>zip()</code> combines one value from each of two different iterators into a tuple like <code>(22.0, 4.0)</code>.</p>
+<pre><pre class="playground"><code class="language-rust editable">fn main() {
+    let array1 = [22.0, 1.0, 17.0];
+    let array2 = [4.0, 19.0, 6.0];
 
-    for i in array1.iter().zip(array2.iter()) {
-        println!(&quot;{:?}&quot;, i);
-    }
+    // you might want print in the map so you can better understand the (i,j) tuple
+    let zipped = array1.iter().zip(array2.iter()).map(|(i, j)| i + j);
+    let summed_array: Vec&lt;f64&gt; = zipped.collect();
+    println!(&quot;{:?}&quot;, summed_array);
 }
 </code></pre></pre>
-<p><code>flat_map</code> iterates through iterators like n dimensional structures and concatenates them one after the other, or &quot;flattens&quot; them.</p>
-<pre><pre class="playpen"><code class="language-rust editable">fn main() {
+<p><code>flatten()</code> iterates through iterators like n dimensional structures and concatenates them one after the other, or &quot;flattens&quot; them. If we had a two dimensional array of arrays and wanted to turn it into a single flat array we would use <code>flatten()</code>.</p>
+<pre><pre class="playground"><code class="language-rust editable">fn main() {
 
     let array: [[f32; 3]; 3] = [
             [1.0, 2.0, 3.0],
             [4.0, 5.0, 6.0],
             [7.0, 8.0, 9.0]
-        ];
+    ];
+    println!(&quot;{:?}&quot;, array);
 
-    //flat_map gives a closure where we could transform, instead we just return it
-    for i in array.iter().flat_map(|j| j) {
-        println!(&quot;{:?}&quot;, i);
-    }
+    let flat = array.iter().flatten();
+    println!(&quot;{:?}&quot;, flat);
 }
 </code></pre></pre>
-<p>If you want even more combinators like these, make sure to check out the <a href="https://doc.rust-lang.org/std/iter/trait.Iterator.html">docs</a>. And, if you want even more combinators, checkout the <a href="https://docs.rs/itertools/0.8.0/itertools/">itertools</a> crate!</p>
+<p>Finally if we wanted to both <code>flatten()</code> and <code>map()</code> at the same time we can use <code>flat_map()</code>.</p>
+<pre><pre class="playground"><code class="language-rust editable">fn main() {
+    let array: [[f32; 3]; 3] = [
+            [1.0, 2.0, 3.0],
+            [4.0, 5.0, 6.0],
+            [7.0, 8.0, 9.0]
+        ];
+    println!(&quot;{:?}&quot;, array);
+
+    let flat_mapped = array.iter().flat_map(|i| {
+        // each i is an entire row of the array, it hasn't been flattened yet
+        println!(&quot;{:?}&quot;, i);
+        // we could do something complex but well just print the inner elements
+        i.iter().map(|j| println!(&quot;{:?}&quot;, j))
+    });
+    println!(&quot;{:?}&quot;, flat_mapped);
+}
+</code></pre></pre>
+<p>Thats all we'll need for our convolution for now, but if you want even more combinators, checkout the <a href="https://docs.rs/itertools/0.8.0/itertools/">itertools</a> crate.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                        
-                            <a rel="prev" href="testing.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                                    <a rel="prev" href="testing.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
                         
-
-                        
-                            <a rel="next" href="convolve.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                                    <a rel="next" href="convolve.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         
-
                         <div style="clear: both"></div>
                     </nav>
                 </div>
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                
-                    <a href="testing.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                    <a rel="prev" href="testing.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
                 
-
-                
-                    <a href="convolve.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                    <a rel="next" href="convolve.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
-                
-            </nav>
+                            </nav>
 
         </div>
 
         
-
         
-
         
-        <script src="ace.js" type="text/javascript" charset="utf-8"></script>
+                <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        
+                <script src="ace.js" type="text/javascript" charset="utf-8"></script>
         <script src="editor.js" type="text/javascript" charset="utf-8"></script>
         <script src="mode-rust.js" type="text/javascript" charset="utf-8"></script>
         <script src="theme-dawn.js" type="text/javascript" charset="utf-8"></script>
         <script src="theme-tomorrow_night.js" type="text/javascript" charset="utf-8"></script>
         
-
-        
-        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+                <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
         
-
         <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
         <script src="book.js" type="text/javascript" charset="utf-8"></script>
 
         <!-- Custom JS scripts -->
         
-
         
-
     </body>
 </html>
