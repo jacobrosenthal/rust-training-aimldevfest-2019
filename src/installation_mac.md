@@ -2,10 +2,12 @@
 
 - Visit [rustup.rs](https://rustup.rs), to install the rust toolchain.
 
-# Choosing your editor
+## Choosing your editor
+
 Whatever editor you choose, the goal is for you to have RLS and Code Formating (rustfmt) installed and enabled. VSCode is a mature and populare solution for Rust.
 
-## Configuring VS Code for Rust with the RLS
+### Configuring VS Code for Rust with the RLS
+
 The steps below configure VS Code on Mac to support Rust and use the Rust Language Server (RLS) for autocompletion and incremental compilation to display warnings and errors.
 
 1. Install the Rust (rls) extension by user 'rust-lang' in VS Code. There are several other plugins, but this one is the most maintained.

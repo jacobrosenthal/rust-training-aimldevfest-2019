@@ -1,10 +1,12 @@
 # Code Organization & Modules
+
 At this point, we're starting to pollute one Rust source file with a few unrelated operations and imports. Rust makes it pretty easy to refactor code into a hierarchy of modules, and sprinkle in encapsulation where appropriate.
 
 ## What's a module?
+
 A module is very similar to a C++ namespace, in that it is a named scope containing declarations of structs, enums, functions, traits, etc.
 
-Let's take a quick look:
+Let's take a quick look.
 
 ```rust,editable
 mod say {
@@ -29,6 +31,7 @@ Rust also gives you some more tools for fine-grain visibility control:
 - `pub(some::path::here)`: visible in the specified module namespace
 
 ## Ways to make a module
+
 1. The `mod {}` syntax above
 
 2. As a separate file
@@ -41,12 +44,14 @@ crate
   - mymodule.rs
 ```
 
-In lib.rs (or main.rs)
+In lib.rs (or main.rs):
+
 ```rust,ignore
 mod mymodule;
 ```
 
 In mymodule.rs:
+
 ```rust,ignore
 pub fn myfunction() {
     ...
@@ -66,11 +71,13 @@ crate
 ```
 
 In lib.rs (or main.rs):
+
 ```rust,ignore
 mod bigmodule;
 ```
 
 In mod.rs:
+
 ```rust,ignore
 mod submodule;
 
@@ -79,7 +86,8 @@ fn function_in_bigmodule() {
 }
 ```
 
-In submodule.rs
+In submodule.rs:
+
 ```rust,ignore
 fn function_in_submodule() {
     ...
@@ -87,14 +95,12 @@ fn function_in_submodule() {
 ```
 
 ## Let's refactor the Sobel filter program
-We can refactor the Sobel filter function, convolution function, and kernels into separate modules.
 
-This way, the main module is only concerned with user input and calling out to the other modules to execute.
+We can refactor the Sobel filter function, convolution function, and kernels into separate modules. This way, the main module is only concerned with user input and calling out to the other modules to execute.
 
 ## Re-exporting
-Rust also includes a mechanism for re-exporting imported modules, functions, structs, etc from within a module.
 
-For example, our Sobel filter module could re-export `GrayImage` since all callers will need to use it.
+Rust also includes a mechanism for re-exporting imported modules, functions, structs, etc from within a module. For example, our Sobel filter module could re-export `GrayImage` since all callers will need to use it.
 
 ```rust,ignore
 pub use image::GrayImage;
@@ -103,6 +109,7 @@ pub use image::GrayImage;
 You can `pub use` crates, whole modules, individual functions, or even sets of things (`pub use some_crate::{thing1, thing2};`).
 
 ## Custom preludes
+
 You probably saw in the previous chapters that to import rayon we used `use rayon::prelude::*`.
 
 This a common pattern in Rust crates to create an easy way to import a group of functions, traits, etc that are commonly all used together. For example, the standard library also uses this pattern for `std::io::prelude::*`, which includes most functions, traits, and structs necessary for file I/O.

@@ -1,6 +1,7 @@
 # Image Processing Example
 
 ## Getting the pixels
+
 Our convolution function is ready, but we are missing the connection between the image we converted to luma and the convolution operator. Let's look into the [docs on GrayImage](https://docs.rs/image/0.22.1/image/type.GrayImage.html) to see how we can get pixel values out.
 
 ![GrayImage docs](./images/gray-image-docs.png)
@@ -11,7 +12,7 @@ Let's take a closer look. `GrayImage` is defined as a type alias of a specific v
 
 ![get_pixel docs](./images/image-get-pixel-docs.png)
 
-There's a `get_pixel` method! Oh, but the return type is `&P`, that's weird. If we look at the declaration of ImageBuffer though, we see that `P` must implement the `Pixel` trait. And if we look at the `Pixel` [trait docs](), we see a method called `channels()` that gives us a slice of the pixel's values, one for each channel. Since out image is grayscale (luma), we expect just one channel.
+There's a `get_pixel` method! Oh, but the return type is `&P`, that's weird. If we look at the declaration of ImageBuffer though, we see that `P` must implement the `Pixel` trait. And if we look at the `Pixel` [trait docs](https://docs.rs/image/0.22.1/image/trait.Pixel.html), we see a method called `channels()` that gives us a slice of the pixel's values, one for each channel. Since out image is grayscale (luma), we expect just one channel.
 
 This might seem over-complicated. However, by abstracting away the underlying storage formats, the "image" crate lets users build processing systems that are general over many image formats. Remember, the Rust compiler boils down all of the abstractions into highly optimized code. So we can have our generics and safety while writing high-performance code!
 
@@ -79,7 +80,7 @@ fn sobel_filter(input: &GrayImage) -> GrayImage {
 }
 ```
 
-We'll need to throw a call into `fn main()` to use this:
+We'll need to throw a call into `fn main()` to use this.
 
 ```rust,ignore
 let input_image = image::open(&options.input_path)
@@ -100,9 +101,11 @@ Well, in Rust debug builds, the primitive integer types are checked for overflow
 And, just like now, the overflow checks in debug builds help catch bugs early on.
 
 ## Handling the edges
+
 The overflow is happening because of the `x - 1` and `y - 1` when x or y is zero. Remember, the kernel includes one pixel left, right, up and down from the one its currently operating on. When were on the far border of our image that pixel doesn't exist. This is indicative of a bigger question: how should we handle the edges of the image?
 
 As the [Wikipedia page on convolution kernels](https://en.wikipedia.org/wiki/Kernel_(image_processing)#Edge_Handling) explains, there are several ways:
+
 - Extend the image by duplicating pixels at the edge
 - Wrap around to the other side
 - Crop the output image 2 pixels smaller in X and Y
@@ -189,7 +192,7 @@ fn sobel_filter(input: &GrayImage) -> GrayImage {
 }
 ```
 
-Uh oh. Now we have a different problem. Our `GrayImage` gives us `u8` from `get_pixel(x, y).channels()[0]`, but `convolve` expects the pixels to be f32.
+Uh oh. Now we have a different problem. Our `GrayImage` gives us `u8` from `get_pixel(x, y).channels()[0]`, but `convolve()` expects the pixels to be f32.
 We can explicitly cast that with 'as f32'.
 
 We can also add a couple lines to combine our two kernels into a single magnitude with the sum of squares. Then well need to turn our resulting f32 into a u8 Luma type before storing it back into the resulting image.
@@ -240,10 +243,12 @@ fn sobel_filter(input: &GrayImage) -> GrayImage {
 
 Now if we `cargo run`, the output should be interesting. If the runtime is a bit long, you might try `cargo run --release`. Running in release mode can make a massive difference.
 
-## We have a Sobel Filter!
+## Sucess
+
 ![Result image](./images/valve_sobel.png)
 
 ## Extra credit
+
 - Can you implement edge extension instead of cropping?
 - Can you implement a box blur instead of the Sobel operator?
 - Can you extend the command line interface to allow the user to select what filter to apply?
