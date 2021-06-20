@@ -147,7 +147,7 @@
 <p>Iterators are one of the most powerful features in Rust! They are also a gateway drug to the functional style programming. They tend to use less memory and optimize better because the compiler can see what we're trying to do and help optimize for us. This gain in speed and reduced memory usage is really important for big datasets or constrained devices where it might be literally impossible to have the entire collection in memory at the same time.</p>
 <p>Most collections like an array can be iterated which just means getting the collection one element at a time. This imperitive style use of an iterator should look very familiar to you. Well just print each value.</p>
 <pre><pre class="playground"><code class="language-rust editable">fn main() {
-    let array = [3.0, 2.0, 1.0];
+    let array = [22.0, 1.0, 17.0];
 
     for i in array.iter() {
         println!(&quot;{:?}&quot;, i);
@@ -157,7 +157,7 @@
 <p>One of the benefits of using iterators is all the functions we get for free. These are generally called 'combinators' but thats just a fancy name for a function that we can run against our collection. The Rust standard library provides a <a href="https://doc.rust-lang.org/std/iter/trait.Iterator.html">large selection</a> of combinators for use with iterators from summing, to sorting to reversing data and much much more.</p>
 <p>Lets reverse our array with <code>rev()</code>.</p>
 <pre><pre class="playground"><code class="language-rust editable">fn main() {
-    let array = [3.0, 2.0, 1.0];
+    let array = [22.0, 1.0, 17.0];
     for i in array.iter().rev() {
         println!(&quot;{:?}&quot;, i);
     }
@@ -165,7 +165,7 @@
 </code></pre></pre>
 <p>If we wanted to do some custom logic like add, we could certainly do it in the for loop.</p>
 <pre><pre class="playground"><code class="language-rust editable">fn main() {
-    let array = [3.0, 2.0, 1.0];
+    let array = [22.0, 1.0, 17.0];
 
     for i in array.iter() {
         let val = i + 1.0;
@@ -175,7 +175,7 @@
 </code></pre></pre>
 <p>But thats not very functional. If we keep this up were just back at the imperitive style. Lets look at the <code>map</code> combinator instead. It lets us define a function to be run on each element one at a time, and we'll do our addition there instead. This way we can seperate concerns keeping our functions single which also has the benefit in that compiler can see better what we're doing so it can optimize better.</p>
 <pre><pre class="playground"><code class="language-rust editable">fn main() {
-    let array = [3.0, 2.0, 1.0];
+    let array = [22.0, 1.0, 17.0];
     for i in array.iter().map(|i| { i + 1.0 } ) { // &lt;- Note no semicolon, we're returning the result of our addition. Also the rust formatter will remove these uneeded brackets are needed as its only a single expression
         println!(&quot;{:?}&quot;, i);
     }
@@ -183,7 +183,7 @@
 </code></pre></pre>
 <p>Ok now lets add AND reverse.</p>
 <pre><pre class="playground"><code class="language-rust editable">fn main() {
-    let array = [3.0, 2.0, 1.0];
+    let array = [22.0, 1.0, 17.0];
     for i in array.iter().rev().map(|i| i+ 1.0) {
         println!(&quot;{:?}&quot;, i);
     }
@@ -192,41 +192,51 @@
 <p>Very slick. How many times have you come across a for loop that you have to puzzle over for 10 minutes to understand what 5 things its doing at the same time? Chained combinators are very self documenting, because they all have names and can be read in order. Plus by not reimplementing simple functions, you don't reimplement the bugs either. Future you thanks present you.</p>
 <p>Lets get even a little bit more functional. If instead of just for looping we assign the iterator to a value, we can hold the intermediate iterator and reuse it or pass it to functions.</p>
 <pre><pre class="playground"><code class="language-rust editable">fn main() {
-    let array = [3.0, 2.0, 1.0];
+    let array = [22.0, 1.0, 17.0];
     let reversed_and_elevated = array.iter().rev().map(|i| i + 1.0);
-    println!(&quot;{:?}&quot;, reversed_and_elevated.clone()); // &lt;- we `clone` the iterator which is cheap, its not copying the datastructure just our mutation chain
-    println!(&quot;{:?}&quot;, reversed_and_elevated); // &lt;- Now we can use it again or pass it to another function
+    println!(&quot;{:?}&quot;, reversed_and_elevated);
 }
 </code></pre></pre>
-<p>But as soon as you start playing with this you'll run into a common mistake that trips people up with iterators. They're 'lazily evaluated'. This means until a function consumes them, they wont actually be run. Lets slim down our example to our add function again. We'll print in our map instead of afterwards.</p>
+<p>Interesting. This time it didn't print our end result, but rather printed the chain of mutations plus the original data <code>Map { iter: Rev { iter: Iter([22.0, 1.0, 17.0]) } }</code>. It turns out iterators are 'lazily evaluated' which means theyre not actuall run until they're consumed. The <code>for in</code> loop and the <code>.sum()</code> are operations we have previously seen that consume an iterator. Another function that consumes an iterator is <code>collect()</code> which collects all the values back into a whole new array.</p>
+<p>We actually can't collect into <code>Array</code> data structures (yet). Instead we'll use a <code>Vec</code> which we won't go over much here yet, but its just another collection type that is a bit more costly and powerful than arrays.</p>
+<blockquote>
+<p>NOTE: This is actually the costly thing we've been avoiding all this time. It brings all the values back into memory and can take lots of memory and compute time. For debugging, desktop programming and small datasets its totally fine and eventually often you just need to consume and get back to an <code>Vec</code>. However when you move to the optimizing stage, or if you're running on constrained devices, you're looking to remove as many <code>collect()</code> as possible and just keep chaining iterators.</p>
+</blockquote>
+<p>So lets collect our iterator and print the result. The compiler often has trouble knowing what you're trying to collect to so we'll help it out with a type hint.</p>
 <pre><pre class="playground"><code class="language-rust editable">fn main() {
-    let array = [3.0, 2.0, 1.0];
+    let array = [22.0, 1.0, 17.0];
+    let reversed_and_elevated = array.iter().rev().map(|i| i + 1.0);
+     // We `clone` the iterator which is cheap, its not copying the datastructure just our mutation chain
+    let reversed_and_elevated_array: Vec&lt;f64&gt; = reversed_and_elevated.clone().collect();
+    println!(&quot;{:?}&quot;, reversed_and_elevated_array);
+    
+    // Now we can use it again or pass it to another function, or add more combinators. Note we didn't need to clone it this time since we don't use it again in this example, but we could.
+    let un_reversed_and_elevated_array: Vec&lt;f64&gt; = reversed_and_elevated.collect();  
+    println!(&quot;{:?}&quot;, un_reversed_and_elevated_array);
+}
+</code></pre></pre>
+<p>To show what lazily evaluated means, run this example with no collect or for loop.</p>
+<pre><pre class="playground"><code class="language-rust editable">fn main() {
+    let array = [22.0, 1.0, 17.0];
     array.iter().rev().map(|i| {
         println!(&quot;{:?}&quot;, i);
         i + 1.0
     });
 }
 </code></pre></pre>
-<p>Note nothing was printed. The <code>map()</code> wasnt run. It's not until its consumed when it will finally run that code. It turns out the <code>for in</code> loop and <code>println!</code> both consume so we hadn't noticed yet</p>
-<p>-```text
-warning: unused <code>Map</code> that must be used
---&gt; src/main.rs:3:5
-|
+<p>Note that nothing was printed because the <code>map()</code> wasn't actually run. The playground probably lost the warning, but if you do accidently run this code on your machine, the compiiler has your back with the following warning.</p>
+<pre><code class="language-text">warning: unused `Map` that must be used
+ --&gt; src/main.rs:3:5
+  |
 3 |     array.iter().rev().map(|i| i + 1.0);
-|     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-|
-= note: <code>#[warn(unused_must_use)]</code> on by default
-= note: iterators are lazy and do nothing unless consumed</p>
-<p>warning: 1 warning emitted
--```</p>
-<p>There's one more way to consume an iterator. <code>collect()</code> it back into a whole new array. We actually can't collect into array data structures (yet), we need to use the more costly and powerful <code>Vec</code> type instead. This is actually the costly thing we've been avoiding all this time. It brings all the values back into memory and can take lots of compute time. For most desktop programming and small datasets its totally fine though. But when you move to the optimizing stage, or if you're running on constrained devices, you're looking to remove as many <code>collect()</code> as possible and just keep chaining iterators. We generally have to help the compiler when using collect and tell it the exact type were trying to collect into.</p>
-<pre><pre class="playground"><code class="language-rust editable">fn main() {
-    let array = [3.0, 2.0, 1.0];
-    let reversed_and_elevated_array: Vec&lt;f64&gt; = array.iter().rev().map(|i| i + 1.0).collect();
-    println!(&quot;{:?}&quot;, reversed_and_elevated_array)
-}
-</code></pre></pre>
-<p>It gets a little more complex from here but were going to need a few more tools as we continue.  <code>zip()</code> combines one value from each of two different iterators into a tuple like <code>(22.0, 4.0)</code>.</p>
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_must_use)]` on by default
+  = note: iterators are lazy and do nothing unless consumed
+
+warning: 1 warning emitted
+</code></pre>
+<p>It gets a little more complex from here but were going to need a few more tools as we continue. <code>zip()</code> combines one value from each of two different iterators into a tuple like <code>(22.0, 4.0)</code>.</p>
 <pre><pre class="playground"><code class="language-rust editable">fn main() {
     let array1 = [22.0, 1.0, 17.0];
     let array2 = [4.0, 19.0, 6.0];
