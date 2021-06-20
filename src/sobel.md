@@ -1,6 +1,7 @@
 # Image Processing Example
 
 ## Getting the pixels
+
 Our convolution function is ready, but we are missing the connection between the image we converted to luma and the convolution operator. Let's look into the [docs on GrayImage](https://docs.rs/image/0.22.1/image/type.GrayImage.html) to see how we can get pixel values out.
 
 ![GrayImage docs](./images/gray-image-docs.png)
@@ -100,9 +101,11 @@ Well, in Rust debug builds, the primitive integer types are checked for overflow
 And, just like now, the overflow checks in debug builds help catch bugs early on.
 
 ## Handling the edges
+
 The overflow is happening because of the `x - 1` and `y - 1` when x or y is zero. Remember, the kernel includes one pixel left, right, up and down from the one its currently operating on. When were on the far border of our image that pixel doesn't exist. This is indicative of a bigger question: how should we handle the edges of the image?
 
 As the [Wikipedia page on convolution kernels](https://en.wikipedia.org/wiki/Kernel_(image_processing)#Edge_Handling) explains, there are several ways:
+
 - Extend the image by duplicating pixels at the edge
 - Wrap around to the other side
 - Crop the output image 2 pixels smaller in X and Y
@@ -240,10 +243,12 @@ fn sobel_filter(input: &GrayImage) -> GrayImage {
 
 Now if we `cargo run`, the output should be interesting. If the runtime is a bit long, you might try `cargo run --release`. Running in release mode can make a massive difference.
 
-## We have a Sobel Filter!
+## Sucess
+
 ![Result image](./images/valve_sobel.png)
 
 ## Extra credit
+
 - Can you implement edge extension instead of cropping?
 - Can you implement a box blur instead of the Sobel operator?
 - Can you extend the command line interface to allow the user to select what filter to apply?
