@@ -152,12 +152,11 @@
 <blockquote>
 <p>For example, if we have two three-by-three matrices, the first a kernel, and the second an image piece, convolution is the process of flipping both the rows and columns of the kernel and multiplying locally similar entries and summing</p>
 </blockquote>
-<blockquote>
-<p>a b c    1 2 3
+<pre><code class="language-text">a b c    1 2 3
 d e f  * 4 5 6
 g h i    7 8 9
-= (i<em>1) + (h</em>2) +  (g<em>3) + (f</em>4) + (e<em>5) + (d</em>6) + (c<em>7) + (b</em>8) + (a*9)</p>
-</blockquote>
+= (i*1) + (h*2) +  (g*3) + (f*4) + (e*5) + (d*6) + (c*7) + (b*8) + (a*9)
+</code></pre>
 <p>That looks a bit annoying to implement in code, but they mention an implemention flipping rows and columns of the kernel.</p>
 <pre><code class="language-text">i h g
 f e d
@@ -196,22 +195,30 @@ c b a    7 8 9
 }
 </code></pre>
 <p>Now we can write a test to assert that running <code>convolve()</code> indeed does return 5.0.</p>
+<blockquote>
+<p>If you attempt to just assert that 5.0 and result are equal the compiler will <a href="https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp">link you to an explanation on how to correctly compare floats</a>. Everything with floats is approximate so we can't just assert that they are equal, we have to say they're within some tolerance.</p>
+</blockquote>
 <pre><code class="language-rust ignore">#[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
     fn test_convolution_identity() {
-        let pixels: [[f32; 3]; 3] = [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0], [7.0, 8.0, 9.0]];
-
+        let pixels: [[f32; 3]; 3] = [
+            [1.0, 2.0, 3.0],
+            [4.0, 5.0, 6.0],
+            [7.0, 8.0, 9.0]
+        ];
         let result = convolve(&amp;IDENTITY_KERNEL_MIRRORED, &amp;pixels);
 
-        // If you attempt to just assert that 5.0 and result are equal the compiler will [link you to an explanation on how to correctly compare floats](https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp), everything with floats is approximate. So we cant say are they equal, we have to say theyre within some tolerance
         assert!((result - 5.0).abs() &lt; f32::EPSILON);
     }
 }
 </code></pre>
 <p>We can run this test with <code>cargo test</code> and we should see passing tests!</p>
+<blockquote>
+<p>Note rust doesn't show println data from tests, so use <code>cargo test -- --nocapture</code> to see your println debugging in this case.</p>
+</blockquote>
 <p>We'll come back to actually implmenting our convolve function for real in a second, but we'll need a few more tools in our toolbox so first we learn how to iterate over these arrays and multiply them using iterators.</p>
 
                     </main>

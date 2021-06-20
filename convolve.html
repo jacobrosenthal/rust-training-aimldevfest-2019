@@ -151,9 +151,6 @@
 }
 </code></pre>
 <p>We can use <code>zip()</code> to combine two iterators into one iterator that yields tuple elements. Since kernel and pixels are nested arrays, <code>kernel.iter()</code> and <code>pixels.iter()</code> both give iterators over elements of type <code>[f32; 3]</code>. So, the tuple parameter <code>(kernel_column, input_column)</code> has type <code>([f32; 3], [f32; 3])</code>. We also know at the end were going to add all the products up.</p>
-<blockquote>
-<p>Note rust doesn't show println data from tests, so use <code>cargo test -- --nocapture</code> to see your println debugging in this case.</p>
-</blockquote>
 <pre><code class="language-rust ignore">fn convolve(kernel: &amp;[[f32; 3]; 3], pixels: &amp;[[f32; 3]; 3]) -&gt; f32 {
         kernel
         .iter()
@@ -181,7 +178,7 @@
 </code></pre>
 </p>
 </details>
-<p>Ok now we have a working convolve function with an identity kernel, but we need our Sobel edge detection kernel instead now. The <a href="https://en.wikipedia.org/wiki/Sobel_operator">Sobel Wikpedia</a> page shows we actually need two kernels, one each estimating the gradient ofs Gx and Gy. In an image, the gradient describes how fast the color of the image is changing in a direction, X and Y in this case. Typically, edges change very quickly, so if we output the gradient of the image, we expect the edges to have high values.</p>
+<p>Ok now we have a working convolve function with an identity kernel, but we need our Sobel edge detection kernel instead now. The <a href="https://en.wikipedia.org/wiki/Sobel_operator">Sobel Wikpedia</a> page shows we actually need two kernels, estimating the gradient of each Gx and Gy. In an image, the gradient describes how fast the color of the image is changing in a direction, X and Y in this case. Typically, edges change very quickly, so if we output the gradient of the image, we expect the edges to have high values.</p>
 <p>Gx:</p>
 <pre><code class="language-text">+1 +0 -1
 +2 +0 -2

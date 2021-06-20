@@ -852,12 +852,11 @@ fn main() {
 <blockquote>
 <p>For example, if we have two three-by-three matrices, the first a kernel, and the second an image piece, convolution is the process of flipping both the rows and columns of the kernel and multiplying locally similar entries and summing</p>
 </blockquote>
-<blockquote>
-<p>a b c    1 2 3
+<pre><code class="language-text">a b c    1 2 3
 d e f  * 4 5 6
 g h i    7 8 9
-= (i<em>1) + (h</em>2) +  (g<em>3) + (f</em>4) + (e<em>5) + (d</em>6) + (c<em>7) + (b</em>8) + (a*9)</p>
-</blockquote>
+= (i*1) + (h*2) +  (g*3) + (f*4) + (e*5) + (d*6) + (c*7) + (b*8) + (a*9)
+</code></pre>
 <p>That looks a bit annoying to implement in code, but they mention an implemention flipping rows and columns of the kernel.</p>
 <pre><code class="language-text">i h g
 f e d
@@ -896,22 +895,30 @@ c b a    7 8 9
 }
 </code></pre>
 <p>Now we can write a test to assert that running <code>convolve()</code> indeed does return 5.0.</p>
+<blockquote>
+<p>If you attempt to just assert that 5.0 and result are equal the compiler will <a href="https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp">link you to an explanation on how to correctly compare floats</a>. Everything with floats is approximate so we can't just assert that they are equal, we have to say they're within some tolerance.</p>
+</blockquote>
 <pre><code class="language-rust ignore">#[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
     fn test_convolution_identity() {
-        let pixels: [[f32; 3]; 3] = [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0], [7.0, 8.0, 9.0]];
-
+        let pixels: [[f32; 3]; 3] = [
+            [1.0, 2.0, 3.0],
+            [4.0, 5.0, 6.0],
+            [7.0, 8.0, 9.0]
+        ];
         let result = convolve(&amp;IDENTITY_KERNEL_MIRRORED, &amp;pixels);
 
-        // If you attempt to just assert that 5.0 and result are equal the compiler will [link you to an explanation on how to correctly compare floats](https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp), everything with floats is approximate. So we cant say are they equal, we have to say theyre within some tolerance
         assert!((result - 5.0).abs() &lt; f32::EPSILON);
     }
 }
 </code></pre>
 <p>We can run this test with <code>cargo test</code> and we should see passing tests!</p>
+<blockquote>
+<p>Note rust doesn't show println data from tests, so use <code>cargo test -- --nocapture</code> to see your println debugging in this case.</p>
+</blockquote>
 <p>We'll come back to actually implmenting our convolve function for real in a second, but we'll need a few more tools in our toolbox so first we learn how to iterate over these arrays and multiply them using iterators.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="iterators"><a class="header" href="#iterators">Iterators</a></h1>
 <p>Iterators are one of the most powerful features in Rust! They are also a gateway drug to the functional style programming. They tend to use less memory and optimize better because the compiler can see what we're trying to do and help optimize for us. This gain in speed and reduced memory usage is really important for big datasets or constrained devices where it might be literally impossible to have the entire collection in memory at the same time.</p>
@@ -1060,9 +1067,6 @@ warning: 1 warning emitted
 }
 </code></pre>
 <p>We can use <code>zip()</code> to combine two iterators into one iterator that yields tuple elements. Since kernel and pixels are nested arrays, <code>kernel.iter()</code> and <code>pixels.iter()</code> both give iterators over elements of type <code>[f32; 3]</code>. So, the tuple parameter <code>(kernel_column, input_column)</code> has type <code>([f32; 3], [f32; 3])</code>. We also know at the end were going to add all the products up.</p>
-<blockquote>
-<p>Note rust doesn't show println data from tests, so use <code>cargo test -- --nocapture</code> to see your println debugging in this case.</p>
-</blockquote>
 <pre><code class="language-rust ignore">fn convolve(kernel: &amp;[[f32; 3]; 3], pixels: &amp;[[f32; 3]; 3]) -&gt; f32 {
         kernel
         .iter()
@@ -1090,7 +1094,7 @@ warning: 1 warning emitted
 </code></pre>
 </p>
 </details>
-<p>Ok now we have a working convolve function with an identity kernel, but we need our Sobel edge detection kernel instead now. The <a href="https://en.wikipedia.org/wiki/Sobel_operator">Sobel Wikpedia</a> page shows we actually need two kernels, one each estimating the gradient ofs Gx and Gy. In an image, the gradient describes how fast the color of the image is changing in a direction, X and Y in this case. Typically, edges change very quickly, so if we output the gradient of the image, we expect the edges to have high values.</p>
+<p>Ok now we have a working convolve function with an identity kernel, but we need our Sobel edge detection kernel instead now. The <a href="https://en.wikipedia.org/wiki/Sobel_operator">Sobel Wikpedia</a> page shows we actually need two kernels, estimating the gradient of each Gx and Gy. In an image, the gradient describes how fast the color of the image is changing in a direction, X and Y in this case. Typically, edges change very quickly, so if we output the gradient of the image, we expect the edges to have high values.</p>
 <p>Gx:</p>
 <pre><code class="language-text">+1 +0 -1
 +2 +0 -2
