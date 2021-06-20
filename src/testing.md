@@ -17,7 +17,7 @@ const IDENTITY: [[f32; 3]; 3] = [
 ];
 ```
 
-Now we need some test data to convolve with our identity. When we convolve we're looking at the value of interest, generally the center value, but we also take with it some amount of its nearby values in order to let those effect the value we care about. This is the value were 'convolving' around. Lets just make up a fake set of pixels, 1.0 through 9.0 where the value of interest is thus 5.0 
+Now we need some test data to convolve with our identity. When we convolve we're looking at the value of interest, generally the center value, but we also take with it some amount of its nearby values in order to let those effect the value we care about. This is the value were 'convolving' around. Lets just make up a fake set of pixels, 1.0 through 9.0 where the value of interest is thus `5.0`.
 
 ```rust,ignore
 let pixels: [[f32; 3]; 3] = [
@@ -35,7 +35,7 @@ fn convolve(kernel: &[[f32; 3]; 3], pixels: &[[f32; 3]; 3]) -> f32 {
 }
 ```
 
-Now we can write a test to assert that running `convolve` indeed does return 5.0;
+Now we can write a test to assert that running `convolve()` indeed does return 5.0.
 
 ```rust,ignore
 #[cfg(test)]

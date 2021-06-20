@@ -16,7 +16,7 @@ fn main() {
 
 One of the benefits of using iterators is all the functions we get for free. These are generally called 'combinators' but thats just a fancy name for a function that we can run against our collection. The Rust standard library provides a [large selection](https://doc.rust-lang.org/std/iter/trait.Iterator.html) of combinators for use with iterators from summing, to sorting to reversing data and much much more.
 
-Lets reverse our array with `rev`;
+Lets reverse our array with `rev()`.
 
 ```rust,editable
 fn main() {
@@ -27,7 +27,7 @@ fn main() {
 }
 ```
 
-If we wanted to do some custom logic like add, we could certainly do it in the for loop
+If we wanted to do some custom logic like add, we could certainly do it in the for loop.
 
 ```rust,editable
 fn main() {
@@ -64,7 +64,7 @@ fn main() {
 
 Very slick. How many times have you come across a for loop that you have to puzzle over for 10 minutes to understand what 5 things its doing at the same time? Chained combinators are very self documenting, because they all have names and can be read in order. Plus by not reimplementing simple functions, you don't reimplement the bugs either. Future you thanks present you.
 
-Lets get even a little bit more functional. If instead of just for looping we assign the iterator to a value, we can hold the intermediate iterator and reuse it or pass it to functions
+Lets get even a little bit more functional. If instead of just for looping we assign the iterator to a value, we can hold the intermediate iterator and reuse it or pass it to functions.
 
 ```rust,editable
 fn main() {
@@ -87,7 +87,7 @@ fn main() {
 }
 ```
 
-Note nothing was printed. The `map` wasnt run. It's not until its consumed when it will finally run that code. It turns out the `for` loop and `println!` both consume so we hadn't noticed yet. 
+Note nothing was printed. The `map()` wasnt run. It's not until its consumed when it will finally run that code. It turns out the `for in` loop and `println!` both consume so we hadn't noticed yet
 
 -```text
 warning: unused `Map` that must be used
@@ -102,7 +102,7 @@ warning: unused `Map` that must be used
 warning: 1 warning emitted
 -```
 
-There's one more way to consume an iterator. `collect` it back into a whole new array. We actually can't collect into array data structures (yet), we need to use the more costly and powerful `Vec` type instead. This is actually the costly thing we've been avoiding all this time. It brings all the values back into memory and can take lots of compute time. For most desktop programming and small datasets its totally fine though. But when you move to the optimizing stage, or if you're running on constrained devices, you're looking to remove as many `collect` as possible and just keep chaining iterators. We generally have to help the compiler when using collect and tell it the exact type were trying to collect into.
+There's one more way to consume an iterator. `collect()` it back into a whole new array. We actually can't collect into array data structures (yet), we need to use the more costly and powerful `Vec` type instead. This is actually the costly thing we've been avoiding all this time. It brings all the values back into memory and can take lots of compute time. For most desktop programming and small datasets its totally fine though. But when you move to the optimizing stage, or if you're running on constrained devices, you're looking to remove as many `collect()` as possible and just keep chaining iterators. We generally have to help the compiler when using collect and tell it the exact type were trying to collect into.
 
 ```rust,editable
 fn main() {
@@ -112,7 +112,7 @@ fn main() {
 }
 ```
 
-It gets a little more complex from here but were going to need a few more tools as we continue.  `zip` combines one value from each of two different iterators into a tuple like `(22.0, 4.0)`.
+It gets a little more complex from here but were going to need a few more tools as we continue.  `zip()` combines one value from each of two different iterators into a tuple like `(22.0, 4.0)`.
 
 ```rust,editable
 fn main() {
@@ -126,7 +126,7 @@ fn main() {
 }
 ```
 
-`flatten` iterates through iterators like n dimensional structures and concatenates them one after the other, or "flattens" them. If we had a two dimensional array of arrays and wanted to turn it into a single flat array we would use `flatten`
+`flatten()` iterates through iterators like n dimensional structures and concatenates them one after the other, or "flattens" them. If we had a two dimensional array of arrays and wanted to turn it into a single flat array we would use `flatten()`.
 
 ```rust,editable
 fn main() {
@@ -143,7 +143,7 @@ fn main() {
 }
 ```
 
-Finally if we wanted to both `flatten` and `map` at the same time we can use `flat_map`
+Finally if we wanted to both `flatten()` and `map()` at the same time we can use `flat_map()`.
 
 ```rust,editable
 fn main() {

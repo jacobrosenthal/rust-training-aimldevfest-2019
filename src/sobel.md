@@ -12,7 +12,7 @@ Let's take a closer look. `GrayImage` is defined as a type alias of a specific v
 
 ![get_pixel docs](./images/image-get-pixel-docs.png)
 
-There's a `get_pixel` method! Oh, but the return type is `&P`, that's weird. If we look at the declaration of ImageBuffer though, we see that `P` must implement the `Pixel` trait. And if we look at the `Pixel` [trait docs](), we see a method called `channels()` that gives us a slice of the pixel's values, one for each channel. Since out image is grayscale (luma), we expect just one channel.
+There's a `get_pixel` method! Oh, but the return type is `&P`, that's weird. If we look at the declaration of ImageBuffer though, we see that `P` must implement the `Pixel` trait. And if we look at the `Pixel` [trait docs](https://docs.rs/image/0.22.1/image/trait.Pixel.html), we see a method called `channels()` that gives us a slice of the pixel's values, one for each channel. Since out image is grayscale (luma), we expect just one channel.
 
 This might seem over-complicated. However, by abstracting away the underlying storage formats, the "image" crate lets users build processing systems that are general over many image formats. Remember, the Rust compiler boils down all of the abstractions into highly optimized code. So we can have our generics and safety while writing high-performance code!
 
@@ -80,7 +80,7 @@ fn sobel_filter(input: &GrayImage) -> GrayImage {
 }
 ```
 
-We'll need to throw a call into `fn main()` to use this:
+We'll need to throw a call into `fn main()` to use this.
 
 ```rust,ignore
 let input_image = image::open(&options.input_path)
@@ -192,7 +192,7 @@ fn sobel_filter(input: &GrayImage) -> GrayImage {
 }
 ```
 
-Uh oh. Now we have a different problem. Our `GrayImage` gives us `u8` from `get_pixel(x, y).channels()[0]`, but `convolve` expects the pixels to be f32.
+Uh oh. Now we have a different problem. Our `GrayImage` gives us `u8` from `get_pixel(x, y).channels()[0]`, but `convolve()` expects the pixels to be f32.
 We can explicitly cast that with 'as f32'.
 
 We can also add a couple lines to combine our two kernels into a single magnitude with the sum of squares. Then well need to turn our resulting f32 into a u8 Luma type before storing it back into the resulting image.

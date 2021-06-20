@@ -1,4 +1,5 @@
 # Data types
+
 We’ve got all the datatypes you would expect but you might want to glance through the Rust book [chapter on variables, functions, and control flow](https://doc.rust-lang.org/book/ch03-01-variables-and-mutability.html) just to update your mental models to Rust notation
 
 We have signed and unsigned scalar types like u32 and i32 and we've got Strings. Variables are instantiated with let syntax, and notably are immutable by default.
@@ -8,6 +9,7 @@ The top of the [Rust standard library page](https://doc.rust-lang.org/std/) has 
 > While you totally can thrash around on stack overflow, and we all do, there really is an authoritative source that you should check first.
 
 From that example we have our String constructor:
+
 ```rust,no_run
 fn main() {
     let input_path = String::from("valve.png");
@@ -28,6 +30,7 @@ fn main() {
 ```
 
 So now how to print those variables to console.  In Rust our printf `%` formatting character is `{}`. Following the `println!()` documentation down the rabbit hole will send us to the [formatters section](https://doc.rust-lang.org/std/fmt/index.html) page and we find all the formatters which you would expect like hex `{:x}`, binary `{:b}`, etc. We're going to focus on the 'empty' Display formatter `{}` for now which is a kind of a pretty printer in Rust. As long as whomever wrote our type implemented the Display pretty printer trait this will work great (cue ominous music).
+
 ```rust,editable
 fn main() {
     let input_path = String::from("valve.png");
@@ -35,12 +38,15 @@ fn main() {
     println!("{} {}", input_path, output_path);
 }
 ```
+
 Running this we find that we do have a Display implementation for String and pretty printing results in rather clean output in this case:
+
 ```text
 valve.png valve_sobel.png
 ```
 
 Objects, we call them structs, should be very familiar. You can define a new struct in any scope you like and we can name and type their members.
+
 ```rust,editable
 struct Opt {
     input_path: String,
@@ -57,12 +63,14 @@ fn main() {
     println!("{} {}", options.input_path, options.output_path);
 }
 ```
-**EXERCISE: Get this all implemented in your training project**
+
+**EXERCISE: Get this all implemented in your training project.**
 
 Notice we access our struct members with dot notation, and there is no default new constructor or overloading in Rust. Though in practice, for functions where it makes sense many developers will offer and occasionally make their struct private to require the usage of a new or other constructor. So note, `String::new()` totally exists and would have made you an empty string.
 
 
 Lets start modularizing our main by putting our options creation in a function. Function syntax is just like we see in the main function, but can return an expression from a function by leaving off the semicolon and annotating the return type:
+
 ```rust,editable
 struct Opt {
     input_path: String,
@@ -82,9 +90,10 @@ fn main() {
     let options = options();
     println!("{} {}", options.input_path, options.output_path);
 }
-``` 
+```
 
 We use semicolons to end expressions. We prefer to leave off semicolons in order to implicitly return the expression saving us the temporary variable like so:
+
 ```rust,ignore,no_run
 fn options() -> Opt {
 
@@ -94,6 +103,7 @@ fn options() -> Opt {
     }
 }
 ```
+
 **EXERCISE: Implement the `options()` function to clean up your main.**
 
 But what if our options creation could fail? Lets talk about error handling in rust.

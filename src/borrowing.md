@@ -1,4 +1,5 @@
 # Borrowing
+
 The borrow checker is probably Rust's most distinctive feature. To enable zero cost abstractions, Rust does not have a garbage collector. However, Rust also doesn't rely on explicit calls to `free()` like C. Instead Rust enforces "ownership" for all memory objects. The rules of the ownership system are pretty simple:
 
 1. There is only ever one owner of a memory object at a time (struct, enum, primitive, etc)
@@ -10,6 +11,7 @@ The borrow checker is probably Rust's most distinctive feature. To enable zero c
 4. An object must live at least as long as all of its borrows
 
 ## Rule #1: single owner
+
 ```rust,editable,ignore,mdbook-runnable
 fn eat(s: String) {
     println!("Eating {}", s);
@@ -24,7 +26,7 @@ fn main() {
 
 The compiler error tells us exactly what's wrong. The `fn eat(s: String)` signature says that `s` will be moved into the function upon calling. In other words, the function `eat` will take ownership of `s`. Unless we pass ownership back to the caller, ownership will remain there. This is called "consuming" a parameter.
 
-Here's how we can pass ownership back:
+Here's how we can pass ownership back.
 
 ```rust,editable
 fn eat(s: String) -> String {
@@ -40,6 +42,7 @@ fn main() {
 ```
 
 ## Rule #2: multiple immutable borrows
+
 If we change the function signature to borrow `s` instead, the problem goes away.
 
 ```rust,editable
@@ -57,6 +60,7 @@ fn main() {
 ```
 
 ## Rule #3: mutable borrows are exclusive
+
 Only a mutable borrow for an object can exist at a time. This prevents many subtle errors where internal state is mutated while other does not expect it. In C++, modifying a container while iterating through it is a classic example.
 
 ```rust,editable,ignore,mdbook-runnable
@@ -88,6 +92,7 @@ fn main() {
 ```
 
 ## Rule #4: lifetime >= borrow time
+
 In the example below, we borrow a temporary value inside the if statement branches. The temporary value does not last beyond the if statement branch, so the compiler tells us that our borrow is invalid. We can't borrow an object that doesn't exist.
 
 ```rust,editable,ignore,mdbook-runnable
@@ -103,6 +108,7 @@ fn main() {
 ```
 
 ## The learning curve
+
 Many new Rustaceans report that the fighting the borrow checker is the hardest part of learning Rust, and kind of like hitting a wall. Programmers coming from C/C++ tend to have a hard time because they know exactly what they want to do, but the Rust compiler "won't let them do it".
 
 Over time, the borrowing rules and working with the borrow checker become second nature. In fact, the borrow checker enforces rules that well-written C++ code should abide by anyway. Working with the borrow checker is kind of like pair programming with a memory ownership expert.
@@ -110,6 +116,7 @@ Over time, the borrowing rules and working with the borrow checker become second
 The borrowing rules prevent all kinds of common C++ memory and security errors. For example, you can't create a dangling borrow, the compiler won't let you. In C/C++, you can quite easily create a dangling pointer!
 
 ## Cloning
+
 While you are learning Rust, you will face another temptation: clone everything! The `Clone` trait in Rust provides the method `clone()` which creates a copy of any objects that implements `Clone`. When something is cloned, the borrows on the original do not apply to the new copy.
 
 ```rust,editable
@@ -127,6 +134,7 @@ fn main() {
 ```
 
 ## Lifetimes and scopes
+
 One last thing to note about lifetimes is that they are tied to scopes. So a borrow must exist in a scope at or below the level of the ownership.
 
 ```rust,editable,ignore,mdbook-runnable

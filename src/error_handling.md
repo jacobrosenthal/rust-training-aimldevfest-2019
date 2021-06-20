@@ -41,7 +41,7 @@ Were going to skip Result here, as our `nth()` method returns an Option, but the
 
 There *is* a minimal runtime in Rust, which means if were not careful we can and will blow up at runtime. This is called a panic and is handled in the panic handler, which on hosted platforms includes unwinding and backtraces. You can fire it on purpose with `panic!()` or by `unwrap()` on a None or Err value.
 
-**EXERCISE: Run our program again, this time not passing any command line arguments**
+**EXERCISE: Run our program again, this time not passing any command line arguments.**
 
 ```text
 thread 'main' panicked at 'called `Option::unwrap()` on a `None` value', src/libcore/option.rs:347:21
@@ -52,7 +52,7 @@ Explicitly panicing like we see above may very well be an option when the error 
 
 ## Option 2, return it
 
-Another option is to make it someone else’s problem by simply handing the Option or Result back up the chain. 
+Another option is to make it someone else’s problem by simply handing the Option or Result back up the chain.
 
 Theres even an early return helper for this, the [? operator](https://doc.rust-lang.org/book/ch09-02-recoverable-errors-with-result.html#a-shortcut-for-propagating-errors-the--operator). This was previously the [try! macro](https://doc.rust-lang.org/std/macro.try.html) but that has been deprecated though you may still see it in code.
 
@@ -81,7 +81,7 @@ Were passing an Option back to main, but now we need to deal with it there
 
 ## option 3, handle it
 
-Someone has to do some control flow on this error somewhere.. Well thats actually not true, we can even return these from the main function where Rust will unwrap them behind the scenes and print the result, but generally if you can do control flow on your errors you should. 
+Someone has to do some control flow on this error somewhere.. Well thats actually not true, we can even return these from the main function where Rust will unwrap them behind the scenes and print the result, but generally if you can do control flow on your errors you should.
 
 We often will often match Options and Results with the [match pattern](https://doc.rust-lang.org/rust-by-example/flow_control/match.html) which is very similar to an exhaustive switch statement.
 
@@ -108,7 +108,7 @@ The Option type is actually an enum type so we lets take a full digression throu
 
 ## error handling playground
 
-Its worth spending some time in the option result playground here to get your mind around all this
+Its worth spending some time in the option result playground here to get your mind around all this.
 
 ```rust,editable
 use std::io::ErrorKind;
