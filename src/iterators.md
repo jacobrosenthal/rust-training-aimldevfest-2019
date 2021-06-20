@@ -6,7 +6,7 @@ Most collections like an array can be iterated which just means getting the coll
 
 ```rust,editable
 fn main() {
-    let array = [3.0, 2.0, 1.0];
+    let array = [22.0, 1.0, 17.0];
 
     for i in array.iter() {
         println!("{:?}", i);
@@ -20,7 +20,7 @@ Lets reverse our array with `rev()`.
 
 ```rust,editable
 fn main() {
-    let array = [3.0, 2.0, 1.0];
+    let array = [22.0, 1.0, 17.0];
     for i in array.iter().rev() {
         println!("{:?}", i);
     }
@@ -31,7 +31,7 @@ If we wanted to do some custom logic like add, we could certainly do it in the f
 
 ```rust,editable
 fn main() {
-    let array = [3.0, 2.0, 1.0];
+    let array = [22.0, 1.0, 17.0];
 
     for i in array.iter() {
         let val = i + 1.0;
@@ -40,11 +40,11 @@ fn main() {
 }
 ```
 
- But thats not very functional. If we keep this up were just back at the imperitive style. Lets look at the `map` combinator instead. It lets us define a function to be run on each element one at a time, and we'll do our addition there instead. This way we can seperate concerns keeping our functions single which also has the benefit in that compiler can see better what we're doing so it can optimize better.
+But thats not very functional. If we keep this up were just back at the imperitive style. Lets look at the `map` combinator instead. It lets us define a function to be run on each element one at a time, and we'll do our addition there instead. This way we can seperate concerns keeping our functions single which also has the benefit in that compiler can see better what we're doing so it can optimize better.
 
 ```rust,editable
 fn main() {
-    let array = [3.0, 2.0, 1.0];
+    let array = [22.0, 1.0, 17.0];
     for i in array.iter().map(|i| { i + 1.0 } ) { // <- Note no semicolon, we're returning the result of our addition. Also the rust formatter will remove these uneeded brackets are needed as its only a single expression
         println!("{:?}", i);
     }
@@ -55,8 +55,8 @@ Ok now lets add AND reverse.
 
 ```rust,editable
 fn main() {
-    let array = [3.0, 2.0, 1.0];
-    for i in array.iter().rev().map(|i| i+ 1.0) {
+    let array = [22.0, 1.0, 17.0];
+    for i in array.iter().rev().map(|i| i + 1.0) {
         println!("{:?}", i);
     }
 }
@@ -68,18 +68,39 @@ Lets get even a little bit more functional. If instead of just for looping we as
 
 ```rust,editable
 fn main() {
-    let array = [3.0, 2.0, 1.0];
+    let array = [22.0, 1.0, 17.0];
     let reversed_and_elevated = array.iter().rev().map(|i| i + 1.0);
-    println!("{:?}", reversed_and_elevated.clone()); // <- we `clone` the iterator which is cheap, its not copying the datastructure just our mutation chain
-    println!("{:?}", reversed_and_elevated); // <- Now we can use it again or pass it to another function
+    println!("{:?}", reversed_and_elevated);
 }
 ```
 
-But as soon as you start playing with this you'll run into a common mistake that trips people up with iterators. They're 'lazily evaluated'. This means until a function consumes them, they wont actually be run. Lets slim down our example to our add function again. We'll print in our map instead of afterwards.
+Interesting. This time it didn't print our end result, but rather printed the chain of mutations plus the original data `Map { iter: Rev { iter: Iter([22.0, 1.0, 17.0]) } }`. It turns out iterators are 'lazily evaluated' which means theyre not actuall run until they're consumed. The `for in` loop and the `.sum()` are operations we have previously seen that consume an iterator. Another function that consumes an iterator is `collect()` which collects all the values back into a whole new array.  
+
+We actually can't collect into `Array` data structures (yet). Instead we'll use a `Vec` which we won't go over much here yet, but its just another collection type that is a bit more costly and powerful than arrays.
+
+> NOTE: This is actually the costly thing we've been avoiding all this time. It brings all the values back into memory and can take lots of memory and compute time. For debugging, desktop programming and small datasets its totally fine and eventually often you just need to consume and get back to an `Vec`. However when you move to the optimizing stage, or if you're running on constrained devices, you're looking to remove as many `collect()` as possible and just keep chaining iterators.
+
+So lets collect our iterator and print the result. The compiler often has trouble knowing what you're trying to collect to so we'll help it out with a type hint.
 
 ```rust,editable
 fn main() {
-    let array = [3.0, 2.0, 1.0];
+    let array = [22.0, 1.0, 17.0];
+    let reversed_and_elevated = array.iter().rev().map(|i| i + 1.0);
+     // We `clone` the iterator which is cheap, its not copying the datastructure just our mutation chain
+    let reversed_and_elevated_array: Vec<f64> = reversed_and_elevated.clone().collect();
+    println!("{:?}", reversed_and_elevated_array);
+    
+    // Now we can use it again or pass it to another function, or add more combinators. Note we didn't need to clone it this time since we don't use it again in this example, but we could.
+    let un_reversed_and_elevated_array: Vec<f64> = reversed_and_elevated.rev().collect();  
+    println!("{:?}", un_reversed_and_elevated_array);
+}
+```
+
+To show what lazily evaluated means, run this example with no collect or for loop.
+
+```rust,editable
+fn main() {
+    let array = [22.0, 1.0, 17.0];
     array.iter().rev().map(|i| {
         println!("{:?}", i);
         i + 1.0
@@ -87,9 +108,9 @@ fn main() {
 }
 ```
 
-Note nothing was printed. The `map()` wasnt run. It's not until its consumed when it will finally run that code. It turns out the `for in` loop and `println!` both consume so we hadn't noticed yet
+Note that nothing was printed because the `map()` wasn't actually run. The playground probably lost the warning, but if you do accidently run this code on your machine, the compiiler has your back with the following warning.
 
--```text
+```text
 warning: unused `Map` that must be used
  --> src/main.rs:3:5
   |
@@ -100,19 +121,9 @@ warning: unused `Map` that must be used
   = note: iterators are lazy and do nothing unless consumed
 
 warning: 1 warning emitted
--```
-
-There's one more way to consume an iterator. `collect()` it back into a whole new array. We actually can't collect into array data structures (yet), we need to use the more costly and powerful `Vec` type instead. This is actually the costly thing we've been avoiding all this time. It brings all the values back into memory and can take lots of compute time. For most desktop programming and small datasets its totally fine though. But when you move to the optimizing stage, or if you're running on constrained devices, you're looking to remove as many `collect()` as possible and just keep chaining iterators. We generally have to help the compiler when using collect and tell it the exact type were trying to collect into.
-
-```rust,editable
-fn main() {
-    let array = [3.0, 2.0, 1.0];
-    let reversed_and_elevated_array: Vec<f64> = array.iter().rev().map(|i| i + 1.0).collect();
-    println!("{:?}", reversed_and_elevated_array)
-}
 ```
 
-It gets a little more complex from here but were going to need a few more tools as we continue.  `zip()` combines one value from each of two different iterators into a tuple like `(22.0, 4.0)`.
+It gets a little more complex from here but were going to need a few more tools as we continue. `zip()` combines one value from each of two different iterators into a tuple like `(22.0, 4.0)`.
 
 ```rust,editable
 fn main() {
@@ -126,11 +137,10 @@ fn main() {
 }
 ```
 
-`flatten()` iterates through iterators like n dimensional structures and concatenates them one after the other, or "flattens" them. If we had a two dimensional array of arrays and wanted to turn it into a single flat array we would use `flatten()`.
+`flatten()` iterates through iterators like n dimensional structures and concatenates them one after the other, or "flattens" them. If we had a two dimensional array of arrays and wanted to turn it into a single flat array we would use `flatten()`. One more trick is needed here, our iterator is pointing at borrowed references to the arrays. We need to use `cloned()` on our iterator in order to turn our `&f32` values in `f32`. If we run this without the compiler says "value of type `Vec<f32>` cannot be built from `std::iter::Iterator<Item=&f32>"
 
 ```rust,editable
 fn main() {
-
     let array: [[f32; 3]; 3] = [
             [1.0, 2.0, 3.0],
             [4.0, 5.0, 6.0],
@@ -138,8 +148,8 @@ fn main() {
     ];
     println!("{:?}", array);
 
-    let flat = array.iter().flatten();
-    println!("{:?}", flat);
+    let flat_array: Vec<f32> = array.iter().cloned().flatten().collect();
+    println!("{:?}", flat_array);
 }
 ```
 
@@ -154,13 +164,16 @@ fn main() {
         ];
     println!("{:?}", array);
 
-    let flat_mapped = array.iter().flat_map(|i| {
+    let flat_mapped_array: Vec<f32> = array.iter().flat_map(|i| {
         // each i is an entire row of the array, it hasn't been flattened yet
         println!("{:?}", i);
         // we could do something complex but well just print the inner elements
-        i.iter().map(|j| println!("{:?}", j))
-    });
-    println!("{:?}", flat_mapped);
+        i.iter().cloned().map(|j| {
+            println!("{:?}", j); 
+            j
+        })
+    }).collect();
+    println!("{:?}", flat_mapped_array);
 }
 ```
 
