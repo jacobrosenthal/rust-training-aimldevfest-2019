@@ -926,7 +926,7 @@ mod tests {
 <p>Ok now lets add AND reverse.</p>
 <pre><pre class="playground"><code class="language-rust editable">fn main() {
     let array = [22.0, 1.0, 17.0];
-    for i in array.iter().rev().map(|i| i+ 1.0) {
+    for i in array.iter().rev().map(|i| i + 1.0) {
         println!(&quot;{:?}&quot;, i);
     }
 }
@@ -953,7 +953,7 @@ mod tests {
     println!(&quot;{:?}&quot;, reversed_and_elevated_array);
     
     // Now we can use it again or pass it to another function, or add more combinators. Note we didn't need to clone it this time since we don't use it again in this example, but we could.
-    let un_reversed_and_elevated_array: Vec&lt;f64&gt; = reversed_and_elevated.collect();  
+    let un_reversed_and_elevated_array: Vec&lt;f64&gt; = reversed_and_elevated.rev().collect();  
     println!(&quot;{:?}&quot;, un_reversed_and_elevated_array);
 }
 </code></pre></pre>
@@ -989,9 +989,8 @@ warning: 1 warning emitted
     println!(&quot;{:?}&quot;, summed_array);
 }
 </code></pre></pre>
-<p><code>flatten()</code> iterates through iterators like n dimensional structures and concatenates them one after the other, or &quot;flattens&quot; them. If we had a two dimensional array of arrays and wanted to turn it into a single flat array we would use <code>flatten()</code>.</p>
+<p><code>flatten()</code> iterates through iterators like n dimensional structures and concatenates them one after the other, or &quot;flattens&quot; them. If we had a two dimensional array of arrays and wanted to turn it into a single flat array we would use <code>flatten()</code>. One more trick is needed here, our iterator is pointing at borrowed references to the arrays. We need to use <code>cloned()</code> on our iterator in order to turn our <code>&amp;f32</code> values in <code>f32</code>. If we run this without the compiler says &quot;value of type <code>Vec&lt;f32&gt;</code> cannot be built from `std::iter::Iterator&lt;Item=&amp;f32&gt;&quot;</p>
 <pre><pre class="playground"><code class="language-rust editable">fn main() {
-
     let array: [[f32; 3]; 3] = [
             [1.0, 2.0, 3.0],
             [4.0, 5.0, 6.0],
@@ -999,8 +998,8 @@ warning: 1 warning emitted
     ];
     println!(&quot;{:?}&quot;, array);
 
-    let flat = array.iter().flatten();
-    println!(&quot;{:?}&quot;, flat);
+    let flat_array: Vec&lt;f32&gt; = array.iter().cloned().flatten().collect();
+    println!(&quot;{:?}&quot;, flat_array);
 }
 </code></pre></pre>
 <p>Finally if we wanted to both <code>flatten()</code> and <code>map()</code> at the same time we can use <code>flat_map()</code>.</p>
@@ -1012,13 +1011,16 @@ warning: 1 warning emitted
         ];
     println!(&quot;{:?}&quot;, array);
 
-    let flat_mapped = array.iter().flat_map(|i| {
+    let flat_mapped_array: Vec&lt;f32&gt; = array.iter().flat_map(|i| {
         // each i is an entire row of the array, it hasn't been flattened yet
         println!(&quot;{:?}&quot;, i);
         // we could do something complex but well just print the inner elements
-        i.iter().map(|j| println!(&quot;{:?}&quot;, j))
-    });
-    println!(&quot;{:?}&quot;, flat_mapped);
+        i.iter().cloned().map(|j| {
+            println!(&quot;{:?}&quot;, j); 
+            j
+        })
+    }).collect();
+    println!(&quot;{:?}&quot;, flat_mapped_array);
 }
 </code></pre></pre>
 <p>Thats all we'll need for our convolution for now, but if you want even more combinators, checkout the <a href="https://docs.rs/itertools/0.8.0/itertools/">itertools</a> crate.</p>
