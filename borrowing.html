@@ -276,21 +276,6 @@ fn main() {
     println!(&quot;{}&quot;, new_number);
 }
 </code></pre></pre>
-<p>Prior to Rust 2018 edition, it used to be common to use scopes to explicitly end borrows. The below code shows how we can use an extra scope (curly braces) to end a borrow early to allow a mutable borrow. With Rust 2018, the compiler is actually smart enough to detect this on its own, so we don't worry about it much unless you have a specific case the compiler can't figure out.</p>
-<pre><pre class="playground"><code class="language-rust editable">fn main() {
-    let mut number: usize = 32;
-
-    {
-        let borrowed = &amp;number;
-        println!(&quot;Borrowed: {}&quot;, borrowed);
-    } // borrow ends here
-
-    // no living borrows, so &amp;mut is ok!
-    let mut_borrowed = &amp;mut number;
-    *mut_borrowed = 59;
-    println!(&quot;Mut borrowed: {}&quot;, mut_borrowed);
-}
-</code></pre></pre>
 
                     </main>
 

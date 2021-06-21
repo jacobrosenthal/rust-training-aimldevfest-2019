@@ -801,21 +801,6 @@ fn main() {
     println!(&quot;{}&quot;, new_number);
 }
 </code></pre></pre>
-<p>Prior to Rust 2018 edition, it used to be common to use scopes to explicitly end borrows. The below code shows how we can use an extra scope (curly braces) to end a borrow early to allow a mutable borrow. With Rust 2018, the compiler is actually smart enough to detect this on its own, so we don't worry about it much unless you have a specific case the compiler can't figure out.</p>
-<pre><pre class="playground"><code class="language-rust editable">fn main() {
-    let mut number: usize = 32;
-
-    {
-        let borrowed = &amp;number;
-        println!(&quot;Borrowed: {}&quot;, borrowed);
-    } // borrow ends here
-
-    // no living borrows, so &amp;mut is ok!
-    let mut_borrowed = &amp;mut number;
-    *mut_borrowed = 59;
-    println!(&quot;Mut borrowed: {}&quot;, mut_borrowed);
-}
-</code></pre></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="convolution-and-testing"><a class="header" href="#convolution-and-testing">Convolution and testing</a></h1>
 <p><a href="https://en.wikipedia.org/wiki/Kernel_(image_processing)">Convolving a kernel with an image</a> is an incredibly common operation in all kinds of image processing. With it we can implement all the machine learning greatest hits, which for images as you can see includes <a href="https://en.wikipedia.org/wiki/Kernel_(image_processing)#Details">edge detection sharpen, blur and more</a>. Convolution should remind you of Convolution Neural nets and might give you an idea how those work too.</p>
 <p>From wikipedia:</p>
@@ -833,13 +818,13 @@ g h i    7 8 9
 f e d
 c b a
 </code></pre>
-<p>Then we can just pairing up the upper left to the upper right and so on, thats our <code>zip()</code> operation.</p>
+<p>Then we can just pair up the upper left to the upper right and so on, thats our <code>zip()</code> operation!</p>
 <pre><code class="language-text">i h g    1 2 3
 f e d  * 4 5 6
 c b a    7 8 9
 = (i*1) + (h*2) +  (g*3) + (f*4) + (e*5) + (d*6) + (c*7) + (b*8) + (a*9)
 </code></pre>
-<p>and we get the same result. So lets store our kernels in mirrored form.</p>
+<p>and we get the same result. So lets store our kernels in mirrored form and plan to use <code>zip()</code>.</p>
 <p>Lets do a little test driven development in order to show off Rust's built in testing capability. So we need 2 matrices, some data (think of it as pixels of an image) and a kernel someone figured out and published for us. Did you notice the Identity Kernel on the wikipedia page? That kernel, when convolved on data, simply returns back the original data unchanged. That would be an easy test to write.</p>
 <p>From wikipedia the identity kernel is</p>
 <pre><code class="language-text">+0 +0 +0

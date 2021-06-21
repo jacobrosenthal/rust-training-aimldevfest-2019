@@ -160,13 +160,13 @@ g h i    7 8 9
 f e d
 c b a
 </code></pre>
-<p>Then we can just pairing up the upper left to the upper right and so on, thats our <code>zip()</code> operation.</p>
+<p>Then we can just pair up the upper left to the upper right and so on, thats our <code>zip()</code> operation!</p>
 <pre><code class="language-text">i h g    1 2 3
 f e d  * 4 5 6
 c b a    7 8 9
 = (i*1) + (h*2) +  (g*3) + (f*4) + (e*5) + (d*6) + (c*7) + (b*8) + (a*9)
 </code></pre>
-<p>and we get the same result. So lets store our kernels in mirrored form.</p>
+<p>and we get the same result. So lets store our kernels in mirrored form and plan to use <code>zip()</code>.</p>
 <p>Lets do a little test driven development in order to show off Rust's built in testing capability. So we need 2 matrices, some data (think of it as pixels of an image) and a kernel someone figured out and published for us. Did you notice the Identity Kernel on the wikipedia page? That kernel, when convolved on data, simply returns back the original data unchanged. That would be an easy test to write.</p>
 <p>From wikipedia the identity kernel is</p>
 <pre><code class="language-text">+0 +0 +0
