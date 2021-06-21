@@ -8,7 +8,7 @@ use structopt::StructOpt;
 
 #[derive(StructOpt, Debug)]
 #[structopt(name = "training")]
-struct Opt {
+struct Arguments {
     #[structopt(short = "i", long = "input", parse(from_os_str))]
     input_path: PathBuf,
     #[structopt(short = "o", long = "output", parse(from_os_str))]
@@ -20,15 +20,15 @@ Then not too much changes in our existing main.
 
 ```rust,ignore,no_run
 fn main() {
-    let opt = Opt::from_args();
-    println!("{:?}", opt);
+    let arguments = Arguments::from_args();
+    println!("{:?}", arguments);
 }
 ```
 
 Running `cargo run -- -i valve.png -o valve_sobel.png` results in
 
 ```text
-Opt { input_path: "valve.png", output_path: "valve_sobel.png" }
+Arguments { input_path: "valve.png", output_path: "valve_sobel.png" }
 ```
 
 and running `cargo run -- --help`

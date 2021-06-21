@@ -26,12 +26,12 @@ Now in main.rs we can use this dependency. To start, let's just write the input 
 ```rust,ignore
 use image;
 
-let options = options().expect("Failed to parse command options!");
+let arguments = arguments().expect("Failed to parse command arguments!");
 
-let input_image = image::open(&options.input_path)
+let input_image = image::open(&arguments.input_path)
     .expect("Failed to open input image file");
 
-input_image.save(&options.output_path)
+input_image.save(&arguments.output_path)
     .expect("Failed to save output image to file");
 ```
 
@@ -54,11 +54,11 @@ For example, we can make our processing code later only accept `GrayImage` as in
 ![to_luma method](./images/to_luma.png)
 
 ```rust,ignore
-let input_image = image::open(&options.input_path)
+let input_image = image::open(&arguments.input_path)
     .expect("Failed to open input image file");
 
 let input_image = input_image.to_luma();
 
-input_image.save(&options.output_path)
+input_image.save(&arguments.output_path)
     .expect("Failed to save output image to file");
 ```
