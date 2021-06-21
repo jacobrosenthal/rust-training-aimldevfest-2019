@@ -8,7 +8,7 @@ A module is very similar to a C++ namespace, in that it is a named scope contain
 
 Let's take a quick look.
 
-```rust,editable
+```rust ,editable
 mod say {
     pub fn hello() {
         println!("I'm a module");
@@ -46,13 +46,13 @@ crate
 
 In lib.rs (or main.rs):
 
-```rust,ignore
+```rust ,ignore
 mod mymodule;
 ```
 
 In mymodule.rs:
 
-```rust,ignore
+```rust ,ignore
 pub fn myfunction() {
     ...
 }
@@ -72,13 +72,13 @@ crate
 
 In lib.rs (or main.rs):
 
-```rust,ignore
+```rust ,ignore
 mod bigmodule;
 ```
 
 In mod.rs:
 
-```rust,ignore
+```rust ,ignore
 mod submodule;
 
 fn function_in_bigmodule() {
@@ -88,7 +88,7 @@ fn function_in_bigmodule() {
 
 In submodule.rs:
 
-```rust,ignore
+```rust ,ignore
 fn function_in_submodule() {
     ...
 }
@@ -102,7 +102,7 @@ We can refactor the Sobel filter function, convolution function, and kernels int
 
 Rust also includes a mechanism for re-exporting imported modules, functions, structs, etc from within a module. For example, our Sobel filter module could re-export `GrayImage` since all callers will need to use it.
 
-```rust,ignore
+```rust ,ignore
 pub use image::GrayImage;
 ```
 
@@ -118,7 +118,7 @@ If we take a look at the [rayon docs](https://docs.rs/rayon/1.1.0/rayon/prelude/
 
 You create a prelude by creating a module, just like other modules. However, typically prelude modules consist solely of `pub use` statements.
 
-```rust,ignore
+```rust ,ignore
 mod prelude {
     pub use sobel::sobel_filter;
     pub use image::GrayImage;

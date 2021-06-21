@@ -23,7 +23,7 @@ The [Cargo chapter on dependencies](https://doc.rust-lang.org/cargo/reference/sp
 
 Now in main.rs we can use this dependency. To start, let's just write the input to the output, passthrough, using the image create we looked at earlier.
 
-```rust,ignore
+```rust ,ignore
 use image;
 
 let arguments = arguments().expect("Failed to parse command arguments!");
@@ -53,7 +53,7 @@ For example, we can make our processing code later only accept `GrayImage` as in
 
 ![to_luma method](./images/to_luma.png)
 
-```rust,ignore
+```rust ,ignore
 let input_image = image::open(&arguments.input_path)
     .expect("Failed to open input image file");
 

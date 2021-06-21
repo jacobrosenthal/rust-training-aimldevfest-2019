@@ -12,7 +12,7 @@ The borrow checker is probably Rust's most distinctive feature. To enable zero c
 
 ## Rule #1: single owner
 
-```rust,editable,ignore,mdbook-runnable
+```rust ,editable,ignore,mdbook-runnable
 fn eat(s: String) {
     println!("Eating {}", s);
 }
@@ -28,7 +28,7 @@ The compiler error tells us exactly what's wrong. The `fn eat(s: String)` signat
 
 Here's how we can pass ownership back.
 
-```rust,editable
+```rust ,editable
 fn eat(s: String) -> String {
     println!("Eating {}", s);
     s
@@ -45,7 +45,7 @@ fn main() {
 
 If we change the function signature to borrow `s` instead, the problem goes away.
 
-```rust,editable
+```rust ,editable
 fn stare_at(s: &String) {
     println!("Drooling over {}", s);
 }
@@ -63,7 +63,7 @@ fn main() {
 
 Only a mutable borrow for an object can exist at a time. This prevents many subtle errors where internal state is mutated while other does not expect it. In C++, modifying a container while iterating through it is a classic example.
 
-```rust,editable,ignore,mdbook-runnable
+```rust ,editable,ignore,mdbook-runnable
 fn main() {
     let mut number: usize = 32;
 
@@ -81,7 +81,7 @@ You'll notice the compiler gave us an error because we have an immutable borrow 
 
 When we have an exclusive mutable borrow, all is good.
 
-```rust,editable
+```rust ,editable
 fn main() {
     let mut number: usize = 32;
 
@@ -95,7 +95,7 @@ fn main() {
 
 In the example below, we borrow a temporary value inside the if statement branches. The temporary value does not last beyond the if statement branch, so the compiler tells us that our borrow is invalid. We can't borrow an object that doesn't exist.
 
-```rust,editable,ignore,mdbook-runnable
+```rust ,editable,ignore,mdbook-runnable
 fn main() {
     let borrowed = if 1 + 1 == 2 {
         let msg = "The world is sane.";
@@ -119,7 +119,7 @@ The borrowing rules prevent all kinds of common C++ memory and security errors. 
 
 While you are learning Rust, you will face another temptation: clone everything! The `Clone` trait in Rust provides the method `clone()` which creates a copy of any objects that implements `Clone`. When something is cloned, the borrows on the original do not apply to the new copy.
 
-```rust,editable
+```rust ,editable
 fn main() {
     let mut number: usize = 32;
 
@@ -137,7 +137,7 @@ fn main() {
 
 One last thing to note about lifetimes is that they are tied to scopes. So a borrow must exist in a scope at or below the level of the ownership.
 
-```rust,editable,ignore,mdbook-runnable
+```rust ,editable,ignore,mdbook-runnable
 fn main() {
     let mut number: usize = 32;
     {
@@ -154,7 +154,7 @@ fn main() {
 
 Also, Rust allows a scope to return a value. This is useful for temporarily borrowing a value in a limited scope and computing some value without creating a whole separate function for it.
 
-```rust,editable
+```rust ,editable
 fn main() {
     let number: usize = 32;
     let new_number = {
@@ -167,7 +167,7 @@ fn main() {
 
 Prior to Rust 2018 edition, it used to be common to use scopes to explicitly end borrows. The below code shows how we can use an extra scope (curly braces) to end a borrow early to allow a mutable borrow. With Rust 2018, the compiler is actually smart enough to detect this on its own, so we don't worry about it much unless you have a specific case the compiler can't figure out.
 
-```rust,editable
+```rust ,editable
 fn main() {
     let mut number: usize = 32;
 

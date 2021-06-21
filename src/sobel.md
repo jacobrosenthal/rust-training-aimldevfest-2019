@@ -18,17 +18,17 @@ This might seem over-complicated. However, by abstracting away the underlying st
 
 For our case, we just have a GrayImage with pixels of type `Luma<u8>` that implement the `Pixel` trait. So we should be able to fetch a pixel pretty easily. Here's a go:
 
-```rust,ignore
+```rust ,ignore
 use image::Pixel; // trait for '.channels()'
 
-let input_image = image::open(&options.input_path)
+let input_image = image::open(&arguments.input_path)
     .expect("Failed to open input image file");
 
 let input_image = input_image.to_luma();
 
 println!("Pixel 0, 0: {}", input_image.get_pixel(0, 0).channels()[0]);
 
-input_image.save(&options.output_path)
+input_image.save(&arguments.output_path)
     .expect("Failed to save output image to file");
 ```
 
@@ -36,7 +36,7 @@ Generally, well-written Rust crates provide comprehensive types like this to cov
 
 Now that we can grab pixels, let's write a function that takes the pixel values and calls our convolution function. First we'll start with this signature, and copying the input. We need a place to store the resulting convolved pixel values, and we want an image of the same dimensions and data types. `clone()` is an easy way to get that. Notice that `result` is declared as `mut` since we will be modifying its contents.
 
-```rust,ignore
+```rust ,ignore
 use image::{GrayImage, Pixel};
 
 fn sobel_filter(input: &GrayImage) -> GrayImage {
@@ -48,7 +48,7 @@ fn sobel_filter(input: &GrayImage) -> GrayImage {
 
 To start with, let's just create the block of pixels to feed the convolution for each center pixel.
 
-```rust,ignore
+```rust ,ignore
 use image::{GrayImage, Pixel};
 
 fn sobel_filter(input: &GrayImage) -> GrayImage {
@@ -82,15 +82,15 @@ fn sobel_filter(input: &GrayImage) -> GrayImage {
 
 We'll need to throw a call into `fn main()` to use this.
 
-```rust,ignore
-let input_image = image::open(&options.input_path)
+```rust ,ignore
+let input_image = image::open(&arguments.input_path)
     .expect("Failed to open input image file");
 
 let input_image = input_image.to_luma();
 
 let input_image = sobel_filter(&input_image);
 
-input_image.save(&options.output_path)
+input_image.save(&arguments.output_path)
     .expect("Failed to save output image to file");
 ```
 
@@ -113,7 +113,7 @@ As the [Wikipedia page on convolution kernels](https://en.wikipedia.org/wiki/Ker
 
 If we crop the output image, we can easily adapt our code. The ImageBuffer struct implements the GenericImage trait which has a function called `sub_image` that gives us a view into rectangular section of an image. With a `SubImage` we can call `to_image()` to get a cropped `ImageBuffer` back out.
 
-```rust,ignore
+```rust ,ignore
 use image::{GenericImage, GrayImage, Pixel};
 
 fn sobel_filter(input: &GrayImage) -> GrayImage {
@@ -151,7 +151,7 @@ fn sobel_filter(input: &GrayImage) -> GrayImage {
 
 Oh, and did you find a place where clone might be handy?. Cool. No more overflows. We should get the convolution in there! Usually, we also divide by a constant value to "normalize" the result (really just make sure it is within the 0.0-1.0 range). For the Sobel operator on a 3x3 block of pixels, a divisor of 8.0 works well.
 
-```rust,ignore
+```rust ,ignore
 use image::{GenericImage, GrayImage, Pixel};
 
 fn sobel_filter(input: &GrayImage) -> GrayImage {
@@ -197,7 +197,7 @@ We can explicitly cast that with 'as f32'.
 
 We can also add a couple lines to combine our two kernels into a single magnitude with the sum of squares. Then well need to turn our resulting f32 into a u8 Luma type before storing it back into the resulting image.
 
-```rust,ignore
+```rust ,ignore
 use image::{GenericImage, GrayImage, Luma, Pixel};
 
 fn sobel_filter(input: &GrayImage) -> GrayImage {

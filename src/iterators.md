@@ -4,7 +4,7 @@ Iterators are one of the most powerful features in Rust! They are also a gateway
 
 Most collections like an array can be iterated which just means getting the collection one element at a time. This imperitive style use of an iterator should look very familiar to you. Well just print each value.
 
-```rust,editable
+```rust ,editable
 fn main() {
     let array = [22.0, 1.0, 17.0];
 
@@ -18,7 +18,7 @@ One of the benefits of using iterators is all the functions we get for free. The
 
 Lets reverse our array with `rev()`.
 
-```rust,editable
+```rust ,editable
 fn main() {
     let array = [22.0, 1.0, 17.0];
     for i in array.iter().rev() {
@@ -29,7 +29,7 @@ fn main() {
 
 If we wanted to do some custom logic like add, we could certainly do it in the for loop.
 
-```rust,editable
+```rust ,editable
 fn main() {
     let array = [22.0, 1.0, 17.0];
 
@@ -42,7 +42,7 @@ fn main() {
 
 But thats not very functional. If we keep this up were just back at the imperitive style. Lets look at the `map` combinator instead. It lets us define a function to be run on each element one at a time, and we'll do our addition there instead. This way we can seperate concerns keeping our functions single which also has the benefit in that compiler can see better what we're doing so it can optimize better.
 
-```rust,editable
+```rust ,editable
 fn main() {
     let array = [22.0, 1.0, 17.0];
     for i in array.iter().map(|i| { i + 1.0 } ) { // <- Note no semicolon, we're returning the result of our addition. Also the rust formatter will remove these uneeded brackets are needed as its only a single expression
@@ -53,7 +53,7 @@ fn main() {
 
 Ok now lets add AND reverse.
 
-```rust,editable
+```rust ,editable
 fn main() {
     let array = [22.0, 1.0, 17.0];
     for i in array.iter().rev().map(|i| i + 1.0) {
@@ -66,7 +66,7 @@ Very slick. How many times have you come across a for loop that you have to puzz
 
 Lets get even a little bit more functional. If instead of just for looping we assign the iterator to a value, we can hold the intermediate iterator and reuse it or pass it to functions.
 
-```rust,editable
+```rust ,editable
 fn main() {
     let array = [22.0, 1.0, 17.0];
     let reversed_and_elevated = array.iter().rev().map(|i| i + 1.0);
@@ -82,7 +82,7 @@ We actually can't collect into `Array` data structures (yet). Instead we'll use 
 
 So lets collect our iterator and print the result. The compiler often has trouble knowing what you're trying to collect to so we'll help it out with a type hint.
 
-```rust,editable
+```rust ,editable
 fn main() {
     let array = [22.0, 1.0, 17.0];
     let reversed_and_elevated = array.iter().rev().map(|i| i + 1.0);
@@ -98,7 +98,7 @@ fn main() {
 
 To show what lazily evaluated means, run this example with no collect or for loop.
 
-```rust,editable
+```rust ,editable
 fn main() {
     let array = [22.0, 1.0, 17.0];
     array.iter().rev().map(|i| {
@@ -125,7 +125,7 @@ warning: 1 warning emitted
 
 It gets a little more complex from here but were going to need a few more tools as we continue. `zip()` combines one value from each of two different iterators into a tuple like `(22.0, 4.0)`.
 
-```rust,editable
+```rust ,editable
 fn main() {
     let array1 = [22.0, 1.0, 17.0];
     let array2 = [4.0, 19.0, 6.0];
@@ -139,7 +139,7 @@ fn main() {
 
 `flatten()` iterates through iterators like n dimensional structures and concatenates them one after the other, or "flattens" them. If we had a two dimensional array of arrays and wanted to turn it into a single flat array we would use `flatten()`. One more trick is needed here, our iterator is pointing at borrowed references to the arrays. We need to use `cloned()` on our iterator in order to turn our `&f32` values in `f32`. If we run this without the compiler says "value of type `Vec<f32>` cannot be built from `std::iter::Iterator<Item=&f32>"
 
-```rust,editable
+```rust ,editable
 fn main() {
     let array: [[f32; 3]; 3] = [
             [1.0, 2.0, 3.0],
@@ -155,7 +155,7 @@ fn main() {
 
 Finally if we wanted to both `flatten()` and `map()` at the same time we can use `flat_map()`.
 
-```rust,editable
+```rust ,editable
 fn main() {
     let array: [[f32; 3]; 3] = [
             [1.0, 2.0, 3.0],
