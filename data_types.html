@@ -145,7 +145,7 @@
                     <main>
                         <h1 id="data-types"><a class="header" href="#data-types">Data types</a></h1>
 <p>On this section well explore data types like String, structs, function syntax, and make a slightly convoluted example to hold the input and output file names that we'll take via command line for our images later.</p>
-<p>We’ve got all the datatypes you would expect but you might want to glance through the Rust book <a href="https://doc.rust-lang.org/book/ch03-01-variables-and-mutability.html">chapter on variables, functions, and control flow</a> just to update your mental models to Rust notation</p>
+<p>We’ve got all the datatypes you would expect but you might want to glance through the Rust book <a href="https://doc.rust-lang.org/book/ch03-01-variables-and-mutability.html">chapter on variables, functions, and control flow</a> just to update your mental models to Rust notation.</p>
 <p>We have signed and unsigned scalar types like u32 and i32 and we've got Strings. Variables are instantiated with let syntax, and notably are immutable by default.</p>
 <p>The top of the <a href="https://doc.rust-lang.org/std/">Rust standard library page</a> has a search box. Entering String there we find <a href="https://doc.rust-lang.org/std/string/struct.String.html#method.from">std::string::String</a> with a bunch of example usage right there for us. You can edit those examples and run them right in your browser to confirm your understanding and even click the [src] link in the upper right corner and be taken straight to the Rust implementation.</p>
 <blockquote>
@@ -232,7 +232,7 @@ fn arguments() -&gt; Arguments {
     return arguments; // &lt;- explicit return statement
 }
 </code></pre>
-<p>We use semicolons to end expressions and 'return' the value, in this case to a variable. We often prefer to leave off semicolons for brevity and implicitly return the expression like so.</p>
+<p>We use semicolons to end expressions and 'return' the value to a variable or out of the function. We often prefer to leave off semicolons for brevity and implicitly return the expression from a function like so.</p>
 <p><strong>EXERCISE: Put everything together and call our arguments() function from main.</strong></p>
 <pre><pre class="playground"><code class="language-rust editible">struct Arguments {
     input_path: String,

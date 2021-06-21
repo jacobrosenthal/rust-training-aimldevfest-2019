@@ -437,7 +437,7 @@ Hello, world!
 <p>However in practice almost no projects are single files require merging multiple modules from within our project and without and thus Cargo is THE way we interact with Rust.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="data-types"><a class="header" href="#data-types">Data types</a></h1>
 <p>On this section well explore data types like String, structs, function syntax, and make a slightly convoluted example to hold the input and output file names that we'll take via command line for our images later.</p>
-<p>We’ve got all the datatypes you would expect but you might want to glance through the Rust book <a href="https://doc.rust-lang.org/book/ch03-01-variables-and-mutability.html">chapter on variables, functions, and control flow</a> just to update your mental models to Rust notation</p>
+<p>We’ve got all the datatypes you would expect but you might want to glance through the Rust book <a href="https://doc.rust-lang.org/book/ch03-01-variables-and-mutability.html">chapter on variables, functions, and control flow</a> just to update your mental models to Rust notation.</p>
 <p>We have signed and unsigned scalar types like u32 and i32 and we've got Strings. Variables are instantiated with let syntax, and notably are immutable by default.</p>
 <p>The top of the <a href="https://doc.rust-lang.org/std/">Rust standard library page</a> has a search box. Entering String there we find <a href="https://doc.rust-lang.org/std/string/struct.String.html#method.from">std::string::String</a> with a bunch of example usage right there for us. You can edit those examples and run them right in your browser to confirm your understanding and even click the [src] link in the upper right corner and be taken straight to the Rust implementation.</p>
 <blockquote>
@@ -524,7 +524,7 @@ fn arguments() -&gt; Arguments {
     return arguments; // &lt;- explicit return statement
 }
 </code></pre>
-<p>We use semicolons to end expressions and 'return' the value, in this case to a variable. We often prefer to leave off semicolons for brevity and implicitly return the expression like so.</p>
+<p>We use semicolons to end expressions and 'return' the value to a variable or out of the function. We often prefer to leave off semicolons for brevity and implicitly return the expression from a function like so.</p>
 <p><strong>EXERCISE: Put everything together and call our arguments() function from main.</strong></p>
 <pre><pre class="playground"><code class="language-rust editible">struct Arguments {
     input_path: String,
@@ -544,8 +544,23 @@ fn main() {
 }
 </code></pre></pre>
 <p>Now we have a simple little program with most of the syntax we need. In our next chapter, we'll get our actual arguments from the command line, and learn about error handling in Rust.</p>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="option-and-result"><a class="header" href="#option-and-result">Option and Result</a></h1>
-<p>Let's take our arguments from the command line with runtime args instead of hard coding it at compile time. Search the standard library for <a href="https://doc.rust-lang.org/std/env/fn.args.html">args</a> finds args come in as a iterator of a collection. We'll talk about iterators later, but for now we can for loop over them, or get the <code>nth()</code> value. (starting from an empty main for just a second)</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="arguments-and-option-and-result"><a class="header" href="#arguments-and-option-and-result">Arguments and Option and Result</a></h1>
+<p>Rust doesn’t have exceptions but there <em>is</em> a minimal runtime, which means if were not careful we can and will blow up at runtime. This is called a panic and is handled in the panic handler, which on hosted platforms includes unwinding and backtraces. You can fire it on purpose with <code>panic!()</code>.</p>
+<p><strong>EXERCISE: Run this program. Notice the program gets no further than the panic and nothing is printed.</strong></p>
+<p>(starting from an empty main for just a second)</p>
+<pre><code class="language-rust ignore">use std::env;
+
+fn main() {
+    panic!(&quot;ded&quot;);
+    println!(&quot;Hello World&quot;);
+}
+</code></pre>
+<p>In Rust we try to program defensively and not let our users ever see messages like that.</p>
+<p>Moving on let's take our arguments from the command line at runtime instead of hard coding them at compile time. Searching the standard library for <a href="https://doc.rust-lang.org/std/env/fn.args.html">args</a> finds args come in as a iterator of a collection. We'll talk about iterators later, but for now we can <code>for in</code> loop over them, or use the <code>nth()</code> function to get a specific value.</p>
+<p><strong>EXERCISE: We can't run this in the browser because we can't pass arguments to it. Run this program on your machine.</strong></p>
+<blockquote>
+<p>NOTE: you can pass command line arguments around cargo and to your program with a double dash <code>cargo run -- valve.png valve_sobel.png</code></p>
+</blockquote>
 <pre><code class="language-rust ignore no_run">use std::env; // explicit use (import) finally
 
 fn main() {
@@ -556,26 +571,16 @@ fn main() {
 </code></pre>
 <pre><code class="language-bash">Some(&quot;target/debug/blah222&quot;)
 Some(&quot;valve.png&quot;)
-Some(&quot;out.png&quot;)
+Some(&quot;valve_sobel.png&quot;)
 </code></pre>
-<p>Just like C command line args the 0th argument is the name of the binary and the rest are your arguments. Hrm now we have this Some type wrapping our strings...</p>
-<p>The problem is the nth argument may or may not be there... This is the original sin of C style languages. They allowed null values in the language and billions of dollars have been lost in hacks and crashes as a result.</p>
+<p>Just like C command line args the 0th argument is the name of the binary and the rest are your arguments. Hrm but did you notice we have this <code>Some</code> type wrapping our Strings...</p>
+<p>The problem is the nth argument may or may not be there... This is the original sin of C style languages. They allowed null values in the language which, if not handled immediately, can sneak into the program and cause crashes or corrupted data days weeks or months later.</p>
 <p>Rust doesn’t have exceptions, but rather the <a href="https://doc.rust-lang.org/std/result/index.html">Result type</a> which can be used to propagate either the error or the result and looks like this:
 <img src="./images/result.png" alt="Result Type" /></p>
 <p>And Rust doesn't have Null but rather the <a href="https://doc.rust-lang.org/std/option/enum.Option.html">Option type</a> which can be used to propagate either the value (Some), or the lack of one (None)
 <img src="./images/option.png" alt="Option Type" /></p>
 <p>Were going to skip Result here for now, as our <code>nth()</code> method returns an Option, but they’re very similar in how they’re handled as they’re both implemented as enums.</p>
-<p>There <em>is</em> a minimal runtime in Rust, which means if were not careful we can and will blow up at runtime. This is called a panic and is handled in the panic handler, which on hosted platforms includes unwinding and backtraces. You can fire it on purpose with <code>panic!()</code> or if you <code>unwrap()</code> on a None or Err value.</p>
-<pre><code class="language-rust ignore no_run">use std::env;
-
-fn main() {
-    panic!(&quot;ded&quot;);
-    println!(&quot;{:?}&quot;, env::args().nth(0));
-    println!(&quot;{:?}&quot;, env::args().nth(1));
-    println!(&quot;{:?}&quot;, env::args().nth(2));
-}
-</code></pre>
-<p>Notice the program gets no furter than the panic and nothing is printed.</p>
+<p>Let's use <code>unwrap()</code> to brute force access to our value.</p>
 <pre><code class="language-rust ignore no_run">use std::env;
 
 fn main() {
@@ -586,13 +591,13 @@ fn main() {
 </code></pre>
 <pre><code class="language-bash">&quot;target/debug/blah222&quot;
 &quot;valve.png&quot;
-&quot;out.png&quot;
+&quot;valve_sobel.png&quot;
 </code></pre>
 <p><strong>EXERCISE: Run our program again, this time not passing any command line arguments.</strong></p>
 <pre><code class="language-text">thread 'main' panicked at 'called `Option::unwrap()` on a `None` value', src/libcore/option.rs:347:21
 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace.
 </code></pre>
-<p>Explicitly panicing like we see above is a fine option when the error is unrecoverable anyway like in this case when theres nothing intelligent we can do except maybe try to print a decent error message. If the default error message from binary isn't very good well often well use <code>.expect()</code> in order to provide a better one for our users.</p>
+<p>Now it may seem like were no better off than C style languages, but at least we crashed at the earliest possible opportunity Explicitly panicing like we see above is a fine option at the top level of our program and when the error is unrecoverable anyway. In this case, if we don't get a file to operate on from our user there's not much else to do. The default error message isn't very useful to our users though so often well use <code>.expect()</code> instead of <code>unwrap()</code> in order to provide a better message for our users.</p>
 <pre><code class="language-rust ignore no_run">use std::env;
 
 fn main() {
@@ -609,7 +614,7 @@ thread 'main' panicked at 'You must pass an output file name as the second optio
 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
 $ 
 </code></pre>
-<p>There's definately command line argument parsing libraries that will do all this for us, but for now it is good to understand what is happening under the hood.</p>
+<p>There's definately command line argument parsing libraries that would do all this for us, a popular one is called Clap, but for now it is good to understand what is happening under the hood.</p>
 <p><strong>EXERCISE: Swap our hardcoded arguments from the previous page for our new command line arguments.</strong></p>
 <p>Next chapter we'll look at the Image library, and load up an image with our filenames.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="external-dependencies-cratesio"><a class="header" href="#external-dependencies-cratesio">external dependencies, crates.io</a></h1>
