@@ -155,14 +155,14 @@
 <p>For our case, we just have a GrayImage with pixels of type <code>Luma&lt;u8&gt;</code> that implement the <code>Pixel</code> trait. So we should be able to fetch a pixel pretty easily. Here's a go:</p>
 <pre><code class="language-rust ignore">use image::Pixel; // trait for '.channels()'
 
-let input_image = image::open(&amp;options.input_path)
+let input_image = image::open(&amp;arguments.input_path)
     .expect(&quot;Failed to open input image file&quot;);
 
 let input_image = input_image.to_luma();
 
 println!(&quot;Pixel 0, 0: {}&quot;, input_image.get_pixel(0, 0).channels()[0]);
 
-input_image.save(&amp;options.output_path)
+input_image.save(&amp;arguments.output_path)
     .expect(&quot;Failed to save output image to file&quot;);
 </code></pre>
 <p>Generally, well-written Rust crates provide comprehensive types like this to cover the data formats and structures that they operate on. An image library in C/C++ may provide a raw buffer of pixels, which is easy to access. But, as soon as you have to deal with multiple formats, multiple pixel orderings (RGB, BGR, RGBA, etc.), it can be difficult to ensure all code branches are correct. With Rust, the type system will catch these errors at compile time.</p>
@@ -207,14 +207,14 @@ fn sobel_filter(input: &amp;GrayImage) -&gt; GrayImage {
 }
 </code></pre>
 <p>We'll need to throw a call into <code>fn main()</code> to use this.</p>
-<pre><code class="language-rust ignore">let input_image = image::open(&amp;options.input_path)
+<pre><code class="language-rust ignore">let input_image = image::open(&amp;arguments.input_path)
     .expect(&quot;Failed to open input image file&quot;);
 
 let input_image = input_image.to_luma();
 
 let input_image = sobel_filter(&amp;input_image);
 
-input_image.save(&amp;options.output_path)
+input_image.save(&amp;arguments.output_path)
     .expect(&quot;Failed to save output image to file&quot;);
 </code></pre>
 <p>And then when we run this... what happened?!? What does it mean we attempted subtraction with overflow?</p>

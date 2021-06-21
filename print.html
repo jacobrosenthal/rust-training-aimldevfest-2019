@@ -436,19 +436,40 @@ Hello, world!
 </code></pre>
 <p>However in practice almost no projects are single files require merging multiple modules from within our project and without and thus Cargo is THE way we interact with Rust.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="data-types"><a class="header" href="#data-types">Data types</a></h1>
+<p>On this section well explore data types like String, structs, function syntax, and make a slightly convoluted example to hold the input and output file names that we'll take via command line for our images later.</p>
+<pre><code class="language-rust ignore no_run">struct Arguments {
+    input_path: String,
+    output_path: String,
+}
+
+fn arguments() -&gt; Arguments {
+    Arguments {
+        input_path: String::from(&quot;valve.png&quot;),
+        output_path: String::from(&quot;valve_sobel.png&quot;),
+    }
+}
+
+fn main() {
+    let arguments = arguments();
+    println!(&quot;{} {}&quot;, arguments.input_path, arguments.output_path);
+}
+</code></pre>
 <p>We’ve got all the datatypes you would expect but you might want to glance through the Rust book <a href="https://doc.rust-lang.org/book/ch03-01-variables-and-mutability.html">chapter on variables, functions, and control flow</a> just to update your mental models to Rust notation</p>
 <p>We have signed and unsigned scalar types like u32 and i32 and we've got Strings. Variables are instantiated with let syntax, and notably are immutable by default.</p>
 <p>The top of the <a href="https://doc.rust-lang.org/std/">Rust standard library page</a> has a search box. Entering String there we find <a href="https://doc.rust-lang.org/std/string/struct.String.html#method.from">std::string::String</a> with a bunch of example usage right there for us. You can edit those examples and run them right in your browser to confirm your understanding and even click the [src] link in the upper right corner and be taken straight to the Rust implementation.</p>
 <blockquote>
 <p>While you totally can thrash around on stack overflow, and we all do, there really is an authoritative source that you should check first.</p>
 </blockquote>
-<p>From that example we have our String constructor.</p>
-<pre><pre class="playground"><code class="language-rust no_run">fn main() {
+<p>From that example we have our <code>String::from</code> constructor. Lets assume we saved an image file as &quot;valve.png&quot; that we'll eventually open, passing that from command line. For now lets just hardcode our filename.</p>
+<pre><pre class="playground"><code class="language-rust editable">fn main() {
     let input_path = String::from(&quot;valve.png&quot;);
-    println!(&quot;{:?}&quot;, input_path);
+    println!(&quot;Hello, world!&quot;);
 }
 </code></pre></pre>
-<p>First, note we don’t need to import anything (we call it <code>use</code>) to use this <code>String</code> type. A portion of the standard library is in our namespace automatically, which we call the <a href="https://doc.rust-lang.org/std/prelude/index.html">prelude</a>. Basically Rust puts <code>use std::prelude::v1::*;</code> at the top of your file and you get access to those members. By no means is everything in there, but a lot is, which is what kept you from explicitly writing <code>use std::string::String</code> at the top of your file in this case. The <code>println!</code> macro came from there as well. You don't have to for this tutorial, but if you wanted to install a cargo tool called <a href="https://github.com/dtolnay/cargo-expand">cargo-expand</a> you could see the end result of your code with all macros and preludes included but before it has been optimized to machine code.</p>
+<p>First, note we don’t need to import anything (we call it <code>use</code>) to use this <code>String</code> type. A portion of the standard library is in our namespace automatically, which we call the <a href="https://doc.rust-lang.org/std/prelude/index.html">prelude</a>. Basically Rust puts <code>use std::prelude::v1::*;</code> at the top of your file and you get access to those members. By no means is everything in there, but a lot is, which is what kept you from explicitly writing <code>use std::string::String</code> at the top of your file in this case. The <code>println!</code> macro came from there as well.</p>
+<details><summary>Digression on cargo-expand</summary>
+<p>
+<p>Out of the scope for this workshop, but if you wanted to install a cargo tool called <a href="https://github.com/dtolnay/cargo-expand">cargo-expand</a> you could see the expanded result of your code with all macros and preludes included but before it has been optimized to machine code.</p>
 <pre><code class="language-bash">$ cargo install cargo-expand
 ..
 $ cargo expand
@@ -461,196 +482,155 @@ fn main() {
     let input_path = String::from(&quot;valve.png&quot;);
     {
         ::std::io::_print(::core::fmt::Arguments::new_v1(
-            &amp;[&quot;&quot;, &quot;\n&quot;],
-            &amp;match (&amp;input_path,) {
-                (arg0,) =&gt; [::core::fmt::ArgumentV1::new(arg0, ::core::fmt::Debug::fmt)],
+            &amp;[&quot;Hello, world!\n&quot;],
+            &amp;match () {
+                () =&gt; [],
             },
         ));
     };
 }
 $
 </code></pre>
-<p>Also notice we didn't have to explicitly type our variable. What Rust <em>can</em> figure it out, <em>it will</em> and so its entirely idiomatic to omit type annotations. However if you or the compiler are having trouble or getting odd type errors, start annotating some of your types like to see if you can give the compiler a hand. Its also a great way to figure out what type you actually have in case you're not sure, let the compiler (or linter) tell you.</p>
+<p>You don't have to understand all that, but just to show if Rust ever feels magic, there are tools to look under the hood to see whats going on.</p>
+</p>
+</details>
+<p>Also notice we didn't have to explicitly type our input_path variable even though Rust is a typed language. What Rust <em>can</em> figure it out, <em>it will</em> and so its entirely idiomatic to omit type annotations. However if you or the compiler are having trouble or getting odd type errors, start annotating some of your types like to see if you can give the compiler a hand. Its also a great way to figure out what type you actually have in case you're not sure, let the compiler (or linter) tell you.</p>
+<p>Lets assume that we want to store our output name as &quot;valve_sobel.png&quot;. The compiler doesn't need it in this instance but we can We can add a type annotation after the variable name with a colon and type like <code>:String</code>.</p>
 <pre><pre class="playground"><code class="language-rust editable">fn main() {
-    let input_path = String::from(&quot;valve.png&quot;);
-    let output_path:String = String::from(&quot;valve_sobel.png&quot;);
+    let input_path = String::from(&quot;valve.png&quot;); // &lt;- no type annotation
+    let output_path: String = String::from(&quot;valve_sobel.png&quot;); // &lt;- type annotation
     println!(&quot;Hello, world!&quot;);
 }
 </code></pre></pre>
-<p>So now how to print those variables to console.  In Rust our printf <code>%</code> formatting character is <code>{}</code>. Following the <code>println!()</code> documentation down the rabbit hole will send us to the <a href="https://doc.rust-lang.org/std/fmt/index.html">formatters section</a> page and we find all the formatters which you would expect like hex <code>{:x}</code>, binary <code>{:b}</code>, etc. We're going to focus on the 'empty' Display formatter <code>{}</code> for now which is a kind of a pretty printer in Rust. As long as whomever wrote our type implemented the Display pretty printer trait this will work great (cue ominous music).</p>
+<p>So now how to print those variables to console instead of that useless &quot;hello world&quot;.  In Rust our formatting character is <code>{}</code>. Following the <code>println!()</code> documentation down the rabbit hole will send us to the <a href="https://doc.rust-lang.org/std/fmt/index.html">formatters section</a> page and we find all the formatters which you would expect like hex <code>{:x}</code>, binary <code>{:b}</code> etc. We're going to focus on the Debug formatter <code>{:?}</code> for now which is almost always implemented for types in Rust though the output may not be pretty.</p>
 <pre><pre class="playground"><code class="language-rust editable">fn main() {
     let input_path = String::from(&quot;valve.png&quot;);
     let output_path = String::from(&quot;valve_sobel.png&quot;);
-    println!(&quot;{} {}&quot;, input_path, output_path);
+    println!(&quot;{:?} {:?}&quot;, input_path, output_path);
 }
 </code></pre></pre>
-<p>Running this we find that we do have a Display implementation for String and pretty printing results in rather clean output in this case:</p>
-<pre><code class="language-text">valve.png valve_sobel.png
+<pre><code class="language-text">&quot;valve.png&quot; &quot;valve_sobel.png&quot;
 </code></pre>
-<p>Objects, we call them structs, should be very familiar. You can define a new struct in any scope you like and we can name and type their members.</p>
-<pre><pre class="playground"><code class="language-rust editable">struct Opt {
+<p>Objects, we call them structs, should be very familiar. You can define a variable and construct a struct in any scope you like and we can name and type their members. This is somewhat a convoluted example, but lets make a struct called <code>Arguments</code> to hold our stubbed command line arguments.</p>
+<pre><pre class="playground"><code class="language-rust editable">// definition of our struct
+struct Arguments {
+    // name   : type
     input_path: String,
     output_path: String,
 }
 
 fn main() {
 
-    let options = Opt {
+    // manully contstruct an instance of our struct and name it arguments
+    let arguments = Arguments {
+        // well keep using our hardcoded names for now until we learn how to get arguments from the command line
         input_path: String::from(&quot;valve.png&quot;),
         output_path: String::from(&quot;valve_sobel.png&quot;),
     };
 
-    println!(&quot;{} {}&quot;, options.input_path, options.output_path);
+    println!(&quot;{:?} {:?}&quot;, arguments.input_path, arguments.output_path);
 }
 </code></pre></pre>
-<p><strong>EXERCISE: Get this all implemented in your training project.</strong></p>
-<p>Notice we access our struct members with dot notation, and there is no default new constructor or overloading in Rust. Though in practice, for functions where it makes sense many developers will offer and occasionally make their struct private to require the usage of a new or other constructor. So note, <code>String::new()</code> totally exists and would have made you an empty string.</p>
-<p>Lets start modularizing our main by putting our options creation in a function. Function syntax is just like we see in the main function, but can return an expression from a function by leaving off the semicolon and annotating the return type.</p>
-<pre><pre class="playground"><code class="language-rust editable">struct Opt {
+<p>Notice we access our struct members with dot notation, and there is no default new constructor or overloading in Rust. Though in practice, for functions where it makes sense many developers will offer and occasionally make their struct private to require the usage of a new or other named constructor. For instance earlier, <code>String::new()</code> totally exists and would have made you an empty string, however there is no way to manually construct a string like <code>let input_path = String { something: &quot;valve.png&quot; };</code></p>
+<p>Lets start modularizing our main by putting our argument creation into a function. Function syntax is just like we see in the main function.</p>
+<pre><pre class="playground"><code class="language-rust editable">// name        -&gt; return type
+fn arguments() -&gt; Arguments {
+
+    let arguments = Arguments {
+        input_path: String::from(&quot;valve.png&quot;),
+        output_path: String::from(&quot;valve_sobel.png&quot;),
+    };
+    return arguments; // &lt;- explicit return statement
+}
+</code></pre></pre>
+<p>We use semicolons to end expressions. We prefer to leave off semicolons in order to implicitly return the expression saving in a temporary variable like so.</p>
+<p><strong>EXERCISE: Put everything together and call our arguments() function.</strong></p>
+<pre><pre class="playground"><code class="language-rust editable">struct Arguments {
     input_path: String,
     output_path: String,
 }
 
-fn options() -&gt; Opt {
-
-    let options = Opt {
-        input_path: String::from(&quot;valve.png&quot;),
-        output_path: String::from(&quot;valve_sobel.png&quot;),
-    };
-    return options;
-}
-
-fn main() {
-    let options = options();
-    println!(&quot;{} {}&quot;, options.input_path, options.output_path);
-}
-</code></pre></pre>
-<p>We use semicolons to end expressions. We prefer to leave off semicolons in order to implicitly return the expression saving us the temporary variable like so.</p>
-<pre><code class="language-rust ignore no_run">fn options() -&gt; Opt {
-
-    Opt {
+fn arguments() -&gt; Arguments {
+    Arguments {
         input_path: String::from(&quot;valve.png&quot;),
         output_path: String::from(&quot;valve_sobel.png&quot;),
     }
 }
-</code></pre>
-<p><strong>EXERCISE: Implement the <code>options()</code> function to clean up your main.</strong></p>
-<p>But what if our options creation could fail? Lets talk about error handling in rust.</p>
+
+fn main() {
+    let arguments = arguments();
+    println!(&quot;{:?} {:?}&quot;, arguments.input_path, arguments.output_path);
+}
+</code></pre></pre>
+<p>In our next chapter, we'll get our actual arguments from the command line, and learn about error handling in Rust.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="option-and-result"><a class="header" href="#option-and-result">Option and Result</a></h1>
-<p>Let's take our config options from the command line with runtime args instead of hard coding it at compile time. Search the standard library for <a href="https://doc.rust-lang.org/std/env/fn.args.html">args</a> finds args come in as a iterator of a collection. We'll talk about iterators later, but for now we can for loop over them, or get the <code>nth()</code> value. Just like C command line args the 0th argument is the name of the binary and the rest are your arguments.</p>
+<p>Let's take our arguments from the command line with runtime args instead of hard coding it at compile time. Search the standard library for <a href="https://doc.rust-lang.org/std/env/fn.args.html">args</a> finds args come in as a iterator of a collection. We'll talk about iterators later, but for now we can for loop over them, or get the <code>nth()</code> value. (starting from an empty main for just a second)</p>
 <pre><code class="language-rust ignore no_run">use std::env; // explicit use (import) finally
 
-fn options() -&gt; Opt {
-
-    Opt {
-        input_path: env::args().nth(1).unwrap(),
-        output_path: env::args().nth(2).unwrap(),
-    }
+fn main() {
+    println!(&quot;{:?}&quot;, env::args().nth(0));
+    println!(&quot;{:?}&quot;, env::args().nth(1));
+    println!(&quot;{:?}&quot;, env::args().nth(2));
 }
 </code></pre>
-<p>And then note you can pass args around cargo to the binary were trying to run like:</p>
-<pre><code class="language-bash">$ cargo run -- valve.png valve_sobel.png
-    Finished dev [unoptimized + debuginfo] target(s) in 0.01s
-     Running `target/debug/training valve.png valve_sobel.png `
-target/debug/training
-valve.png
-valve_sobel.png
+<pre><code class="language-bash">Some(&quot;target/debug/blah222&quot;)
+Some(&quot;valve.png&quot;)
+Some(&quot;out.png&quot;)
 </code></pre>
-<p>So what is this unwrap. The problem is the nth argument may or may not be there...</p>
-<p>We have two related types commingled in <a href="https://doc.rust-lang.org/book/ch09-00-error-handling.html">error handling</a> in Rust.</p>
+<p>Just like C command line args the 0th argument is the name of the binary and the rest are your arguments. Hrm now we have this Some type wrapping our strings...</p>
+<p>The problem is the nth argument may or may not be there... This is the original sin of C style languages. They allowed null values in the language and billions of dollars have been lost in hacks and crashes as a result.</p>
 <p>Rust doesn’t have exceptions, but rather the <a href="https://doc.rust-lang.org/std/result/index.html">Result type</a> which can be used to propagate either the error or the result and looks like this:
 <img src="./images/result.png" alt="Result Type" /></p>
 <p>And Rust doesn't have Null but rather the <a href="https://doc.rust-lang.org/std/option/enum.Option.html">Option type</a> which can be used to propagate either the value (Some), or the lack of one (None)
 <img src="./images/option.png" alt="Option Type" /></p>
-<p>Were going to skip Result here, as our <code>nth()</code> method returns an Option, but they’re very similar in how they’re handled as they’re both implemented as enums. We basically have three possibilities for dealing with both:</p>
-<h2 id="option-1-panic-unwrap-and-expect"><a class="header" href="#option-1-panic-unwrap-and-expect">Option 1, panic! unwrap and expect</a></h2>
-<p>There <em>is</em> a minimal runtime in Rust, which means if were not careful we can and will blow up at runtime. This is called a panic and is handled in the panic handler, which on hosted platforms includes unwinding and backtraces. You can fire it on purpose with <code>panic!()</code> or by <code>unwrap()</code> on a None or Err value.</p>
+<p>Were going to skip Result here for now, as our <code>nth()</code> method returns an Option, but they’re very similar in how they’re handled as they’re both implemented as enums.</p>
+<p>There <em>is</em> a minimal runtime in Rust, which means if were not careful we can and will blow up at runtime. This is called a panic and is handled in the panic handler, which on hosted platforms includes unwinding and backtraces. You can fire it on purpose with <code>panic!()</code> or if you <code>unwrap()</code> on a None or Err value.</p>
+<pre><code class="language-rust ignore no_run">use std::env;
+
+fn main() {
+    panic!(&quot;ded&quot;);
+    println!(&quot;{:?}&quot;, env::args().nth(0));
+    println!(&quot;{:?}&quot;, env::args().nth(1));
+    println!(&quot;{:?}&quot;, env::args().nth(2));
+}
+</code></pre>
+<p>Notice the program gets no furter than the panic and nothing is printed.</p>
+<pre><code class="language-rust ignore no_run">use std::env;
+
+fn main() {
+    println!(&quot;{:?}&quot;, env::args().nth(0).unwrap());
+    println!(&quot;{:?}&quot;, env::args().nth(1).unwrap());
+    println!(&quot;{:?}&quot;, env::args().nth(2).unwrap());
+}
+</code></pre>
+<pre><code class="language-bash">&quot;target/debug/blah222&quot;
+&quot;valve.png&quot;
+&quot;out.png&quot;
+</code></pre>
 <p><strong>EXERCISE: Run our program again, this time not passing any command line arguments.</strong></p>
 <pre><code class="language-text">thread 'main' panicked at 'called `Option::unwrap()` on a `None` value', src/libcore/option.rs:347:21
 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace.
 </code></pre>
-<p>Explicitly panicing like we see above may very well be an option when the error is unrecoverable anyway like in examples like this where theres nothing intelligent we can do except maybe try to print a decent error message. If the error message needs help well often well use <code>.expect(&quot;Please enter an image file as the first option to this program&quot;)</code> instead of <code>unwrap()</code> in order to further refine the message.</p>
-<h2 id="option-2-return-it"><a class="header" href="#option-2-return-it">Option 2, return it</a></h2>
-<p>Another option is to make it someone else’s problem by simply handing the Option or Result back up the chain.</p>
-<p>Theres even an early return helper for this, the <a href="https://doc.rust-lang.org/book/ch09-02-recoverable-errors-with-result.html#a-shortcut-for-propagating-errors-the--operator">? operator</a>. This was previously the <a href="https://doc.rust-lang.org/std/macro.try.html">try! macro</a> but that has been deprecated though you may still see it in code.</p>
-<p>Our <code>nth()</code> is an Option of Some or None so lets just hand an optional back up the chain to our main function. At least this way we can decide what to do with it there.</p>
-<pre><code class="language-rust ignore no_run">fn options() -&gt; Option&lt;Opt&gt; { //&lt;-return Option wrapping our Opt struct
-
-    Some(Opt { //&lt;-Now we wrap our good return in Some
-        input_path: env::args().nth(1)?, //&lt;-unwrap becomes ? early return of None
-        output_path: env::args().nth(2)?, //&lt;-unwrap becomes ? early return of None
-    })
-}
-</code></pre>
-<p><strong>EXERCISE: Have our options function return an Option of Opt.</strong></p>
-<p>But we still get an error up in main now.</p>
-<pre><code class="language-text">error[E0609]: no field `input_path` on type `std::option::Option&lt;Opt&gt;`
-  --&gt; src/main.rs:93:44
-</code></pre>
-<p>Were passing an Option back to main, but now we need to deal with it there</p>
-<h2 id="option-3-handle-it"><a class="header" href="#option-3-handle-it">option 3, handle it</a></h2>
-<p>Someone has to do some control flow on this error somewhere.. Well thats actually not true, we can even return these from the main function where Rust will unwrap them behind the scenes and print the result, but generally if you can do control flow on your errors you should.</p>
-<p>We often will often match Options and Results with the <a href="https://doc.rust-lang.org/rust-by-example/flow_control/match.html">match pattern</a> which is very similar to an exhaustive switch statement.</p>
-<p>These two solutions are equivalent as they both panic if we don't get a good value. However you can easily see how you will be using match if you need to take some positive action on bad values.</p>
-<pre><code class="language-rust ignore no_run">let options = options().unwrap();
-
-println!(&quot;{} {}&quot;, options.input_path, options.output_path);
-</code></pre>
-<pre><code class="language-rust ignore no_run">let options = match options() {
-    Some(val) =&gt; val,
-    None =&gt; panic!(&quot;Please enter an image file as the first option to this program&quot;),
-};
-
-println!(&quot;{} {}&quot;, options.input_path, options.output_path);
-</code></pre>
-<p><strong>EXERCISE: Implement one of these solutions to satisfy the Rust compiler.</strong></p>
-<p>The Option type is actually an enum type so we lets take a full digression through enums and matching in the next section.</p>
-<h2 id="error-handling-playground"><a class="header" href="#error-handling-playground">error handling playground</a></h2>
-<p>Its worth spending some time in the option result playground here to get your mind around all this.</p>
-<pre><pre class="playground"><code class="language-rust editable">use std::io::ErrorKind;
+<p>Explicitly panicing like we see above is a fine option when the error is unrecoverable anyway like in this case when theres nothing intelligent we can do except maybe try to print a decent error message. If the default error message from binary isn't very good well often well use <code>.expect()</code> in order to provide a better one for our users.</p>
+<pre><code class="language-rust ignore no_run">use std::env;
 
 fn main() {
-    // lets just make some values we might have gotten back from a function call
-    let first_arg = Some(&quot;valve.png&quot;);
-    let second_arg: Option&lt;String&gt; = None;
-    let good_val: Result&lt;u32, std::io::ErrorKind&gt; = Ok(22);
-    let definitely_error: Result&lt;u32, std::io::ErrorKind&gt; = Err(ErrorKind::Other);
-
-    // Use unwrap to get access to the underlying value
-    println!(&quot;{:?}&quot;, first_arg.unwrap());
-    println!(&quot;{:?}&quot;, good_val.unwrap());
-    // println!(&quot;{:?}&quot;, second_arg.unwrap()); //no good
-
-    match first_arg {
-        // this is the one that will match, as first_arg is a Some
-        Some(val) =&gt; println!(&quot;first_arg: {}&quot;, val),
-        // we dont get here for this program
-        None =&gt; { // &lt;- Note the block scope here so we can have more expressions
-            println!(&quot;what the&quot;);
-            panic!(&quot;oops&quot;);
-        }
-    }
-
-    // as we've said, results are very similar, just two different variants
-    match definitely_error {
-        // this is the one that will match, as definitely_error is an Err
-        Err(e) =&gt; println!(&quot;{:?}&quot;, e),
-        // we dont get here for this program
-        Ok(val) =&gt; println!(&quot;cant imagine how we got here: {}&quot;, val),
-    };
-
-    // the revealing/destructuring pattern is really handy occasionally
-    if let Some(val) = first_arg {
-        println!(&quot;Gotem {:?}!&quot;, val);
-    }
-
-    // theres also a ton of combinators in the standard library
-    // lets say we didnt care about the value, but wanted to check the success
-    if good_val.is_ok() &amp;&amp; definitely_error.is_err() {
-        println!(&quot;some convoluted example here&quot;);
-    }
+    println!(&quot;{:?}&quot;, env::args().nth(1).expect(&quot;You must pass an input file name as the first argument&quot;));
+    println!(&quot;{:?}&quot;, env::args().nth(2).expect(&quot;You must pass an output file name as the second argument&quot;));
 }
-</code></pre></pre>
+</code></pre>
+<p><strong>EXERCISE: Run our program again, this time not passing the first and or second argument.</strong></p>
+<pre><code class="language-bash">$ cargo run -- valve.png 
+    Finished dev [unoptimized + debuginfo] target(s) in 0.01s
+     Running `target/debug/blah222 valve.png`
+&quot;valve.png&quot;
+thread 'main' panicked at 'You must pass an output file name as the second option to this program', src/main.rs:14:14
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+$ 
+</code></pre>
+<p>There's definately command line argument parsing libraries that will do all this for us, but for now it is good to understand what is happening under the hood.</p>
+<p><strong>EXERCISE: Swap our hardcoded arguments from the previous page for our new command line arguments.</strong></p>
+<p>Next chapter we'll look at the Image library, and load up an image with our filenames.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="external-dependencies-cratesio"><a class="header" href="#external-dependencies-cratesio">external dependencies, crates.io</a></h1>
 <p>Lets have our code load in an image from the filesystem. Searching in the standard library for images doesn't find anything, we could take a File to binary, but lets go to the community ecosystem, <a href="https://www.crates.io">crates.io</a>. Searching there for images finds a crate image with ~1mil downloads which seems to be pretty popular. <a href="https://crates.io/crates/image">image</a> says it wants us to add it to our Cargo.toml dependencies section so lets do that.</p>
 <pre><code class="language-toml">[dependencies]
@@ -668,12 +648,12 @@ PATCH version when you make backwards compatible bug fixes.
 <p>Now in main.rs we can use this dependency. To start, let's just write the input to the output, passthrough, using the image create we looked at earlier.</p>
 <pre><code class="language-rust ignore">use image;
 
-let options = options().expect(&quot;Failed to parse command options!&quot;);
+let arguments = arguments().expect(&quot;Failed to parse command arguments!&quot;);
 
-let input_image = image::open(&amp;options.input_path)
+let input_image = image::open(&amp;arguments.input_path)
     .expect(&quot;Failed to open input image file&quot;);
 
-input_image.save(&amp;options.output_path)
+input_image.save(&amp;arguments.output_path)
     .expect(&quot;Failed to save output image to file&quot;);
 </code></pre>
 <blockquote>
@@ -687,12 +667,12 @@ input_image.save(&amp;options.output_path)
 <p>Since types and abstractions in Rust don't incur overhead, it's pretty typically to use more types than less to represent different possible data structures and formats. This not only makes code clear to the reader, but also allows the compiler to help you enforce invariants.</p>
 <p>For example, we can make our processing code later only accept <code>GrayImage</code> as input, which makes sure the caller has converted any inputs.</p>
 <p><img src="./images/to_luma.png" alt="to_luma method" /></p>
-<pre><code class="language-rust ignore">let input_image = image::open(&amp;options.input_path)
+<pre><code class="language-rust ignore">let input_image = image::open(&amp;arguments.input_path)
     .expect(&quot;Failed to open input image file&quot;);
 
 let input_image = input_image.to_luma();
 
-input_image.save(&amp;options.output_path)
+input_image.save(&amp;arguments.output_path)
     .expect(&quot;Failed to save output image to file&quot;);
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="borrowing"><a class="header" href="#borrowing">Borrowing</a></h1>
@@ -892,7 +872,10 @@ c b a    7 8 9
     5.0
 }
 </code></pre>
-<p>Now we can write a test to assert that running <code>convolve()</code> indeed does return 5.0.</p>
+<p>Now we can write a test to assert that running <code>convolve()</code> indeed does return 5.0. You can simply place the testing right inside your <code>main.rs</code> file and cargo will pick it up. We can run this test with <code>cargo test</code> and we should see passing tests!</p>
+<blockquote>
+<p>Note rust doesn't show println data from tests, so use <code>cargo test -- --nocapture</code> to see your println debugging in this case.</p>
+</blockquote>
 <blockquote>
 <p>If you attempt to just assert that 5.0 and result are equal the compiler will <a href="https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp">link you to an explanation on how to correctly compare floats</a>. Everything with floats is approximate so we can't just assert that they are equal, we have to say they're within some tolerance.</p>
 </blockquote>
@@ -913,10 +896,6 @@ mod tests {
     }
 }
 </code></pre>
-<p>We can run this test with <code>cargo test</code> and we should see passing tests!</p>
-<blockquote>
-<p>Note rust doesn't show println data from tests, so use <code>cargo test -- --nocapture</code> to see your println debugging in this case.</p>
-</blockquote>
 <p>We'll come back to actually implmenting our convolve function for real in a second, but we'll need a few more tools in our toolbox so first we learn how to iterate over these arrays and multiply them using iterators.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="iterators"><a class="header" href="#iterators">Iterators</a></h1>
 <p>Iterators are one of the most powerful features in Rust! They are also a gateway drug to the functional style programming. They tend to use less memory and optimize better because the compiler can see what we're trying to do and help optimize for us. This gain in speed and reduced memory usage is really important for big datasets or constrained devices where it might be literally impossible to have the entire collection in memory at the same time.</p>
@@ -1140,14 +1119,14 @@ const SOBEL_KERNEL_Y_MIRRORED: [[f32; 3]; 3] = [
 <p>For our case, we just have a GrayImage with pixels of type <code>Luma&lt;u8&gt;</code> that implement the <code>Pixel</code> trait. So we should be able to fetch a pixel pretty easily. Here's a go:</p>
 <pre><code class="language-rust ignore">use image::Pixel; // trait for '.channels()'
 
-let input_image = image::open(&amp;options.input_path)
+let input_image = image::open(&amp;arguments.input_path)
     .expect(&quot;Failed to open input image file&quot;);
 
 let input_image = input_image.to_luma();
 
 println!(&quot;Pixel 0, 0: {}&quot;, input_image.get_pixel(0, 0).channels()[0]);
 
-input_image.save(&amp;options.output_path)
+input_image.save(&amp;arguments.output_path)
     .expect(&quot;Failed to save output image to file&quot;);
 </code></pre>
 <p>Generally, well-written Rust crates provide comprehensive types like this to cover the data formats and structures that they operate on. An image library in C/C++ may provide a raw buffer of pixels, which is easy to access. But, as soon as you have to deal with multiple formats, multiple pixel orderings (RGB, BGR, RGBA, etc.), it can be difficult to ensure all code branches are correct. With Rust, the type system will catch these errors at compile time.</p>
@@ -1192,14 +1171,14 @@ fn sobel_filter(input: &amp;GrayImage) -&gt; GrayImage {
 }
 </code></pre>
 <p>We'll need to throw a call into <code>fn main()</code> to use this.</p>
-<pre><code class="language-rust ignore">let input_image = image::open(&amp;options.input_path)
+<pre><code class="language-rust ignore">let input_image = image::open(&amp;arguments.input_path)
     .expect(&quot;Failed to open input image file&quot;);
 
 let input_image = input_image.to_luma();
 
 let input_image = sobel_filter(&amp;input_image);
 
-input_image.save(&amp;options.output_path)
+input_image.save(&amp;arguments.output_path)
     .expect(&quot;Failed to save output image to file&quot;);
 </code></pre>
 <p>And then when we run this... what happened?!? What does it mean we attempted subtraction with overflow?</p>
@@ -1350,7 +1329,7 @@ use structopt::StructOpt;
 
 #[derive(StructOpt, Debug)]
 #[structopt(name = &quot;training&quot;)]
-struct Opt {
+struct Arguments {
     #[structopt(short = &quot;i&quot;, long = &quot;input&quot;, parse(from_os_str))]
     input_path: PathBuf,
     #[structopt(short = &quot;o&quot;, long = &quot;output&quot;, parse(from_os_str))]
@@ -1359,12 +1338,12 @@ struct Opt {
 </code></pre>
 <p>Then not too much changes in our existing main.</p>
 <pre><code class="language-rust ignore no_run">fn main() {
-    let opt = Opt::from_args();
-    println!(&quot;{:?}&quot;, opt);
+    let arguments = Arguments::from_args();
+    println!(&quot;{:?}&quot;, arguments);
 }
 </code></pre>
 <p>Running <code>cargo run -- -i valve.png -o valve_sobel.png</code> results in</p>
-<pre><code class="language-text">Opt { input_path: &quot;valve.png&quot;, output_path: &quot;valve_sobel.png&quot; }
+<pre><code class="language-text">Arguments { input_path: &quot;valve.png&quot;, output_path: &quot;valve_sobel.png&quot; }
 </code></pre>
 <p>and running <code>cargo run -- --help</code></p>
 <pre><code class="language-text">training 0.1.0

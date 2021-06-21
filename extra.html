@@ -150,7 +150,7 @@ use structopt::StructOpt;
 
 #[derive(StructOpt, Debug)]
 #[structopt(name = &quot;training&quot;)]
-struct Opt {
+struct Arguments {
     #[structopt(short = &quot;i&quot;, long = &quot;input&quot;, parse(from_os_str))]
     input_path: PathBuf,
     #[structopt(short = &quot;o&quot;, long = &quot;output&quot;, parse(from_os_str))]
@@ -159,12 +159,12 @@ struct Opt {
 </code></pre>
 <p>Then not too much changes in our existing main.</p>
 <pre><code class="language-rust ignore no_run">fn main() {
-    let opt = Opt::from_args();
-    println!(&quot;{:?}&quot;, opt);
+    let arguments = Arguments::from_args();
+    println!(&quot;{:?}&quot;, arguments);
 }
 </code></pre>
 <p>Running <code>cargo run -- -i valve.png -o valve_sobel.png</code> results in</p>
-<pre><code class="language-text">Opt { input_path: &quot;valve.png&quot;, output_path: &quot;valve_sobel.png&quot; }
+<pre><code class="language-text">Arguments { input_path: &quot;valve.png&quot;, output_path: &quot;valve_sobel.png&quot; }
 </code></pre>
 <p>and running <code>cargo run -- --help</code></p>
 <pre><code class="language-text">training 0.1.0

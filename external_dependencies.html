@@ -160,12 +160,12 @@ PATCH version when you make backwards compatible bug fixes.
 <p>Now in main.rs we can use this dependency. To start, let's just write the input to the output, passthrough, using the image create we looked at earlier.</p>
 <pre><code class="language-rust ignore">use image;
 
-let options = options().expect(&quot;Failed to parse command options!&quot;);
+let arguments = arguments().expect(&quot;Failed to parse command arguments!&quot;);
 
-let input_image = image::open(&amp;options.input_path)
+let input_image = image::open(&amp;arguments.input_path)
     .expect(&quot;Failed to open input image file&quot;);
 
-input_image.save(&amp;options.output_path)
+input_image.save(&amp;arguments.output_path)
     .expect(&quot;Failed to save output image to file&quot;);
 </code></pre>
 <blockquote>
@@ -179,12 +179,12 @@ input_image.save(&amp;options.output_path)
 <p>Since types and abstractions in Rust don't incur overhead, it's pretty typically to use more types than less to represent different possible data structures and formats. This not only makes code clear to the reader, but also allows the compiler to help you enforce invariants.</p>
 <p>For example, we can make our processing code later only accept <code>GrayImage</code> as input, which makes sure the caller has converted any inputs.</p>
 <p><img src="./images/to_luma.png" alt="to_luma method" /></p>
-<pre><code class="language-rust ignore">let input_image = image::open(&amp;options.input_path)
+<pre><code class="language-rust ignore">let input_image = image::open(&amp;arguments.input_path)
     .expect(&quot;Failed to open input image file&quot;);
 
 let input_image = input_image.to_luma();
 
-input_image.save(&amp;options.output_path)
+input_image.save(&amp;arguments.output_path)
     .expect(&quot;Failed to save output image to file&quot;);
 </code></pre>
 

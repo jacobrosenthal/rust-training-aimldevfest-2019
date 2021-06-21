@@ -192,7 +192,10 @@ c b a    7 8 9
     5.0
 }
 </code></pre>
-<p>Now we can write a test to assert that running <code>convolve()</code> indeed does return 5.0.</p>
+<p>Now we can write a test to assert that running <code>convolve()</code> indeed does return 5.0. You can simply place the testing right inside your <code>main.rs</code> file and cargo will pick it up. We can run this test with <code>cargo test</code> and we should see passing tests!</p>
+<blockquote>
+<p>Note rust doesn't show println data from tests, so use <code>cargo test -- --nocapture</code> to see your println debugging in this case.</p>
+</blockquote>
 <blockquote>
 <p>If you attempt to just assert that 5.0 and result are equal the compiler will <a href="https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp">link you to an explanation on how to correctly compare floats</a>. Everything with floats is approximate so we can't just assert that they are equal, we have to say they're within some tolerance.</p>
 </blockquote>
@@ -213,10 +216,6 @@ mod tests {
     }
 }
 </code></pre>
-<p>We can run this test with <code>cargo test</code> and we should see passing tests!</p>
-<blockquote>
-<p>Note rust doesn't show println data from tests, so use <code>cargo test -- --nocapture</code> to see your println debugging in this case.</p>
-</blockquote>
 <p>We'll come back to actually implmenting our convolve function for real in a second, but we'll need a few more tools in our toolbox so first we learn how to iterate over these arrays and multiply them using iterators.</p>
 
                     </main>
