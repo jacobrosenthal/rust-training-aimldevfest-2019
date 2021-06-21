@@ -2,26 +2,7 @@
 
 On this section well explore data types like String, structs, function syntax, and make a slightly convoluted example to hold the input and output file names that we'll take via command line for our images later.
 
-```rust ,ignore,no_run
-struct Arguments {
-    input_path: String,
-    output_path: String,
-}
-
-fn arguments() -> Arguments {
-    Arguments {
-        input_path: String::from("valve.png"),
-        output_path: String::from("valve_sobel.png"),
-    }
-}
-
-fn main() {
-    let arguments = arguments();
-    println!("{} {}", arguments.input_path, arguments.output_path);
-}
-```
-
-We’ve got all the datatypes you would expect but you might want to glance through the Rust book [chapter on variables, functions, and control flow](https://doc.rust-lang.org/book/ch03-01-variables-and-mutability.html) just to update your mental models to Rust notation
+We’ve got all the datatypes you would expect but you might want to glance through the Rust book [chapter on variables, functions, and control flow](https://doc.rust-lang.org/book/ch03-01-variables-and-mutability.html) just to update your mental models to Rust notation.
 
 We have signed and unsigned scalar types like u32 and i32 and we've got Strings. Variables are instantiated with let syntax, and notably are immutable by default.
 
@@ -75,7 +56,7 @@ You don't have to understand all that, but just to show if Rust ever feels magic
 
 Also notice we didn't have to explicitly type our input_path variable even though Rust is a typed language. What Rust *can* figure it out, *it will* and so its entirely idiomatic to omit type annotations. However if you or the compiler are having trouble or getting odd type errors, start annotating some of your types like to see if you can give the compiler a hand. Its also a great way to figure out what type you actually have in case you're not sure, let the compiler (or linter) tell you.
 
-Lets assume that we want to store our output name as "valve_sobel.png". The compiler doesn't need it in this instance but we can We can add a type annotation after the variable name with a colon and type like `:String`.
+Lets assume that we want to store our output name as "valve_sobel.png". The compiler doesn't need it in this instance but we can add a type annotation after the variable name with a colon and type like `:String`.
 
 ```rust ,editable
 fn main() {
@@ -85,7 +66,7 @@ fn main() {
 }
 ```
 
-So now how to print those variables to console instead of that useless "hello world".  In Rust our formatting character is `{}`. Following the `println!()` documentation down the rabbit hole will send us to the [formatters section](https://doc.rust-lang.org/std/fmt/index.html) page and we find all the formatters which you would expect like hex `{:x}`, binary `{:b}` etc. We're going to focus on the Debug formatter `{:?}` for now which is almost always implemented for types in Rust though the output may not be pretty.
+So now how to print those variables to console instead of that useless "hello world". In Rust our formatting character is `{}`. Following the `println!()` documentation down the rabbit hole will send us to the [formatters section](https://doc.rust-lang.org/std/fmt/index.html) page and we find all the formatters which you would expect like hex `{:x}`, binary `{:b}` etc. We're going to focus on the Debug formatter `{:?}` for now which is almost always implemented for types in Rust though the output may not be pretty.
 
 ```rust ,editable
 fn main() {
@@ -93,10 +74,6 @@ fn main() {
     let output_path = String::from("valve_sobel.png");
     println!("{:?} {:?}", input_path, output_path);
 }
-```
-
-```text
-"valve.png" "valve_sobel.png"
 ```
 
 Objects, we call them structs, should be very familiar. You can define a variable and construct a struct in any scope you like and we can name and type their members. This is somewhat a convoluted example, but lets make a struct called `Arguments` to hold our stubbed command line arguments.
@@ -111,7 +88,7 @@ struct Arguments {
 
 fn main() {
 
-    // manully contstruct an instance of our struct and name it arguments
+    // manully contstruct an instance of our struct
     let arguments = Arguments {
         // well keep using our hardcoded names for now until we learn how to get arguments from the command line
         input_path: String::from("valve.png"),
@@ -122,11 +99,11 @@ fn main() {
 }
 ```
 
-Notice we access our struct members with dot notation, and there is no default new constructor or overloading in Rust. Though in practice, for functions where it makes sense many developers will offer and occasionally make their struct private to require the usage of a new or other named constructor. For instance earlier, `String::new()` totally exists and would have made you an empty string, however there is no way to manually construct a string like `let input_path = String { something: "valve.png" };`
+Notice we access our struct members with dot notation, and there is no default new constructor or overloading in Rust. Though in practice, for functions where it makes sense many developers will make their struct members private and require the usage of a constructor -- occasionally but not necessarily called new. For instance earlier, `String::new()` totally exists and would have made you an empty string. However there is no way to manually construct a string like `let input_path = String { something: "valve.png" };`
 
 Lets start modularizing our main by putting our argument creation into a function. Function syntax is just like we see in the main function.
 
-```rust ,editable
+```rust ,ignore,no_run
 // name        -> return type
 fn arguments() -> Arguments {
 
@@ -138,11 +115,11 @@ fn arguments() -> Arguments {
 }
 ```
 
-We use semicolons to end expressions. We prefer to leave off semicolons in order to implicitly return the expression saving in a temporary variable like so.
+We use semicolons to end expressions and 'return' the value to a variable or out of the function. We often prefer to leave off semicolons for brevity and implicitly return the expression from a function like so.
 
-**EXERCISE: Put everything together and call our arguments() function.**
+**EXERCISE: Put everything together and call our arguments() function from main.**
 
-```rust ,editable
+```rust ,editible
 struct Arguments {
     input_path: String,
     output_path: String,
@@ -161,4 +138,4 @@ fn main() {
 }
 ```
 
-In our next chapter, we'll get our actual arguments from the command line, and learn about error handling in Rust.
+Now we have a simple little program with most of the syntax we need. In our next chapter, we'll get our actual arguments from the command line, and learn about error handling in Rust.

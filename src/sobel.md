@@ -229,8 +229,8 @@ fn sobel_filter(input: &GrayImage) -> GrayImage {
             ];
 
             // normalize divisor of 8.0 for Sobel
-            let gradient_x = convolve(&SOBEL_KERNEL_X, &pixels) / 8.0;
-            let gradient_y = convolve(&SOBEL_KERNEL_Y, &pixels) / 8.0;
+            let gradient_x = convolve(&SOBEL_KERNEL_X_MIRRORED, &pixels) / 8.0;
+            let gradient_y = convolve(&SOBEL_KERNEL_Y_MIRRORED, &pixels) / 8.0;
             let magnitude = (gradient_x.powi(2) + gradient_y.powi(2)).sqrt();
             //place our pixel off by one because of crop
             result.put_pixel(x - 1, y - 1, Luma([(magnitude) as u8]));
