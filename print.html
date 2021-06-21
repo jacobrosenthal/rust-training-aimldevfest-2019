@@ -437,23 +437,6 @@ Hello, world!
 <p>However in practice almost no projects are single files require merging multiple modules from within our project and without and thus Cargo is THE way we interact with Rust.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="data-types"><a class="header" href="#data-types">Data types</a></h1>
 <p>On this section well explore data types like String, structs, function syntax, and make a slightly convoluted example to hold the input and output file names that we'll take via command line for our images later.</p>
-<pre><code class="language-rust ignore no_run">struct Arguments {
-    input_path: String,
-    output_path: String,
-}
-
-fn arguments() -&gt; Arguments {
-    Arguments {
-        input_path: String::from(&quot;valve.png&quot;),
-        output_path: String::from(&quot;valve_sobel.png&quot;),
-    }
-}
-
-fn main() {
-    let arguments = arguments();
-    println!(&quot;{} {}&quot;, arguments.input_path, arguments.output_path);
-}
-</code></pre>
 <p>We’ve got all the datatypes you would expect but you might want to glance through the Rust book <a href="https://doc.rust-lang.org/book/ch03-01-variables-and-mutability.html">chapter on variables, functions, and control flow</a> just to update your mental models to Rust notation</p>
 <p>We have signed and unsigned scalar types like u32 and i32 and we've got Strings. Variables are instantiated with let syntax, and notably are immutable by default.</p>
 <p>The top of the <a href="https://doc.rust-lang.org/std/">Rust standard library page</a> has a search box. Entering String there we find <a href="https://doc.rust-lang.org/std/string/struct.String.html#method.from">std::string::String</a> with a bunch of example usage right there for us. You can edit those examples and run them right in your browser to confirm your understanding and even click the [src] link in the upper right corner and be taken straight to the Rust implementation.</p>
@@ -495,22 +478,20 @@ $
 </p>
 </details>
 <p>Also notice we didn't have to explicitly type our input_path variable even though Rust is a typed language. What Rust <em>can</em> figure it out, <em>it will</em> and so its entirely idiomatic to omit type annotations. However if you or the compiler are having trouble or getting odd type errors, start annotating some of your types like to see if you can give the compiler a hand. Its also a great way to figure out what type you actually have in case you're not sure, let the compiler (or linter) tell you.</p>
-<p>Lets assume that we want to store our output name as &quot;valve_sobel.png&quot;. The compiler doesn't need it in this instance but we can We can add a type annotation after the variable name with a colon and type like <code>:String</code>.</p>
+<p>Lets assume that we want to store our output name as &quot;valve_sobel.png&quot;. The compiler doesn't need it in this instance but we can add a type annotation after the variable name with a colon and type like <code>:String</code>.</p>
 <pre><pre class="playground"><code class="language-rust editable">fn main() {
     let input_path = String::from(&quot;valve.png&quot;); // &lt;- no type annotation
     let output_path: String = String::from(&quot;valve_sobel.png&quot;); // &lt;- type annotation
     println!(&quot;Hello, world!&quot;);
 }
 </code></pre></pre>
-<p>So now how to print those variables to console instead of that useless &quot;hello world&quot;.  In Rust our formatting character is <code>{}</code>. Following the <code>println!()</code> documentation down the rabbit hole will send us to the <a href="https://doc.rust-lang.org/std/fmt/index.html">formatters section</a> page and we find all the formatters which you would expect like hex <code>{:x}</code>, binary <code>{:b}</code> etc. We're going to focus on the Debug formatter <code>{:?}</code> for now which is almost always implemented for types in Rust though the output may not be pretty.</p>
+<p>So now how to print those variables to console instead of that useless &quot;hello world&quot;. In Rust our formatting character is <code>{}</code>. Following the <code>println!()</code> documentation down the rabbit hole will send us to the <a href="https://doc.rust-lang.org/std/fmt/index.html">formatters section</a> page and we find all the formatters which you would expect like hex <code>{:x}</code>, binary <code>{:b}</code> etc. We're going to focus on the Debug formatter <code>{:?}</code> for now which is almost always implemented for types in Rust though the output may not be pretty.</p>
 <pre><pre class="playground"><code class="language-rust editable">fn main() {
     let input_path = String::from(&quot;valve.png&quot;);
     let output_path = String::from(&quot;valve_sobel.png&quot;);
     println!(&quot;{:?} {:?}&quot;, input_path, output_path);
 }
 </code></pre></pre>
-<pre><code class="language-text">&quot;valve.png&quot; &quot;valve_sobel.png&quot;
-</code></pre>
 <p>Objects, we call them structs, should be very familiar. You can define a variable and construct a struct in any scope you like and we can name and type their members. This is somewhat a convoluted example, but lets make a struct called <code>Arguments</code> to hold our stubbed command line arguments.</p>
 <pre><pre class="playground"><code class="language-rust editable">// definition of our struct
 struct Arguments {
@@ -521,7 +502,7 @@ struct Arguments {
 
 fn main() {
 
-    // manully contstruct an instance of our struct and name it arguments
+    // manully contstruct an instance of our struct
     let arguments = Arguments {
         // well keep using our hardcoded names for now until we learn how to get arguments from the command line
         input_path: String::from(&quot;valve.png&quot;),
@@ -531,9 +512,9 @@ fn main() {
     println!(&quot;{:?} {:?}&quot;, arguments.input_path, arguments.output_path);
 }
 </code></pre></pre>
-<p>Notice we access our struct members with dot notation, and there is no default new constructor or overloading in Rust. Though in practice, for functions where it makes sense many developers will offer and occasionally make their struct private to require the usage of a new or other named constructor. For instance earlier, <code>String::new()</code> totally exists and would have made you an empty string, however there is no way to manually construct a string like <code>let input_path = String { something: &quot;valve.png&quot; };</code></p>
+<p>Notice we access our struct members with dot notation, and there is no default new constructor or overloading in Rust. Though in practice, for functions where it makes sense many developers will make their struct members private and require the usage of a constructor -- occasionally but not necessarily called new. For instance earlier, <code>String::new()</code> totally exists and would have made you an empty string. However there is no way to manually construct a string like <code>let input_path = String { something: &quot;valve.png&quot; };</code></p>
 <p>Lets start modularizing our main by putting our argument creation into a function. Function syntax is just like we see in the main function.</p>
-<pre><pre class="playground"><code class="language-rust editable">// name        -&gt; return type
+<pre><code class="language-rust ignore no_run">// name        -&gt; return type
 fn arguments() -&gt; Arguments {
 
     let arguments = Arguments {
@@ -542,10 +523,10 @@ fn arguments() -&gt; Arguments {
     };
     return arguments; // &lt;- explicit return statement
 }
-</code></pre></pre>
-<p>We use semicolons to end expressions. We prefer to leave off semicolons in order to implicitly return the expression saving in a temporary variable like so.</p>
-<p><strong>EXERCISE: Put everything together and call our arguments() function.</strong></p>
-<pre><pre class="playground"><code class="language-rust editable">struct Arguments {
+</code></pre>
+<p>We use semicolons to end expressions and 'return' the value, in this case to a variable. We often prefer to leave off semicolons for brevity and implicitly return the expression like so.</p>
+<p><strong>EXERCISE: Put everything together and call our arguments() function from main.</strong></p>
+<pre><pre class="playground"><code class="language-rust editible">struct Arguments {
     input_path: String,
     output_path: String,
 }
@@ -562,7 +543,7 @@ fn main() {
     println!(&quot;{:?} {:?}&quot;, arguments.input_path, arguments.output_path);
 }
 </code></pre></pre>
-<p>In our next chapter, we'll get our actual arguments from the command line, and learn about error handling in Rust.</p>
+<p>Now we have a simple little program with most of the syntax we need. In our next chapter, we'll get our actual arguments from the command line, and learn about error handling in Rust.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="option-and-result"><a class="header" href="#option-and-result">Option and Result</a></h1>
 <p>Let's take our arguments from the command line with runtime args instead of hard coding it at compile time. Search the standard library for <a href="https://doc.rust-lang.org/std/env/fn.args.html">args</a> finds args come in as a iterator of a collection. We'll talk about iterators later, but for now we can for loop over them, or get the <code>nth()</code> value. (starting from an empty main for just a second)</p>
 <pre><code class="language-rust ignore no_run">use std::env; // explicit use (import) finally
