@@ -546,21 +546,18 @@ fn main() {
 <p>Now we have a simple little program with most of the syntax we need. In our next chapter, we'll get our actual arguments from the command line, and learn about error handling in Rust.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="arguments-and-option-and-result"><a class="header" href="#arguments-and-option-and-result">Arguments and Option and Result</a></h1>
 <p>Rust doesn’t have exceptions but there <em>is</em> a minimal runtime, which means if were not careful we can and will blow up at runtime. This is called a panic and is handled in the panic handler, which on hosted platforms includes unwinding and backtraces. You can fire it on purpose with <code>panic!()</code>.</p>
-<p><strong>EXERCISE: Run this program. Notice the program gets no further than the panic and nothing is printed.</strong></p>
 <p>(starting from an empty main for just a second)</p>
-<pre><code class="language-rust ignore">use std::env;
-
-fn main() {
+<pre><code class="language-rust ignore">fn main() {
     panic!(&quot;ded&quot;);
     println!(&quot;Hello World&quot;);
 }
 </code></pre>
+<p><strong>EXERCISE: Run this program on your machine. Notice the program gets no further than the panic and nothing is printed.</strong></p>
+<pre><code class="language-text">thread 'main' panicked at 'ded', src/main.rs:4:5
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+</code></pre>
 <p>In Rust we try to program defensively and not let our users ever see messages like that.</p>
-<p>Moving on let's take our arguments from the command line at runtime instead of hard coding them at compile time. Searching the standard library for <a href="https://doc.rust-lang.org/std/env/fn.args.html">args</a> finds args come in as a iterator of a collection. We'll talk about iterators later, but for now we can <code>for in</code> loop over them, or use the <code>nth()</code> function to get a specific value.</p>
-<p><strong>EXERCISE: We can't run this in the browser because we can't pass arguments to it. Run this program on your machine.</strong></p>
-<blockquote>
-<p>NOTE: you can pass command line arguments around cargo and to your program with a double dash <code>cargo run -- valve.png valve_sobel.png</code></p>
-</blockquote>
+<p>We'll learn more about errors in a second, but let's take our arguments from the command line at runtime instead of hard coding them at compile time. Searching the standard library for <a href="https://doc.rust-lang.org/std/env/fn.args.html">args</a> finds args come in as a iterator of a collection. We'll talk about iterators later, but for now we can <code>for in</code> loop over them, or use the <code>nth()</code> function to get a specific value.</p>
 <pre><code class="language-rust ignore no_run">use std::env; // explicit use (import) finally
 
 fn main() {
@@ -569,18 +566,22 @@ fn main() {
     println!(&quot;{:?}&quot;, env::args().nth(2));
 }
 </code></pre>
+<p><strong>EXERCISE: Run this program on your machine. We can't run this in the browser because we can't pass arguments to it.</strong></p>
+<blockquote>
+<p>NOTE: you can pass command line arguments around cargo and to your program with a double dash <code>cargo run -- valve.png valve_sobel.png</code></p>
+</blockquote>
 <pre><code class="language-bash">Some(&quot;target/debug/blah222&quot;)
 Some(&quot;valve.png&quot;)
 Some(&quot;valve_sobel.png&quot;)
 </code></pre>
-<p>Just like C command line args the 0th argument is the name of the binary and the rest are your arguments. Hrm but did you notice we have this <code>Some</code> type wrapping our Strings...</p>
-<p>The problem is the nth argument may or may not be there... This is the original sin of C style languages. They allowed null values in the language which, if not handled immediately, can sneak into the program and cause crashes or corrupted data days weeks or months later.</p>
-<p>Rust doesn’t have exceptions, but rather the <a href="https://doc.rust-lang.org/std/result/index.html">Result type</a> which can be used to propagate either the error or the result and looks like this:
+<p>Just like C style languages, the 0th argument is the name of the binary and the rest are your arguments. Hrm but did you notice we have this <code>Some</code> type wrapping our Strings...</p>
+<p>The problem is the nth argument may or may not be there... This is the original sin of C style languages. They allowed null values in the language which, if not handled immediately, can sneak further into the program and cause crashes or corrupted data days weeks or months later.</p>
+<p>Rust doesn’t have exceptions or pass error codes around, but rather uses the <a href="https://doc.rust-lang.org/std/result/index.html">Result type</a> which can be used to propagate either the error or the result and looks like this:
 <img src="./images/result.png" alt="Result Type" /></p>
-<p>And Rust doesn't have Null but rather the <a href="https://doc.rust-lang.org/std/option/enum.Option.html">Option type</a> which can be used to propagate either the value (Some), or the lack of one (None)
+<p>And Rust doesn't have Null but rather the <a href="https://doc.rust-lang.org/std/option/enum.Option.html">Option type</a> which can be used to propagate either a value (Some), or the lack of one (None)
 <img src="./images/option.png" alt="Option Type" /></p>
 <p>Were going to skip Result here for now, as our <code>nth()</code> method returns an Option, but they’re very similar in how they’re handled as they’re both implemented as enums.</p>
-<p>Let's use <code>unwrap()</code> to brute force access to our value.</p>
+<p>In Rust we cant just have access to our values, we ofen need to <code>unwrap()</code> them to peel off the enum they come wrapped in. </p>
 <pre><code class="language-rust ignore no_run">use std::env;
 
 fn main() {
@@ -589,15 +590,17 @@ fn main() {
     println!(&quot;{:?}&quot;, env::args().nth(2).unwrap());
 }
 </code></pre>
+<p><strong>EXERCISE: Run this new program.</strong></p>
 <pre><code class="language-bash">&quot;target/debug/blah222&quot;
 &quot;valve.png&quot;
 &quot;valve_sobel.png&quot;
 </code></pre>
+<p>No more Some() wrapping our strings.</p>
 <p><strong>EXERCISE: Run our program again, this time not passing any command line arguments.</strong></p>
 <pre><code class="language-text">thread 'main' panicked at 'called `Option::unwrap()` on a `None` value', src/libcore/option.rs:347:21
 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace.
 </code></pre>
-<p>Now it may seem like were no better off than C style languages, but at least we crashed at the earliest possible opportunity Explicitly panicing like we see above is a fine option at the top level of our program and when the error is unrecoverable anyway. In this case, if we don't get a file to operate on from our user there's not much else to do. The default error message isn't very useful to our users though so often well use <code>.expect()</code> instead of <code>unwrap()</code> in order to provide a better message for our users.</p>
+<p>It may seem like were no better off than C style languages, but at least we crashed at the earliest possible opportunity. <code>unwrap()</code> is the most brute force way this can be done and is not ideal, but until we learn more its totally fine. The default error message isn't very useful to our users though so often well use <code>.expect()</code> instead of <code>unwrap()</code> in order to provide a better message.</p>
 <pre><code class="language-rust ignore no_run">use std::env;
 
 fn main() {
