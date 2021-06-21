@@ -165,22 +165,26 @@ fn main() {
     println!(&quot;{:?}&quot;, env::args().nth(2));
 }
 </code></pre>
-<p><strong>EXERCISE: Run this program on your machine. We can't run this in the browser because we can't pass arguments to it.</strong></p>
 <blockquote>
 <p>NOTE: you can pass command line arguments around cargo and to your program with a double dash <code>cargo run -- valve.png valve_sobel.png</code></p>
 </blockquote>
-<pre><code class="language-bash">Some(&quot;target/debug/blah222&quot;)
+<p><strong>EXERCISE: Run this program on your machine. We can't run this in the browser because we can't pass arguments to it.</strong></p>
+<pre><code class="language-bash">$ cargo run
+   Compiling blah222 v0.1.0 (/home/jacob/Downloads/blah222)
+    Finished dev [unoptimized + debuginfo] target(s) in 0.98s
+     Running `target/debug/blah222`
+Some(&quot;target/debug/blah222&quot;)
 Some(&quot;valve.png&quot;)
 Some(&quot;valve_sobel.png&quot;)
 </code></pre>
 <p>Just like C style languages, the 0th argument is the name of the binary and the rest are your arguments. Hrm but did you notice we have this <code>Some</code> type wrapping our Strings...</p>
-<p>The problem is the nth argument may or may not be there... This is the original sin of C style languages. They allowed null values in the language which, if not handled immediately, can sneak further into the program and cause crashes or corrupted data days weeks or months later.</p>
-<p>Rust doesn’t have exceptions or pass error codes around, but rather uses the <a href="https://doc.rust-lang.org/std/result/index.html">Result type</a> which can be used to propagate either the error or the result and looks like this:
-<img src="./images/result.png" alt="Result Type" /></p>
-<p>And Rust doesn't have Null but rather the <a href="https://doc.rust-lang.org/std/option/enum.Option.html">Option type</a> which can be used to propagate either a value (Some), or the lack of one (None)
+<p>Rust doesn't have Null but rather the <a href="https://doc.rust-lang.org/std/option/enum.Option.html">Option type</a> which can be used to propagate either a value (Some), or the lack of one (None)
 <img src="./images/option.png" alt="Option Type" /></p>
+<p>The problem is the nth argument may or may not be there... This is one of the original sins of C style languages. They allowed Null for all data types which, when not handled immediately, can sneak further into the program and cause crashes or corrupted data days weeks or months later.</p>
+<p>Erorrs are handled similarly in Rust with the <a href="https://doc.rust-lang.org/std/result/index.html">Result type</a> which can be used to propagate either the error or the result and looks like this:
+<img src="./images/result.png" alt="Result Type" /></p>
 <p>Were going to skip Result here for now, as our <code>nth()</code> method returns an Option, but they’re very similar in how they’re handled as they’re both implemented as enums.</p>
-<p>In Rust we cant just have access to our values, we ofen need to <code>unwrap()</code> them to peel off the enum they come wrapped in. </p>
+<p>In Rust we can't just access many of our values, we ofen need to <code>unwrap()</code> them to peel off the enum they come wrapped in.</p>
 <pre><code class="language-rust ignore no_run">use std::env;
 
 fn main() {
